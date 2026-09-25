@@ -274,6 +274,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 .view-toggle.compact{flex:0 0 auto;}
 .view-toggle.compact button{flex:0 0 auto;padding:5px 10px;font-size:0.74rem;}
 .chart-panel .sub .share{font-size:0.7rem;background:var(--lemon-soft);color:var(--ink);padding:1px 7px;border-radius:999px;white-space:nowrap;}
+button.btn-star{margin-left:auto;}
+.help.fn{font-size:0.7rem;margin-top:4px;}
+.help.fn sup,.help sup{color:var(--accent);font-weight:700;}
 button.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--surface);}
 button.btn-primary:hover{background:var(--accent);filter:brightness(1.1);}
 

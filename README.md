@@ -40,13 +40,13 @@ The page is a scrolling essay in five acts (hiring only for now). All five acts 
 | `src/colors.js` | Theme colors and canvas helpers shared by the charts. |
 | `src/styles.css` | Styles (light and dark themes via CSS variables). |
 | `test/model.test.js` | Simulation-vs-theory tests, including the Act I headline numbers. |
-| `docs/methodology.txt` | Full math and code walkthrough, written for outside review. |
+| `docs/methodology.md` | Full math and code walkthrough, written for outside review. |
 
 ## Parameter names
 
 | On the page | In the model |
 | --- | --- |
-| Market churn | gamma = alpha_O / beta_O: search time divided by tenure for someone exactly as advertised (default 0.04). Not the unemployment rate; P(available) is about 2x gamma. |
+| Market churn | gamma = alpha_O / beta_O: search time divided by tenure for someone exactly as advertised (default 0.07; the handoff's targets use 0.04). Not the unemployment rate; P(available) runs from about gamma to 2x gamma depending on the job type. |
 | Pool size | N |
 | Truth ratio | X = actual quality / advertised quality, mean 1. Lognormal with CV 0.48 (Professional, default) or 0.19 (Unskilled); Uniform(0, 2] as the essay's worst case |
 

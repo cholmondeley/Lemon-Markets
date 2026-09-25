@@ -34,10 +34,9 @@
   </section>
 
   <section class="prose" id="prologue">
-    <p class="lede float-in">In 1970 the economist George Akerlof asked why used cars sell at such a discount. Simply put, the people selling a car know its entire history, and they're probably selling for a reason that has something to do with that history being troublesome. This is called <em>adverse selection</em>, and it affects hiring as well.</p>
-    <p class="float-in">Hiring seems like a better scenario. There are no pushy used-car salesmen, and you get to interview people as many times as you want. On top of that, everyone knows that as soon as the job req goes up, the résumés come pouring in!</p>
-    <p class="float-in">Surely, with hundreds of résumés to choose from, the ability to do multiple rounds of interviews, and the enviable position of being &ldquo;the buyer&rdquo; in a buyer's market, we should be able to find great candidates? Okay, okay &mdash; I hear some of you cracking up already. Yes, hiring is <em>the</em> hard problem, and it is affirmatively a lemon market, for several reasons.</p>
-    <p class="float-in">This essay makes that case in five acts. It shows <em>that</em> this is true and <em>why</em> it's true, lets you play with the assumptions and parameters yourself, and then covers the four levers you have to do better: how hard you look at each candidate, where you find them, the extreme importance of handling offers and counter-offers correctly, and when to stop looking.</p>
+    <p class="lede float-in">Hiring is hard. It is, in fact, a lemon market. But why is this?</p>
+    <p class="float-in">Buying used cars is a lemon market because the seller knows a given car's entire history, and the reason for selling often has something to do with that history being bad. Hiring is the same way, but why? There are no pushy used-car salesmen, you can interview people as many times as you want, and everyone knows you get flooded with candidates as soon as the job req opens. Shouldn't you be able to get a great candidate?</p>
+    <p class="float-in">We're going to take you through why hiring is so hard. This essay shows <em>that</em> this is true and <em>why</em> it is true, lets you play with the assumptions and parameters yourself, and then covers the four levers you have to do better: how hard you look at each candidate, where you find them, the importance of handling offers and counter-offers correctly, and when to stop looking.</p>
   </section>
 
   <section class="act" id="act-1">
@@ -129,7 +128,7 @@
 
         <div class="step" data-layout="mirror" data-clock="live" data-focus="looking" data-marks="ghost employed">
           <div class="card">
-            <p>About two years in, the market has settled. Look at who is still looking.</p>
+            <p>A few years in, the market has settled. Look at who is still looking.</p>
             <p class="big"><strong class="t-red"><span data-th="PXlt1_A" data-fmt="pct">75%</span></strong> of them oversell.</p>
             <p>We started at <span data-th="PXlt1" data-fmt="pct">59%</span>. Nobody started lying more. The market kept sending the oversellers back.</p>
           </div>
@@ -163,7 +162,7 @@
       <header class="play-head float-in">
         <p class="eyebrow">Try it yourself</p>
         <h3 class="display" id="play-1-title">Run your own market</h3>
-        <p>The same model, live and random. Press play, change how fast people cycle through jobs, and switch between the people looking and the people already employed.</p>
+        <p>The same model, seeded with a new random population each refresh. Press play, change how fast people cycle through jobs, and switch between the people looking and the people already employed.</p>
       </header>
 
       <div class="play-grid">
@@ -220,13 +219,14 @@
 
         <div class="panel controls">
           <div class="ctrl-group ctrl-wide">
-            <label for="gammaSlider">Market churn <span class="readout mono" id="gammaReadout">0.04</span></label>
-            <input type="range" id="gammaSlider" min="0" max="100" value="12">
+            <label for="gammaSlider">Market churn <span class="readout mono" id="gammaReadout">0.07</span></label>
+            <input type="range" id="gammaSlider" min="0" max="100" value="22">
             <div class="tickrow">
               <span class="mono share" id="gammaShare"></span>
               <button type="button" data-preset="hiring">reset to hiring default</button>
             </div>
-            <p class="help"><strong>Search time &divide; tenure</strong> for someone who is exactly as advertised. A two-month search for every four-year job is about 0.04. <span id="gammaHelp"></span></p>
+            <p class="help"><strong>Search time &divide; tenure</strong> for someone who is exactly as advertised. A three-and-a-half-month search for every four-year job is about 0.07, close to the source essay's white-collar example.<sup>&dagger;</sup> <span id="gammaHelp"></span></p>
+            <p class="help fn"><sup>&dagger;</sup> Job search is changing. AI tools have made résumés more polished and less informative, and employers and candidates alike widely report that searching has gotten harder. The market hasn't settled into a new equilibrium, so treat this default as provisional. In this model, less informative résumés widen the spread of truth ratios, which worsens the skew; more churn on its own slightly softens it.</p>
           </div>
           <div class="ctrl-group">
             <label for="nSlider">People in this market <span class="readout mono" id="nReadout">260</span></label>
@@ -365,8 +365,8 @@
           <div class="transport">
             <button class="btn btn-primary" id="a2interview" type="button">Interview</button>
             <button class="btn" id="a2reveal" type="button">Hide truth</button>
-            <button class="btn" id="a2star" type="button">Star candidate</button>
             <button class="btn" id="a2new" type="button">New candidate</button>
+            <button class="btn btn-star" id="a2star" type="button">Star candidate</button>
           </div>
           <p class="tip" id="a2hint" hidden>Switch formats to re-read the same interviews with a better or worse method.</p>
         </div>
@@ -375,7 +375,7 @@
           <ol>
             <li><strong>Interview the same person three or four times.</strong> Watch the scores jump around, then watch the curve tighten as they add up. That's the case for several interviews, each run by a different interviewer. (We treat each interview as an independent read. Real interviews share some error, so the gain in practice is smaller.)</li>
             <li><strong>Draw several candidates and interview each once.</strong> Notice how alike the &ldquo;after&rdquo; curves look.</li>
-            <li><strong>Press Star candidate</strong> for someone who truly delivers 1.5&times; their résumé. Interview them once and see how little the curve moves toward them. Then interview them a few more times.</li>
+            <li><strong>Press Star candidate</strong> for someone who truly delivers somewhere between 1.5&times; and 4&times; their résumé. Interview them once and see how little the curve moves toward them. Then interview them a few more times.</li>
             <li><strong>Now look at the next chart.</strong> Seeing more candidates moves the quality of your hire far more than reading one candidate harder. Do both.</li>
           </ol>
         </div>
@@ -726,7 +726,7 @@
       <div>
         <p class="eyebrow">Act V &middot; When to stop</p>
         <h2 class="display">If you&rsquo;re hiring on the open market, stop earlier than the textbook says</h2>
-        <p class="dek">The famous 37% rule answers a question hiring managers don't have. When candidates come from the open market and a top-5% hire is good enough, interview a fifth of them as a benchmark, then hire the first who beats it.</p>
+        <p class="dek">So if interviewing mainly lets you rank candidates, when have you seen enough candidates to be sure you're seeing a good one? When candidates come from the open market and &ldquo;within the top 5&ndash;10% of the candidates&rdquo; is good enough (rather than &ldquo;the best candidate,&rdquo; which you have a low chance of getting anyway), interview a fifth of them as a benchmark, then hire the first who beats it.</p>
       </div>
     </header>
 
@@ -892,8 +892,8 @@
     </div>
     <div>
       <h4>What to keep in mind</h4>
-      <p>Everyone shares one churn rate, and people who oversell leave in exact proportion to how much they oversold. Truth ratios follow a lognormal distribution with an average of 1. Its spread is set from the variation in output among people doing the same job: about 48% of the average for high-complexity work and 19% for unskilled and semi-skilled work (Hunter, Schmidt &amp; Judiesch, 1990). The source essay's &ldquo;worst case&rdquo; spread from 0 to 2 puts much more weight on near-total overselling, so it's offered as a worst case. The model has no state for searching while employed, so people who job-hunt from a job are counted with the employed. If many of your applicants search from a job, your pool is likely less lemon-heavy than these numbers suggest.</p>
-      <p><a href="https://github.com/cholmondeley/Lemon-Markets/blob/main/docs/methodology.txt" target="_blank" rel="noopener">Full methodology and code notes &rarr;</a></p>
+      <p>Everyone shares one churn rate, and people who oversell leave in exact proportion to how much they oversold. Truth ratios follow a lognormal distribution with an average of 1. Its spread is set from the variation in output among people doing the same job: about 48% of the average for high-complexity work and 19% for unskilled and semi-skilled work (Hunter, Schmidt &amp; Judiesch, 1990). The source essay's &ldquo;worst case&rdquo; spread from 0 to 2 puts much more weight on near-total overselling, so it's offered as a worst case. The default churn (search time &divide; tenure &asymp; 0.07) is provisional: job search is changing, with AI tools making résumés more polished and less informative, and the market hasn't settled into a new equilibrium. The model has no state for searching while employed, so people who job-hunt from a job are counted with the employed. If many of your applicants search from a job, your pool is likely less lemon-heavy than these numbers suggest.</p>
+      <p><a href="https://github.com/cholmondeley/Lemon-Markets/blob/main/docs/methodology.md" target="_blank" rel="noopener">Full methodology and code notes &rarr;</a></p>
     </div>
   </div>
 </footer>

@@ -14,7 +14,7 @@ import { C, readColors, honestyRgb, hexToRgb, fitCanvas, lerp } from './colors.j
 
 const GAMMA = PRESET_HIRING;
 const SCRUB_T = 12;           // model time covered by the scrub step (1 unit = one average search)
-const MONTHS_PER_UNIT = 2;    // illustrative: a 2-month search per ~4-year job gives gamma = 0.04
+const MONTHS_PER_UNIT = 3.5;  // illustrative: a 3.5-month search per ~4-year job gives gamma = 0.07
 const LIVE_RATE = 0.5;        // model time units per second once the market is "live"
 const SEED = 20260924;
 

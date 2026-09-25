@@ -1,4 +1,4 @@
-// Pure model code: no DOM, no rendering. See docs/methodology.txt for the math.
+// Pure model code: no DOM, no rendering. See docs/methodology.md for the math.
 //
 // Each agent has a fixed "truth ratio" x = actual quality / advertised quality and
 // is either Available ('A') or Taken ('U'). Time is measured so the hiring rate
@@ -6,7 +6,9 @@
 
 export const GAMMA_MIN = 0.03;
 export const GAMMA_MAX = 1.3;
-export const PRESET_HIRING = 0.04;
+// Search time / tenure for an as-advertised person: about a 3.5-month search per four-year
+// job, close to the source essay's white-collar example (~1/15). See docs/methodology.md.
+export const PRESET_HIRING = 0.07;
 export const PRESET_DATING = 0.33;
 export const BETA = 1;
 export const DT = 0.05;
