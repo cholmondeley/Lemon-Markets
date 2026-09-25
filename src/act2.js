@@ -222,6 +222,8 @@ export function createAct2Play(root) {
     dirty = true; sync();
   }));
   $('a2new').addEventListener('click', newCandidate);
+  // A star by fiat: someone who truly delivers 1.5x their résumé.
+  $('a2star').addEventListener('click', () => { cand = 1.5; noises = []; revealed = true; dirty = true; sync(); });
   $('a2interview').addEventListener('click', interview);
   $('a2reveal').addEventListener('click', () => { revealed = !revealed; dirty = true; sync(); });
   onJobChange(setup);

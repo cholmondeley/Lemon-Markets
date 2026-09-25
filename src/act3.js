@@ -97,10 +97,11 @@ export function createAct3Play(root) {
   const chans = CHANNELS.filter((c) => c.id !== 'ap5' && c.id !== 'ap8').map((c) => (c.id === 'ap3' ? { ...c, id: 'ap' } : c));
   const lad = buildLadder($('a3ladder'), chans);
   Object.values(lad.rows).forEach((R) => R.row.classList.add('shown'));
-  const state = { rho: 0.3, zRef: Z90, k: 5, kRef: 3 };
+  const state = { rho: 0.8, zRef: Z90, k: 5, kRef: 3 };
   // Controls sit inside the ladder, under the rows they affect.
   lad.rows.poachS.row.after($('a3ctrlInterview'));
   lad.rows.ap.row.after($('a3ctrlReferral'));
+  lad.rows.ap.name.textContent = 'A-player referral (\u03c1 = .80)';
   let pending = null, visible = false;
   watchVisible(root, (v) => { visible = v; if (v && pending) schedule(pending); }, '100px');
 

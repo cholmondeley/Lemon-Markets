@@ -34,9 +34,10 @@
   </section>
 
   <section class="prose" id="prologue">
-    <p class="lede float-in">In 1970 the economist George Akerlof asked why used cars sell at such a discount. His answer: the seller knows whether the car is a lemon and the buyer doesn't. So buyers discount every car, owners of good cars decline to sell at that price, and the lot fills up with lemons. The name for this is <em>adverse selection</em>.</p>
-    <p class="float-in">Hiring looks like a cleaner market. There's no dealer steering you toward the bad cars, and you get to interview people. But the lemon problem shows up anyway, by a different route. <strong>No one has to hold anything back. The ordinary cycle of hiring and leaving does the sorting.</strong></p>
-    <p class="float-in">This essay follows that logic through five acts. It starts with the problem, then covers the four levers you have against it: how hard you look at each person, where you find them, what a counter-offer tells you, and when you stop looking.</p>
+    <p class="lede float-in">In 1970 the economist George Akerlof asked why used cars sell at such a discount. Simply put, the people selling a car know its entire history, and they're probably selling for a reason that has something to do with that history being troublesome. This is called <em>adverse selection</em>, and it affects hiring as well.</p>
+    <p class="float-in">Hiring seems like a better scenario. There are no pushy used-car salesmen, and you get to interview people as many times as you want. On top of that, everyone knows that as soon as the job req goes up, the résumés come pouring in!</p>
+    <p class="float-in">Surely, with hundreds of résumés to choose from, the ability to do multiple rounds of interviews, and the enviable position of being &ldquo;the buyer&rdquo; in a buyer's market, we should be able to find great candidates? Okay, okay &mdash; I hear some of you cracking up already. Yes, hiring is <em>the</em> hard problem, and it is affirmatively a lemon market, for several reasons.</p>
+    <p class="float-in">This essay makes that case in five acts. It shows <em>that</em> this is true and <em>why</em> it's true, lets you play with the assumptions and parameters yourself, and then covers the four levers you have to do better: how hard you look at each candidate, where you find them, the extreme importance of handling offers and counter-offers correctly, and when to stop looking.</p>
   </section>
 
   <section class="act" id="act-1">
@@ -45,7 +46,7 @@
       <div>
         <p class="eyebrow">Act I &middot; The problem</p>
         <h2 class="display">The people still looking</h2>
-        <p class="dek">A market that sorts on what people claim and keeps them on what they deliver fills its open pool with oversellers, without anyone lying more.</p>
+        <p class="dek">Most résumés over-promise and under-deliver, and the less a person delivers, the more likely they are to land back in the pool.</p>
       </div>
     </header>
 
@@ -331,8 +332,8 @@
 
         <div class="step" data-mode="slate">
           <div class="card card-quote">
-            <p class="pull display">An interview can't pin one person down. It can rank several.</p>
-            <p>Interview five people from the same pool and hire the one who does best. With structured interviews, the person you hire has an expected truth ratio of <strong data-th="B44" data-fmt="dec2">1.01</strong>, up from <strong data-th="B0" data-fmt="dec2">0.82</strong> for a single candidate. The interview is the same. Now it only has to put people in order.</p>
+            <p class="pull display">An interview can't pin one person down, but it can rank several.</p>
+            <p>Interview five people with the same résumé quality and hire the one who does best. With structured interviews, the person you hire has an expected truth ratio of <strong data-th="B44" data-fmt="dec2">1.01</strong>, up from <strong data-th="B0" data-fmt="dec2">0.82</strong> for a single candidate. The interview is the same. Now it only has to put people in order.</p>
             <p>In practice, do both: interview each finalist more than once, with different interviewers, and see more candidates than feels necessary. Where those candidates come from matters even more, and that's Act III.</p>
           </div>
         </div>
@@ -364,9 +365,19 @@
           <div class="transport">
             <button class="btn btn-primary" id="a2interview" type="button">Interview</button>
             <button class="btn" id="a2reveal" type="button">Hide truth</button>
+            <button class="btn" id="a2star" type="button">Star candidate</button>
             <button class="btn" id="a2new" type="button">New candidate</button>
           </div>
           <p class="tip" id="a2hint" hidden>Switch formats to re-read the same interviews with a better or worse method.</p>
+        </div>
+        <div class="panel try-list">
+          <h4>Things to try</h4>
+          <ol>
+            <li><strong>Interview the same person three or four times.</strong> Watch the scores jump around, then watch the curve tighten as they add up. That's the case for several interviews, each run by a different interviewer. (We treat each interview as an independent read. Real interviews share some error, so the gain in practice is smaller.)</li>
+            <li><strong>Draw several candidates and interview each once.</strong> Notice how alike the &ldquo;after&rdquo; curves look.</li>
+            <li><strong>Press Star candidate</strong> for someone who truly delivers 1.5&times; their résumé. Interview them once and see how little the curve moves toward them. Then interview them a few more times.</li>
+            <li><strong>Now look at the next chart.</strong> Seeing more candidates moves the quality of your hire far more than reading one candidate harder. Do both.</li>
+          </ol>
         </div>
         <div class="panel chart-panel">
           <div class="panel-head-row">
@@ -381,15 +392,6 @@
           <canvas id="a2Best"></canvas>
           <p class="sub axis-cap">Candidates interviewed &rarr;</p>
         </div>
-        <div class="panel try-list">
-          <h4>Things to try</h4>
-          <ol>
-            <li><strong>Interview the same person three or four times.</strong> Watch the scores jump around, then watch the curve tighten as they add up. That's the case for several interviews, each run by a different interviewer. (We treat each interview as an independent read. Real interviews share some error, so the gain in practice is smaller.)</li>
-            <li><strong>Draw several candidates and interview each once.</strong> Notice how alike the &ldquo;after&rdquo; curves look.</li>
-            <li><strong>Keep drawing until the yellow truth line is far to the right,</strong> a real star. Interview them once and see how little the curve moves toward them. Then interview them a few more times.</li>
-            <li><strong>Now look at the chart on the right.</strong> Seeing more candidates moves the quality of your hire far more than reading one candidate harder. Do both.</li>
-          </ol>
-        </div>
       </div>
     </section>
   </section>
@@ -400,7 +402,7 @@
       <div>
         <p class="eyebrow">Act III &middot; Where you look</p>
         <h2 class="display">Where you look matters more than how hard</h2>
-        <p class="dek">The same interview does very different work depending on the pool it's used on. The best hires come from people who already have jobs, found through someone who has seen their work. Referrals, in other words, and specifically referrals from your best people.</p>
+        <p class="dek">The same interview does very different work depending on the pool it's used on. The best hires come from people who already have jobs, and are still stronger if referred by somebody who's worked with them before and considers them good. Referrals, in other words, and specifically referrals from your best people.</p>
       </div>
     </header>
 
@@ -456,7 +458,7 @@
 
         <div class="step">
           <div class="card">
-            <p>Referrals are the third route. You only get one name, so the choosing happens in the referrer's head: they think through the people they could send and pick the one they rate best. We assume they weigh three people, which is generous. Most referrers probably consider two or three.</p>
+            <p>Referrals are the third route. You only get one name, so the choosing happens in the referrer's head: they think through the people they could send and pick the one they rate best. We assume they weigh three people, which is generous. Most referrers probably consider between one and three.</p>
             <p>It matters who's being referred. A friend who is <strong>currently job hunting</strong> still comes from the looking pool. Even with a well-informed judge, it lands at the <strong data-th="L_friend" data-fmt="ord">52nd</strong> percentile, about where a structured interview on the open market gets you.</p>
             <p class="note">Someone who has worked with a person reads them with a validity of about r = .49, the figure for peer ratings (Schmidt &amp; Hunter, 1998).</p>
           </div>
@@ -525,8 +527,8 @@
               <p class="help" id="a3krNote">How many people they think through before sending you one.</p>
             </div>
             <div class="ctrl-group">
-              <label for="a3rho">Network homophily &rho; <span class="readout mono" id="a3rhoOut">0.30</span></label>
-              <input type="range" id="a3rho" min="0" max="90" value="30">
+              <label for="a3rho">Network homophily &rho; <span class="readout mono" id="a3rhoOut">0.80</span></label>
+              <input type="range" id="a3rho" min="0" max="90" value="80">
               <p class="help">How closely the A-player's contacts resemble them in quality. 0 means a random draw.</p>
             </div>
             <div class="ctrl-group">
@@ -624,7 +626,7 @@
 
         <div class="step" data-view="won">
           <div class="card">
-            <p>What's that worth? Not salary: you only open a role if the hire should create well more value than they cost. Say an as-advertised hire here earns $150,000 and creates $300,000 a year.</p>
+            <p>What's that worth? Not salary: you only open a role if the hire creates noticeably more value than they cost. Say an as-advertised hire here earns $150,000 and creates $300,000 a year.</p>
             <p>The gap between <strong data-th="C_won" data-fmt="dec2">1.47</strong>&times; and <strong data-th="C_not" data-fmt="dec2">0.91</strong>&times; is <strong data-th="C_liftX" data-fmt="dec2">0.57</strong> of an as-advertised hire's output, or about <strong data-th="C_val" data-fmt="usd">$120,000</strong> a year of extra value. That's your break-even: you could pay a countered candidate up to that much more than someone nobody fought for and still come out even. Anything less is profit.</p>
             <p class="note">The calculator below lets you change the counter rate, the employer's read, how many fights you win, the value of the role and the expected tenure.</p>
           </div>
@@ -723,8 +725,8 @@
       <span class="act-num display" aria-hidden="true">V</span>
       <div>
         <p class="eyebrow">Act V &middot; When to stop</p>
-        <h2 class="display">Stop earlier than the textbook says</h2>
-        <p class="dek">The famous 37% rule answers a question hiring managers don't have. If a top-5% hire is good enough, look at a fifth of your candidates, keep the best ones warm, and go back to them if nobody beats them.</p>
+        <h2 class="display">If you&rsquo;re hiring on the open market, stop earlier than the textbook says</h2>
+        <p class="dek">The famous 37% rule answers a question hiring managers don't have. When candidates come from the open market and a top-5% hire is good enough, interview a fifth of them as a benchmark, then hire the first who beats it.</p>
       </div>
     </header>
 
@@ -761,12 +763,13 @@
           <div class="card">
             <p>The textbook answer is the <strong>secretary problem</strong>. Look at the first 37% without hiring anyone, then hire the first person who beats all of them.</p>
             <p>That finds the single best candidate about <strong data-th="S_best37" data-fmt="pct">37%</strong> of the time. If all you can judge is who beats whom, and you can't go back to people you've passed on, no rule does better.</p>
+            <p class="note">The problem reached a wide audience through Martin Gardner's 1960 column. Lindley (1961) and Dynkin (1963) worked out the 1/e rule, and Ferguson (1989) tells the history. The figures on this page come from our own simulations, which reproduce it.</p>
           </div>
         </div>
 
         <div class="step" data-mode="chart">
           <div class="card">
-            <p>But you don't need the single best. You need someone great. Say a top-5% hire is good enough, out of 100 candidates.</p>
+            <p>But you don't need the single best. You need someone great. Say a top-5% hire is good enough, and, as the textbook does, that you can interview 100 candidates.</p>
             <p>Look at only the first 20%, and you land a top-5% hire <strong data-th="S_p5_20" data-fmt="pct">67%</strong> of the time, against <strong data-th="S_p5_37" data-fmt="pct">61%</strong> at 37%. You also stop after about <strong data-th="S_seen20" data-fmt="n100">52</strong> candidates instead of <strong data-th="S_seen37" data-fmt="n100">74</strong>.</p>
           </div>
         </div>
@@ -774,8 +777,8 @@
         <div class="step" data-mode="chart" data-recall="1">
           <div class="card">
             <p>The textbook also assumes you can never go back. Employers can: the candidate you passed on last week may still be available. Few employers ever do it.</p>
-            <p>They should. With recall, the same 20% rule lands a top-5% hire <strong data-th="S_p5_20R" data-fmt="pct">85%</strong> of the time, even though good candidates get hired elsewhere while you wait. Recall matters most as insurance for the case where nobody beats your early benchmark.</p>
-            <p class="note">We assume the whole search lasts about as long as an average job search, so the first candidate you saw has about a 37% chance of still being available at the end.</p>
+            <p>In this idealized setting, recall looks powerful: the same 20% rule lands a top-5% hire <strong data-th="S_p5_20R" data-fmt="pct">85%</strong> of the time. It's insurance against the case where nobody beats your early benchmark. Without recall you'd be stuck with whoever comes last. With it, you only need someone good to still be available.</p>
+            <p class="note">Other employers are interviewing the same people, so the ones who interview best go first: someone in the top 10% of interviews gets hired away about twice as fast as the median. The whole search lasts about one average job search. Recall with backward solicitation is studied in Yang (1974).</p>
           </div>
         </div>
 
@@ -789,14 +792,15 @@
         <div class="step" data-mode="chart" data-r="0.44" data-recall="both">
           <div class="card">
             <p>With a real interview, looking at 20% first lands a top-5% hire only <strong data-th="S_p5_20s" data-fmt="pct">24%</strong> of the time, or <strong data-th="S_p5_20sR" data-fmt="pct">30%</strong> with recall. At the textbook 37% it's <strong data-th="S_p5_37s" data-fmt="pct">21%</strong>.</p>
-            <p>The stopping rule moves this by a few points, and recall by a few more. Your read is the bottleneck, and the pool you draw from is the lever.</p>
+            <p>And nobody interviews 100 people for a professional role. With a more realistic ten, looking at the first two lands a top-10% hire <strong data-th="S10_p10s" data-fmt="pct">18%</strong> of the time, <strong data-th="S10_p10sR" data-fmt="pct">19%</strong> with recall. Even a perfect read would manage only <strong data-th="S10_p10p" data-fmt="pct">30%</strong>, because ten people rarely include a star.</p>
+            <p>The stopping rule and recall move the result by a few points. With ten interviews and a noisy read, what decides your hire is who's in the ten. That's Act III.</p>
           </div>
         </div>
 
         <div class="step" data-mode="chart" data-r="0.44" data-recall="both">
           <div class="card card-quote">
-            <p class="pull display">Look at a fifth, keep your shortlist warm, then go back to sourcing.</p>
-            <p>Decide how many candidates you expect to see, and treat the first 10&ndash;20% as a benchmark. Hire the first person who beats it. Keep the best runners-up warm, and go back to them if nobody does. And since your read of any one person is noisy, time spent finding better candidates beats time spent perfecting when to stop.</p>
+            <p class="pull display">Interview a fifth, keep your shortlist warm, then go back to sourcing.</p>
+            <p>Decide how many candidates you expect to interview, and treat the first 10&ndash;20% as a benchmark. Hire the first person who beats it. Keep the best runners-up warm, and go back to them if nobody does. And since your read of any one person is noisy, time spent finding better candidates beats time spent perfecting when to stop.</p>
           </div>
         </div>
       </div>
@@ -806,7 +810,7 @@
       <header class="play-head float-in">
         <p class="eyebrow">Try it yourself</p>
         <h3 class="display" id="play-5-title">Pick your stopping rule</h3>
-        <p>Each point is thousands of simulated searches. Choose how many candidates you'll see, how well you can read them, and whether you'll go back to people you passed on.</p>
+        <p>Each point is thousands of simulated searches. Choose how many candidates you'll interview, how well the interviews read them, and whether you'll go back to people you passed on.</p>
       </header>
       <div class="a4-grid">
         <div class="panel chart-panel">
@@ -825,7 +829,7 @@
             <div><span>Top-10% hire</span><b class="mono" id="a5p10"></b></div>
             <div><span>Average hire</span><b class="mono" id="a5mean"></b></div>
             <div><span>Median hire</span><b class="mono" id="a5median"></b></div>
-            <div><span>Candidates seen</span><b class="mono" id="a5seen"></b></div>
+            <div><span>Interviews before you hire</span><b class="mono" id="a5seen"></b></div>
           </div>
           <p class="help">Percentiles are among the candidates you could see. If nobody beats your benchmark you take the last one, which drags the average below the median.</p>
         </div>
@@ -835,15 +839,18 @@
             <input type="range" id="a5f" min="0" max="10" value="4">
           </div>
           <div class="ctrl-group">
-            <span class="label">Candidates you'll see</span>
-            <div class="view-toggle" role="group" aria-label="Candidates">
+            <span class="label">Candidates you will take through several interviews</span>
+            <div class="view-toggle" role="group" aria-label="Candidates interviewed">
+              <button type="button" data-sn="5">5</button>
+              <button type="button" data-sn="10" class="active">10</button>
               <button type="button" data-sn="20">20</button>
-              <button type="button" data-sn="100" class="active">100</button>
-              <button type="button" data-sn="200">200</button>
+              <button type="button" data-sn="50">50</button>
+              <button type="button" data-sn="100">100</button>
             </div>
+            <p class="help">The people you actually interview, not the résumés you screen. Most roles get through about ten before they need filling.</p>
           </div>
           <div class="ctrl-group">
-            <span class="label">How well you read them</span>
+            <span class="label">How well those interviews read them</span>
             <div class="view-toggle" role="group" aria-label="Interview">
               <button type="button" data-sr="0.18">Unstructured</button>
               <button type="button" data-sr="0.44" class="active">Structured</button>
@@ -853,8 +860,8 @@
           <div class="ctrl-group">
             <span class="label">Go back to people you passed on</span>
             <div class="view-toggle" role="group" aria-label="Recall">
-              <button type="button" data-srecall="0">No</button>
-              <button type="button" data-srecall="1" class="active">Yes, if still available</button>
+              <button type="button" data-srecall="0" class="active">No</button>
+              <button type="button" data-srecall="1">Yes, if still available</button>
             </div>
           </div>
         </div>
@@ -867,11 +874,11 @@
       <p class="eyebrow">The playbook</p>
       <h2 class="display" id="playbook-title">Five rules for hiring in a lemon market</h2>
       <ol class="rules">
-        <li class="float-in"><span class="rn display">I</span><div><b>Assume the open pool is skewed.</b> The people still looking are disproportionately the ones who oversell: <strong data-th="PXlt1_A" data-fmt="pct">75%</strong> of them in this model.</div></li>
-        <li class="float-in"><span class="rn display">II</span><div><b>Don't expect one interview to settle it.</b> Use structured interviews, run several, and always compare candidates. Ranking is what interviews are good at.</div></li>
-        <li class="float-in"><span class="rn display">III</span><div><b>Source from people who have jobs, through your best people.</b> Ask &ldquo;Who's the best person you've worked with?&rdquo;, not &ldquo;Know anyone looking?&rdquo;</div></li>
-        <li class="float-in"><span class="rn display">IV</span><div><b>Make the strong offer first.</b> A counter-offer is evidence you chose well, and there's plenty of headroom to win. If they counter, counter back.</div></li>
-        <li class="float-in"><span class="rn display">V</span><div><b>Look at a fifth, then leap.</b> Benchmark on the first 10&ndash;20% of candidates, hire the first who beats them, and keep your shortlist warm.</div></li>
+        <li class="float-in"><span class="rn display">I</span><div><b>Assume the open pool is skewed.</b> The people still looking are disproportionately the ones who oversell. Hire from it on charm alone and your average hire lands at the <strong data-th="L_charm" data-fmt="ord">38th</strong> percentile.</div><p class="lift"><span class="lift-n mono"><strong data-th="PXlt1_A" data-fmt="pct">75%</strong></span><span class="lift-c">of people looking oversell; the average delivers <strong data-th="EXA" data-fmt="cents">82 cents</strong> on the dollar. The best candidates you can get by following all this advice deliver <strong data-th="L_ap3_EX" data-fmt="n100">144</strong> to <strong data-th="L_ap8_EX" data-fmt="n100">165</strong> cents. In the limit, you could find a candidate who delivers <strong data-th="L_ap8_99_EX" data-fmt="n100">250</strong> cents on the dollar: the best case, a 99th-percentile performer (&rho; = .8) referring the best of three people they know.</span></p></li>
+        <li class="float-in"><span class="rn display">II</span><div><b>Don't expect one interview to settle it.</b> Use structured interviews, run several, and always compare candidates. Ranking is what interviews are good at.</div><p class="lift"><span class="lift-n mono"><strong data-th="L_charm" data-fmt="ord">38th</strong> &rarr; <strong data-th="L_structured" data-fmt="ord">50th</strong></span><span class="lift-c">percentile of your hire, from charm to comparing five with structured interviews</span></p></li>
+        <li class="float-in"><span class="rn display">III</span><div><b>Source from people who have jobs, through your best people.</b> Ask &ldquo;Who&rsquo;s the best person you&rsquo;ve worked with?&rdquo;, not &ldquo;Know anyone looking?&rdquo;</div><p class="lift"><span class="lift-n mono"><strong data-th="L_structured" data-fmt="ord">50th</strong> &rarr; <strong data-th="L_ap8" data-fmt="ord">86th</strong></span><span class="lift-c">from the best open-market interview to an A-player&rsquo;s referral (&rho; = .8, assumed)</span></p></li>
+        <li class="float-in"><span class="rn display">IV</span><div><b>Make the strong offer first.</b> A counter-offer is evidence you chose well, and the break-even leaves plenty of headroom. If they counter, counter back.</div><p class="lift"><span class="lift-n mono"><strong data-th="C_lift" data-fmt="plusPct">+62%</strong></span><span class="lift-c">output from a countered hire you win, worth up to <strong data-th="C_val" data-fmt="usd">$170,000</strong> a year more, in a $300k-value / $150k-salary role. <span data-th="C_valShare" data-fmt="headroom">You could double their current comp and still come out ahead!</span></span></p></li>
+        <li class="float-in"><span class="rn display">V</span><div><b>If you are stuck with hiring on the open market, interview a fifth, then leap.</b> Benchmark on the first 10&ndash;20% of the candidates you expect to interview, hire the first who beats them, and keep your shortlist warm.</div><p class="lift"><span class="lift-n mono">&minus;<strong data-th="S_cut" data-fmt="pct">28%</strong></span><span class="lift-c">Cut total interviews by about <strong data-th="S_cut" data-fmt="pct">28%</strong> while actually increasing your chances of landing a top-5% hire (<strong data-th="S_p5_37" data-fmt="pct">60%</strong> &rarr; <strong data-th="S_p5_20" data-fmt="pct">68%</strong>, textbook setting).</span></p></li>
       </ol>
     </div>
   </section>
@@ -881,11 +888,11 @@
   <div class="colophon-inner">
     <div>
       <h4>Where the model comes from</h4>
-      <p>The market model is from Connor's essay <a href="https://bosoncutter.substack.com/p/deception-is-amplified-by-default" target="_blank" rel="noopener">&ldquo;Deception is Amplified by Default&rdquo;</a> (Boson Cutter, 2026). This page simulates the same continuous-time Markov chain by Monte Carlo and checks it against the closed forms. The lemons framing is from G. Akerlof, &ldquo;The Market for &lsquo;Lemons&rsquo;&rdquo;, <i>Quarterly Journal of Economics</i>, 1970.</p>
+      <p>The &ldquo;worst case&rdquo; market model was inspired by and uses equations from Connor's essay <a href="https://bosoncutter.substack.com/p/deception-is-amplified-by-default" target="_blank" rel="noopener">&ldquo;Deception is Amplified by Default&rdquo;</a> (Boson Cutter, 2026). This page simulates the same continuous-time Markov chain by Monte Carlo and checks it against the closed forms. The lemons framing is from G. Akerlof, &ldquo;The Market for &lsquo;Lemons&rsquo;&rdquo;, <i>Quarterly Journal of Economics</i>, 1970. The stopping rules in Act V build on the secretary problem (T. Ferguson, &ldquo;Who Solved the Secretary Problem?&rdquo;, <i>Statistical Science</i>, 1989) and its recall variant (M. Yang, <i>Journal of Applied Probability</i>, 1974).</p>
     </div>
     <div>
       <h4>What to keep in mind</h4>
-      <p>Everyone shares one churn rate, and people who oversell leave in exact proportion to how much they oversold. Truth ratios follow a lognormal distribution with an average of 1. Its spread is set from the variation in output among people doing the same job: about 48% of the average for high-complexity work and 19% for unskilled and semi-skilled work (Hunter, Schmidt &amp; Judiesch, 1990). The source essay's even spread from 0 to 2 puts much more weight on near-total overselling, so it's offered as a worst case. The model has no state for searching while employed, so people who job-hunt from a job are counted with the employed. If many of your applicants search from a job, your pool is likely less lemon-heavy than these numbers suggest.</p>
+      <p>Everyone shares one churn rate, and people who oversell leave in exact proportion to how much they oversold. Truth ratios follow a lognormal distribution with an average of 1. Its spread is set from the variation in output among people doing the same job: about 48% of the average for high-complexity work and 19% for unskilled and semi-skilled work (Hunter, Schmidt &amp; Judiesch, 1990). The source essay's &ldquo;worst case&rdquo; spread from 0 to 2 puts much more weight on near-total overselling, so it's offered as a worst case. The model has no state for searching while employed, so people who job-hunt from a job are counted with the employed. If many of your applicants search from a job, your pool is likely less lemon-heavy than these numbers suggest.</p>
       <p><a href="https://github.com/cholmondeley/Lemon-Markets/blob/main/docs/methodology.txt" target="_blank" rel="noopener">Full methodology and code notes &rarr;</a></p>
     </div>
   </div>

@@ -150,17 +150,27 @@ Pipeline at r_E = .7 (k = 5 interviewed, referrers weigh 3):
 | Poach + structured | 64.9 | 55.8 | 59.6 | 24% |
 | A-player referral ρ = .8 | 85.9 | 79.6 | 82.3 | 40% |
 
-## Act V: stopping rules (professional, looking pool, n = 100, look-then-leap)
+## Act V: stopping rules (professional, looking pool, look-then-leap)
 
 From `src/data/stopping.json` (`scripts/stopping-data.mjs`, 6,000 searches per point). Percentiles are within
-the candidate stream. No one beats the benchmark → take the last candidate; with recall, go back to the best
-read still available (availability decays over one average search, D = 1).
+the candidate stream. If no one beats the benchmark you take the last candidate. With recall, you go back to the
+best read still available. Availability is quality-filtered: competing employers take their own structured read
+(r = .44) and hire a candidate away at a rate proportional to exp(0.54 x read), normalized to one hire per
+average search (top-10% reads go about twice as fast as the median). The search lasts one average search (D = 1).
 
-| Read | Evaluate | Top-5% hire | with recall | Mean pct | with recall | Candidates seen |
-|---|---|---|---|---|---|---|
-| Perfect (r = 1) | 20% | 67% | 85% | 88 | 97 | 52 |
-| Perfect (r = 1) | 37% | 61% | 94% | 80 | 98 | 74 |
-| Structured (.44) | 20% | 24% | 30% | 70 | 75 | 52 |
-| Structured (.44) | 37% | 21% | 32% | 67 | 77 | 74 |
+| Interviewed | Read | Evaluate | Top-5% | with recall | Top-10% | with recall | Mean pct | with recall |
+|---|---|---|---|---|---|---|---|---|
+| 100 | Perfect (r = 1) | 20% | 68% | 84% | 79% | 97% | 88 | 97 |
+| 100 | Perfect (r = 1) | 37% | 60% | 92% | 66% | 99% | 80 | 98 |
+| 100 | Structured (.44) | 20% | 24% | 28% | 35% | 41% | 70 | 75 |
+| 100 | Structured (.44) | 37% | 22% | 30% | 32% | 42% | 67 | 76 |
+| 10 | Perfect (r = 1) | 20% | 16% | 21% | 29% | 37% | 73 | 81 |
+| 10 | Perfect (r = 1) | 37% | 17% | 23% | 31% | 43% | 69 | 85 |
+| 10 | Structured (.44) | 20% | 10% | 11% | 17% | 20% | 58 | 61 |
+| 10 | Structured (.44) | 37% | 11% | 13% | 18% | 22% | 58 | 63 |
+
+Recall is worth a lot only with many candidates and a good read. At ten structured interviews it adds about
+1-3 points; it shrinks further as searches lengthen (D = 2, 4). Quality filtering (kappa) changes little,
+because recall only needs someone good to remain, not the single best.
 
 Check: perfect read, 37%, no recall picks the single best ~37% of the time (test in test/model.test.js).

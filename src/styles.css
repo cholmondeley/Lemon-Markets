@@ -253,7 +253,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 .inset-curve .c-lab{font:600 9.5px "IBM Plex Sans",sans-serif;fill:var(--ink);}
 .inset-curve .c-tick{font:9px "IBM Plex Mono",monospace;fill:var(--ink-faint);}
 .inset-cap{display:block;font-size:0.7rem;color:var(--ink-muted);margin-top:2px;}
-.a2-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;}
+.a2-grid{display:grid;grid-template-columns:1fr;gap:16px;}
 @media (max-width:860px){.a2-grid{grid-template-columns:1fr;}}
 #a2Band,#a2Best{height:250px;}
 .a2-readouts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--rule);}
@@ -383,10 +383,16 @@ input.num{font:inherit;font-size:0.9rem;padding:7px 9px;border-radius:8px;border
 .playbook-inner{max-width:860px;margin:0 auto;padding:12vh 24px;}
 .playbook h2{font-size:clamp(1.8rem,4.5vw,2.8rem);margin:0 0 32px;line-height:1.1;text-wrap:balance;}
 .rules{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:18px;}
-.rules li{display:flex;gap:18px;align-items:baseline;padding:18px 20px;border-radius:14px;background:var(--bg);border:1px solid var(--rule);}
+.rules li{display:grid;grid-template-columns:auto 1fr minmax(170px,220px);gap:18px;align-items:start;padding:18px 20px;border-radius:14px;background:var(--bg);border:1px solid var(--rule);}
 .rules .rn{font-size:1.6rem;font-weight:700;color:var(--lemon);min-width:2.2ch;}
 .rules li div{font-size:1.02rem;line-height:1.6;color:var(--ink-muted);}
 .rules li b{color:var(--ink);}
+.lift{margin:0;display:flex;flex-direction:column;gap:4px;padding-left:16px;border-left:3px solid var(--lemon);}
+.lift-n{font-size:1.35rem;font-weight:600;line-height:1.15;color:var(--ink);}
+.lift-n strong{font-weight:600;}
+.lift-c{font-size:0.74rem;line-height:1.45;color:var(--ink-muted);}
+.lift-c strong{color:var(--ink);font-weight:600;}
+@media (max-width:700px){.rules li{grid-template-columns:auto 1fr;} .lift{grid-column:2;}}
 
 /* ---------- Next up + footer ---------- */
 .next-up{position:relative;max-width:760px;margin:0 auto 14vh;padding:36px 36px 32px;border:1px dashed var(--rule-strong);border-radius:20px;background:linear-gradient(135deg, var(--surface), var(--bg));}

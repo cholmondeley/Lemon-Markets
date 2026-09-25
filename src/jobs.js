@@ -4,7 +4,7 @@
 //   <span data-th="PXlt1_A" data-fmt="pct">75%</span>
 
 import STOP from './data/stopping.json';
-import { JOB_TYPES, DEFAULT_JOB, PRESET_HIRING, steadyState, bestOfK, exactNarrowing, ladder, counterOffers, sourceChannel, CHANNELS } from './model.js';
+import { JOB_TYPES, DEFAULT_JOB, PRESET_HIRING, steadyState, bestOfK, exactNarrowing, ladder, counterOffers, sourceChannel, CHANNELS, Z99 } from './model.js';
 
 let current = DEFAULT_JOB;
 const subs = [];
@@ -16,6 +16,16 @@ export function onJobChange(fn) { subs.push(fn); }
 // a referrer weighs three people they know and sends you one.
 export const K_REF = 3;
 export const standardLadder = () => ladder(getDist(), PRESET_HIRING, { n: 20000, kRef: K_REF });
+
+// Best case: a 99th-percentile referrer (rho = .8) weighing three people. Cached per job type.
+const bestCaseCache = new Map();
+function bestCase() {
+  if (!bestCaseCache.has(current)) {
+    const ch = CHANNELS.find((c) => c.id === 'ap8');
+    bestCaseCache.set(current, sourceChannel(getDist(), PRESET_HIRING, ch, { k: K_REF, n: 20000, zRef: Z99, seed: 99 }).EX);
+  }
+  return bestCaseCache.get(current);
+}
 
 // Act IV defaults: 12% of people with an outside offer get a counter (Faberman et al.,
 // 2022). The employer's read has validity .7: supervisors' ratings of overall
@@ -54,6 +64,9 @@ const formats = {
   plus2: (v) => (v >= 0 ? '+' : '\u2212') + Math.abs(v).toFixed(2),
   ord: (v) => ordinal(Math.round(v * 100)),
   n100: (v) => String(Math.round(v * 100)),
+  // Break-even extra pay as a share of salary, as a sentence.
+  headroom: (v) => (v >= 1 ? 'You could double their current comp and still come out ahead!'
+    : 'You could raise their pay by ' + Math.round(v * 100) + '% and still come out ahead.'),
   plusPct: (v) => (v >= 0 ? '+' : '\u2212') + Math.round(Math.abs(v) * 100) + '%',
   usd: (v) => '$' + (Math.round(v / 1000) * 1000).toLocaleString('en-US'),
 };
@@ -69,8 +82,8 @@ function numbers() {
   const B0 = th.EXA, B18 = bestOfK(d, g, 0.18, 5), B44 = bestOfK(d, g, 0.44, 5);
   const N18 = exactNarrowing(d, g, 0.18), N44 = exactNarrowing(d, g, 0.44), N90 = exactNarrowing(d, g, 0.9);
   const lad = {};
-  for (const [id, v] of Object.entries(standardLadder())) { lad['L_' + id] = v.mean; lad['L_' + id + '_q1'] = v.q[0]; lad['L_' + id + '_q5'] = v.q[4]; }
-  // Act V: stopping rules at 100 candidates (fractions 20% and 37%).
+  for (const [id, v] of Object.entries(standardLadder())) { lad['L_' + id] = v.mean; lad['L_' + id + '_q1'] = v.q[0]; lad['L_' + id + '_q5'] = v.q[4]; lad['L_' + id + '_EX'] = v.EX; }
+  // Act V: stopping rules at 100 interviewed candidates (fractions 20% and 37%).
   const st = (r, rec, f) => STOP.results[[current, 100, r, rec].join('|')][STOP.fractions.indexOf(f)];
   const stop = {
     S_best37: st(1, 0, 0.37).best, S_p5_20: st(1, 0, 0.2).p5, S_p5_37: st(1, 0, 0.37).p5,
@@ -79,6 +92,15 @@ function numbers() {
     S_p5_20s: st(0.44, 0, 0.2).p5, S_p5_20sR: st(0.44, 1, 0.2).p5, S_p5_37s: st(0.44, 0, 0.37).p5,
     S_mean20s: st(0.44, 0, 0.2).mean, S_mean20sR: st(0.44, 1, 0.2).mean,
   };
+  // The same at a realistic ten interviews.
+  const st10 = (r, rec, f) => STOP.results[[current, 10, r, rec].join('|')][STOP.fractions.indexOf(f)];
+  Object.assign(stop, {
+    S10_p10s: st10(0.44, 0, 0.2).p10, S10_p10sR: st10(0.44, 1, 0.2).p10, S10_p10p: st10(1, 0, 0.2).p10,
+    S10_means: st10(0.44, 0, 0.2).mean, S10_meansR: st10(0.44, 1, 0.2).mean,
+  });
+  // Interviews saved by looking at 20% instead of 37% (100 candidates).
+  stop.S_cut = 1 - stop.S_seen20 / stop.S_seen37;
+  lad.L_ap8_99_EX = bestCase();
   const co = standardCounter(), cl = {};
   for (const [id, v] of Object.entries(counterLadder())) { cl['LC_' + id] = v.mean; if (id.endsWith('_walk')) cl['LCF_' + id.slice(0, -5)] = v.firstCountered; }
   return {

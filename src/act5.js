@@ -196,7 +196,7 @@ export function createAct5Story(root) {
 // ---------- Try it yourself ----------
 export function createAct5Play(root) {
   const $ = (id) => root.querySelector('#' + id);
-  const s = { n: 100, r: 0.44, recall: true, f: 0.2 };
+  const s = { n: 10, r: 0.44, recall: false, f: 0.2 };
   let visible = false, dirty = true;
   watchVisible(root, (v) => { visible = v; if (v) dirty = true; }, '100px');
 
@@ -226,7 +226,8 @@ export function createAct5Play(root) {
       { values: ser.map((v) => v.p10), color: C.blue, label: '', alpha: 1, width: 1.6 },
       { values: ser.map((v) => v.p20), color: C.inkFaint, label: '', alpha: 1, width: 1.4 },
     ], [{ f: s.f, v: at.p5, color: C.accent, alpha: 1 }]);
-    $('a5fOut').textContent = Math.round(s.f * 100) + '%';
+    const firstM = Math.max(1, Math.round(s.f * s.n));
+    $('a5fOut').textContent = Math.round(s.f * 100) + '% (' + firstM + ' of ' + s.n + ')';
     $('a5p5').textContent = Math.round(at.p5 * 100) + '%';
     $('a5p10').textContent = Math.round(at.p10 * 100) + '%';
     $('a5mean').textContent = ordinal(Math.round(at.mean * 100));
