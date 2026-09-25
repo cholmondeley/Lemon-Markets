@@ -1,0 +1,16 @@
+{
+  "name": "lemon-markets",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Interactive simulation of selection bias in dating and hiring markets",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test test/model.test.js"
+  },
+  "devDependencies": {
+    "vite": "^8.3.1"
+  }
+}

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Lemon Market</title>
+<meta name="description" content="An interactive simulation of how selection bias floods dating and hiring pools with overselling, based on Boson Cutter's Markov-chain model.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Domine:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="titleblock">
+      <p class="eyebrow">an explorable model of selection bias</p>
+      <h1 class="display">The Lemon Market</h1>
+      <p>Why the person still available might not be the catch they look like. Play with the market and watch the pool of "available" people quietly fill up with overselling.</p>
+    </div>
+    <div class="domain-toggle" role="group" aria-label="Choose a market">
+      <button type="button" data-domain="hiring" class="active">Hiring</button>
+      <button type="button" data-domain="dating">Dating</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <section class="stats-row">
+      <div class="panel stat-card warn">
+        <span class="stat-label" id="statLiarsLabel">Share of the market that's overselling</span>
+        <span class="stat-value mono" id="statLiars">&mdash;</span>
+        <span class="stat-theory mono" id="statLiarsTheory"></span>
+      </div>
+      <div class="panel stat-card">
+        <span class="stat-label" id="statOverstateLabel">Average overstatement</span>
+        <span class="stat-value mono" id="statOverstate">&mdash;</span>
+        <span class="stat-theory mono" id="statOverstateTheory"></span>
+      </div>
+      <div class="panel stat-card">
+        <span class="stat-label">Share of everyone currently searching</span>
+        <span class="stat-value mono" id="statFracAvail">&mdash;</span>
+        <span class="stat-theory mono" id="statFracAvailTheory"></span>
+      </div>
+    </section>
+
+    <section class="charts-row">
+      <div class="panel chart-panel">
+        <h3>Truth Ratio in the current pool</h3>
+        <p class="sub">Actual quality &divide; advertised quality. 1.0 = honest. The pale band is the truth before any selection happens.</p>
+        <div class="hist-wrap">
+          <canvas id="histCanvas"></canvas>
+          <div class="hist-scrim" id="histScrim"></div>
+          <button type="button" id="playBtn" class="paused" aria-label="Play">
+            <svg class="ic-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z"/></svg>
+            <svg class="ic-pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="5.5" y="4" width="4.5" height="16" rx="1"/><rect x="14" y="4" width="4.5" height="16" rx="1"/></svg>
+          </button>
+        </div>
+        <div class="transport">
+          <button class="btn" id="resetBtn" type="button">Reset to t=0</button>
+          <button class="btn" id="ffBtn" type="button">Jump to steady state</button>
+          <span class="tval mono" id="tReadout">t = 0.0</span>
+          <div class="speed">
+            <label for="speedSlider">Speed <span class="readout mono" id="speedReadout">0.5&times;</span></label>
+            <input type="range" id="speedSlider" min="1" max="10" value="1">
+          </div>
+          <p class="tip">Tip: reset and look at the pool <i>before</i> pressing play &mdash; that's the honest, unskewed truth. Then watch how fast it turns.</p>
+        </div>
+      </div>
+      <div class="panel chart-panel time-panel">
+        <h3>Average honesty over time</h3>
+        <p class="sub">Dashed line = what the theory predicts at steady state.</p>
+        <div class="time-wrap"><canvas id="timeCanvas"></canvas></div>
+      </div>
+    </section>
+
+    <section class="panel pool-panel">
+      <div class="panel-head">
+        <h2>The Pool, Live</h2>
+        <div class="legend">
+          <span><i style="background:var(--red)"></i>overselling</span>
+          <span><i style="background:var(--ink-faint)"></i>as advertised</span>
+          <span><i style="background:var(--blue)"></i>underselling (hidden gem)</span>
+        </div>
+      </div>
+      <canvas id="poolCanvas"></canvas>
+    </section>
+
+    <section class="panel controls">
+      <h2 class="section-title">Market settings</h2>
+      <div class="controls-grid">
+        <div class="ctrl-group">
+          <label for="gammaSlider">Market Churn <span class="readout mono" id="gammaReadout">0.07</span></label>
+          <input type="range" id="gammaSlider" min="0" max="100" value="34">
+          <div class="tickrow">
+            <button type="button" data-preset="hiring">slow (hiring-like)</button>
+            <button type="button" data-preset="dating">fast (dating-like)</button>
+          </div>
+          <p class="help" id="gammaHelp">How much even a genuinely great match still cycles back onto the market.</p>
+        </div>
+
+        <div class="ctrl-group">
+          <label for="nSlider">Pool Size <span class="readout mono" id="nReadout">260</span></label>
+          <input type="range" id="nSlider" min="60" max="500" value="260" step="10">
+          <p class="help">How many people we're simulating at once.</p>
+        </div>
+
+        <div class="ctrl-group">
+          <label for="screenSlider"><span>Your Screening Skill<sup>*</sup></span> <span class="readout mono" id="screenReadout">0.31</span></label>
+          <input type="range" id="screenSlider" min="0" max="90" value="31">
+          <div class="tickrow">
+            <button type="button" data-screen="18">unstructured interview .18</button>
+            <button type="button" data-screen="44">structured .44</button>
+          </div>
+          <p class="help">How well your vetting predicts who's actually good. 0 = coin flip, 1 = perfect. Better screening narrows the gap between what people <i>are</i> and what they <i>claim</i>.</p>
+        </div>
+
+        <div class="ctrl-group">
+          <label>Looking at</label>
+          <div class="view-toggle" role="group">
+            <button type="button" data-view="A" class="active" id="viewAvailBtn">On the market</button>
+            <button type="button" data-view="U" id="viewTakenBtn">Already taken</button>
+          </div>
+          <p class="help" id="viewHelp">The pool of people currently searching.</p>
+        </div>
+      </div>
+      <p class="footnote"><sup>*</sup> Screening skill is a validity correlation: how strongly your assessment of a candidate tracks their real performance. Hiring research puts it at about 0.18 for unstructured interviews and 0.44 for structured interviews (Sackett et al., 2022, <i>Journal of Applied Psychology</i>, Table 2, validity corrected for criterion unreliability; the paper's headline estimates, which also correct for range restriction, are 0.19 and 0.42). These are hiring benchmarks; there is no equivalent measured figure for dating, so on the Dating tab treat the scale as illustrative. The model shrinks the claim-versus-reality gap by a factor of &radic;(1 &minus; r&sup2;), the share of the spread your assessment can't explain, so even good screening leaves most of the gap in place.</p>
+    </section>
+
+    <details class="panel explainer" id="explainer">
+      <summary>How this actually works</summary>
+      <div class="explainer-body">
+        <div>
+          <h4>The setup</h4>
+          <p>Everyone has an <b>actual quality</b> (how good they really are) and an <b>advertised quality</b> (how good they look on the first pass &mdash; a r&eacute;sum&eacute;, a dating profile). People get discovered at a rate based on how they look. They get found out &mdash; and sent back onto the market &mdash; at a rate based on who they actually are.</p>
+        </div>
+        <div>
+          <h4>Why liars pile up</h4>
+          <p>An honest, high-quality match gets taken and <b>stays</b> taken &mdash; they leave the pool for good. Someone overselling gets taken too, but gets found out and bounced back quickly. Run that forward, and the people who keep reappearing in the pool are disproportionately the ones who oversold. The pool doesn't lie about individuals &mdash; it lies about the <b>average</b>.</p>
+        </div>
+        <div>
+          <h4>What actually helps</h4>
+          <p><b>Move fast</b> on someone before the market has had time to sort them (reset the sim and look at t=0). <b>Poach</b> people who aren't even looking &mdash; in a fast-churning market, the ones already "taken" are the real high performers (try the "already taken" view). Or just <b>get better at screening</b> &mdash; narrowing the gap between claims and reality has the same effect as raising your bar.</p>
+        </div>
+      </div>
+      <p class="cite">Model and equations adapted from Connor's essay <a href="https://bosoncutter.substack.com/p/deception-is-amplified-by-default" target="_blank" rel="noopener">"Deception is Amplified by Default"</a> on Boson Cutter. This page simulates the same continuous-time Markov chain by Monte Carlo rather than solving it in closed form, so you can watch the skew build in real time.</p>
+    </details>
+  </div>
+</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
