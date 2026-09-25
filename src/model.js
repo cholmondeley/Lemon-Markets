@@ -386,3 +386,52 @@ export function counterProbs(dist, x, rE, t, tq, q) {
   const pC = 1 - normCdf((t - m) / sig);
   return { pC, pW: q >= 1 ? pC : Math.max(0, normCdf((tq - m) / sig) - normCdf((t - m) / sig)) };
 }
+
+// ---------- Act V: when to stop ----------
+// Candidates arrive one at a time from the looking pool. You read each with validity
+// r (r = 1 is a perfect read: the textbook secretary problem). Look-then-leap: pass on
+// the first f*n, then hire the first whose read beats the best read so far. If nobody
+// does, you take the last candidate, or with recall you go back to the best read you
+// saw who is still available. A passed candidate stays available with probability
+// exp(-elapsed / avg search), with the whole process lasting D average searches.
+// Percentiles are within the candidate stream (the looking pool).
+export function stoppingRun(dist, gamma, { n = 100, f = 0.37, r = 1, recall = false, D = 1, T = 5000, seed = 5 } = {}) {
+  const rng = mulberry32(seed), M = 4000;
+  const xs = new Float64Array(M), cum = new Float64Array(M);
+  let tot = 0;
+  for (let i = 0; i < M; i++) { xs[i] = dist.quantile((i + 0.5) / M); tot += gamma / (gamma + xs[i]); cum[i] = tot; }
+  const draw = () => {
+    const t = rng() * tot; let lo = 0, hi = M - 1;
+    while (lo < hi) { const m = (lo + hi) >> 1; if (cum[m] < t) lo = m + 1; else hi = m; }
+    return lo;
+  };
+  const m = Math.max(1, Math.round(f * n)), stay = Math.exp(-D / n);
+  const out = { p1: 0, p5: 0, p10: 0, p20: 0, best: 0, mean: 0, seen: 0 };
+  const pcts = new Float64Array(T), idx = new Int32Array(n), sig = new Float64Array(n);
+  for (let k = 0; k < T; k++) {
+    let bestIdx = 0;
+    for (let i = 0; i < n; i++) {
+      idx[i] = draw();
+      sig[i] = r >= 1 ? xs[idx[i]] : r * (xs[idx[i]] - 1) / dist.cv + Math.sqrt(1 - r * r) * gauss(rng);
+      if (idx[i] > idx[bestIdx]) bestIdx = i;
+    }
+    let bench = -Infinity;
+    for (let i = 0; i < m; i++) if (sig[i] > bench) bench = sig[i];
+    let pick = -1, stop = n;
+    for (let i = m; i < n; i++) if (sig[i] > bench) { pick = i; stop = i + 1; break; }
+    if (pick < 0 && recall) {
+      // Best reads first; each is still available with probability stay^(time since seen).
+      const order = Array.from({ length: n }, (_, i) => i).sort((a, b) => sig[b] - sig[a]);
+      for (const i of order) if (rng() < Math.pow(stay, n - 1 - i)) { pick = i; break; }
+    }
+    if (pick < 0) pick = n - 1;
+    const p = cum[idx[pick]] / tot;
+    pcts[k] = p;
+    out.p1 += p >= 0.99; out.p5 += p >= 0.95; out.p10 += p >= 0.9; out.p20 += p >= 0.8;
+    out.best += idx[pick] === idx[bestIdx]; out.mean += p; out.seen += stop;
+  }
+  pcts.sort();
+  for (const key of Object.keys(out)) out[key] /= T;
+  out.median = pcts[T >> 1];
+  return out;
+}

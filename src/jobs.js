@@ -3,6 +3,7 @@
 // the essay's copy stays true when the reader flips the switch.
 //   <span data-th="PXlt1_A" data-fmt="pct">75%</span>
 
+import STOP from './data/stopping.json';
 import { JOB_TYPES, DEFAULT_JOB, PRESET_HIRING, steadyState, bestOfK, exactNarrowing, ladder, counterOffers, sourceChannel, CHANNELS } from './model.js';
 
 let current = DEFAULT_JOB;
@@ -52,6 +53,7 @@ const formats = {
   cents: (v) => Math.round(v * 100) + ' cents',
   plus2: (v) => (v >= 0 ? '+' : '\u2212') + Math.abs(v).toFixed(2),
   ord: (v) => ordinal(Math.round(v * 100)),
+  n100: (v) => String(Math.round(v * 100)),
   plusPct: (v) => (v >= 0 ? '+' : '\u2212') + Math.round(Math.abs(v) * 100) + '%',
   usd: (v) => '$' + (Math.round(v / 1000) * 1000).toLocaleString('en-US'),
 };
@@ -68,11 +70,21 @@ function numbers() {
   const N18 = exactNarrowing(d, g, 0.18), N44 = exactNarrowing(d, g, 0.44), N90 = exactNarrowing(d, g, 0.9);
   const lad = {};
   for (const [id, v] of Object.entries(standardLadder())) { lad['L_' + id] = v.mean; lad['L_' + id + '_q1'] = v.q[0]; lad['L_' + id + '_q5'] = v.q[4]; }
+  // Act V: stopping rules at 100 candidates (fractions 20% and 37%).
+  const st = (r, rec, f) => STOP.results[[current, 100, r, rec].join('|')][STOP.fractions.indexOf(f)];
+  const stop = {
+    S_best37: st(1, 0, 0.37).best, S_p5_20: st(1, 0, 0.2).p5, S_p5_37: st(1, 0, 0.37).p5,
+    S_seen20: st(1, 0, 0.2).seen / 100, S_seen37: st(1, 0, 0.37).seen / 100,
+    S_p5_20R: st(1, 1, 0.2).p5, S_p5_37R: st(1, 1, 0.37).p5,
+    S_p5_20s: st(0.44, 0, 0.2).p5, S_p5_20sR: st(0.44, 1, 0.2).p5, S_p5_37s: st(0.44, 0, 0.37).p5,
+    S_mean20s: st(0.44, 0, 0.2).mean, S_mean20sR: st(0.44, 1, 0.2).mean,
+  };
   const co = standardCounter(), cl = {};
   for (const [id, v] of Object.entries(counterLadder())) { cl['LC_' + id] = v.mean; if (id.endsWith('_walk')) cl['LCF_' + id.slice(0, -5)] = v.firstCountered; }
   return {
     ...th, B0, B18, B44, LIFT44: B44 - B0, N18, N44, N90, S90: 1 - N90, ...lad, ...cl,
     C_cnt: co.countered.EX, C_not: co.not.EX, C_won: co.won.EX, C_lift: co.liftRel, C_liftX: co.lift,
+    ...stop,
     C_val: co.lift * COUNTER.value, C_valShare: (co.lift * COUNTER.value) / COUNTER.salary,
   };
 }

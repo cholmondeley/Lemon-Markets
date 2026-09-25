@@ -149,3 +149,18 @@ Pipeline at r_E = .7 (k = 5 interviewed, referrers weigh 3):
 |---|---|---|---|---|
 | Poach + structured | 64.9 | 55.8 | 59.6 | 24% |
 | A-player referral ρ = .8 | 85.9 | 79.6 | 82.3 | 40% |
+
+## Act V: stopping rules (professional, looking pool, n = 100, look-then-leap)
+
+From `src/data/stopping.json` (`scripts/stopping-data.mjs`, 6,000 searches per point). Percentiles are within
+the candidate stream. No one beats the benchmark → take the last candidate; with recall, go back to the best
+read still available (availability decays over one average search, D = 1).
+
+| Read | Evaluate | Top-5% hire | with recall | Mean pct | with recall | Candidates seen |
+|---|---|---|---|---|---|---|
+| Perfect (r = 1) | 20% | 67% | 85% | 88 | 97 | 52 |
+| Perfect (r = 1) | 37% | 61% | 94% | 80 | 98 | 74 |
+| Structured (.44) | 20% | 24% | 30% | 70 | 75 | 52 |
+| Structured (.44) | 37% | 21% | 32% | 67 | 77 | 74 |
+
+Check: perfect read, 37%, no recall picks the single best ~37% of the time (test in test/model.test.js).

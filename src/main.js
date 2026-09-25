@@ -6,6 +6,7 @@ import { createPlayground } from './playground.js';
 import { createAct2Story, createAct2Play } from './act2.js';
 import { createAct3Story, createAct3Play } from './act3.js';
 import { createAct4Story, createAct4Play } from './act4.js';
+import { createAct5Story, createAct5Play } from './act5.js';
 
 initChrome();
 initJobs();
@@ -17,6 +18,8 @@ const act3 = createAct3Story(document.getElementById('act-3-story'));
 createAct3Play(document.getElementById('act-3-play'));
 const act4 = createAct4Story(document.getElementById('act-4-story'));
 const act4play = createAct4Play(document.getElementById('act-4-play'));
+const act5 = createAct5Story(document.getElementById('act-5-story'));
+const act5play = createAct5Play(document.getElementById('act-5-play'));
 
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', playground.render);
 
@@ -31,6 +34,8 @@ function loop(ts) {
   act3.frame(dt);
   act4.frame(dt);
   act4play.frame(dt);
+  act5.frame(dt);
+  act5play.frame(dt);
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);

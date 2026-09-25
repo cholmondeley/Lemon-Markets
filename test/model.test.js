@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { genAgents, step, poolStats, theory, steadyState, spreadWidth, mulberry32, JOB_TYPES, DT, bestOfK, narrowing, exactNarrowing, poolDensity, ladder, normCdf, counterOffers, sourceChannel, CHANNELS } from '../src/model.js';
+import { genAgents, step, poolStats, theory, steadyState, spreadWidth, mulberry32, JOB_TYPES, DT, bestOfK, narrowing, exactNarrowing, poolDensity, ladder, normCdf, counterOffers, sourceChannel, CHANNELS, stoppingRun } from '../src/model.js';
 
 test('spreadWidth: r=0 is 1; larger r narrows', () => {
   assert.equal(spreadWidth(0), 1);
@@ -154,4 +154,12 @@ test('ladder with counter-offers: walking away matches the handoff section 4 tar
   const half = sourceChannel(d, 0.04, ch, { n: 40000, counter: { rE: 0.5, t: co.t, tq: co.tq } }).mean * 100;
   assert.ok(Math.abs(walk - 62.0) < 0.8, 'walk ' + walk.toFixed(1));
   assert.ok(walk < half && half < none, 'winning some counter-counters recovers part of the loss');
+});
+
+test('stopping: a perfect read at the 37% rule finds the single best about 37% of the time', () => {
+  const d = JOB_TYPES.professional.dist;
+  const r = stoppingRun(d, 0.04, { n: 100, f: 0.37, r: 1, T: 8000 });
+  assert.ok(Math.abs(r.best - 0.37) < 0.02, 'best ' + r.best.toFixed(3));
+  const withRecall = stoppingRun(d, 0.04, { n: 100, f: 0.37, r: 1, recall: true, T: 8000 });
+  assert.ok(withRecall.mean > r.mean + 0.1, 'recall rescues the no-one-beats-the-benchmark case');
 });

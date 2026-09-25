@@ -18,7 +18,7 @@
     <a class="rail-seg" data-act="act-2" href="#act-2"><b>II</b><span>One candidate</span></a>
     <a class="rail-seg" data-act="act-3" href="#act-3"><b>III</b><span>Where you look</span></a>
     <a class="rail-seg" data-act="act-4" href="#act-4"><b>IV</b><span>Counter-offers</span></a>
-    <span class="rail-seg is-soon" title="Coming soon"><b>V</b><span>When to stop</span></span>
+    <a class="rail-seg" data-act="act-5" href="#act-5"><b>V</b><span>When to stop</span></a>
   </nav>
 </header>
 
@@ -718,11 +718,162 @@
     </section>
   </section>
 
-  <section class="next-up float-in" aria-label="Coming next">
-    <p class="eyebrow">Next &middot; Act V</p>
-    <h2 class="display">When to stop looking</h2>
-    <p>The textbook answer is to look at 37% of candidates and then take the next one who beats them all. In a market where the good ones get hired while you deliberate, stopping much earlier gives up very little.</p>
-    <span class="soon-tag">In production</span>
+  <section class="act" id="act-5">
+    <header class="act-head float-in">
+      <span class="act-num display" aria-hidden="true">V</span>
+      <div>
+        <p class="eyebrow">Act V &middot; When to stop</p>
+        <h2 class="display">Stop earlier than the textbook says</h2>
+        <p class="dek">The famous 37% rule answers a question hiring managers don't have. If a top-5% hire is good enough, look at a fifth of your candidates, keep the best ones warm, and go back to them if nobody beats them.</p>
+      </div>
+    </header>
+
+    <div class="scrolly" id="act-5-story">
+      <figure class="stage" data-step="0">
+        <div class="stage-top">
+          <span class="stage-title">Candidates, one at a time</span>
+        </div>
+        <div class="stage-sub">
+          <div class="job-switch" role="group" aria-label="Job type">
+            <button type="button" data-job="professional" class="active">Professional</button>
+            <button type="button" data-job="unskilled">Unskilled</button>
+            <button type="button" data-job="uniform">Worst case</button>
+          </div>
+        </div>
+        <div class="stage-plot">
+          <canvas role="img" aria-label="Candidates arrive one at a time. Later, a chart of how often each stopping rule lands a top-5% hire, against the share of candidates you only look at first."></canvas>
+        </div>
+        <figcaption class="ladder-legend">
+          <span><i class="sw q1"></i>Bottom 20%</span><span><i class="sw q2"></i>20&ndash;40%</span><span><i class="sw q3"></i>40&ndash;60%</span><span><i class="sw q4"></i>60&ndash;80%</span><span><i class="sw q5"></i>Top 20%</span>
+          <span class="legend-right">Colour: true quality among these candidates</span>
+        </figcaption>
+      </figure>
+
+      <div class="steps">
+        <div class="step" data-mode="conveyor" data-reveal="scrub">
+          <div class="card">
+            <p>The last decision is when to stop. Candidates arrive one at a time, and you usually have to decide on each before long.</p>
+            <p>Each dot is a candidate from the looking pool. For now, pretend you can see exactly how good they are: the higher the dot, the better.</p>
+          </div>
+        </div>
+
+        <div class="step" data-mode="conveyor" data-window="0.37">
+          <div class="card">
+            <p>The textbook answer is the <strong>secretary problem</strong>. Look at the first 37% without hiring anyone, then hire the first person who beats all of them.</p>
+            <p>That finds the single best candidate about <strong data-th="S_best37" data-fmt="pct">37%</strong> of the time. If all you can judge is who beats whom, and you can't go back to people you've passed on, no rule does better.</p>
+          </div>
+        </div>
+
+        <div class="step" data-mode="chart">
+          <div class="card">
+            <p>But you don't need the single best. You need someone great. Say a top-5% hire is good enough, out of 100 candidates.</p>
+            <p>Look at only the first 20%, and you land a top-5% hire <strong data-th="S_p5_20" data-fmt="pct">67%</strong> of the time, against <strong data-th="S_p5_37" data-fmt="pct">61%</strong> at 37%. You also stop after about <strong data-th="S_seen20" data-fmt="n100">52</strong> candidates instead of <strong data-th="S_seen37" data-fmt="n100">74</strong>.</p>
+          </div>
+        </div>
+
+        <div class="step" data-mode="chart" data-recall="1">
+          <div class="card">
+            <p>The textbook also assumes you can never go back. Employers can: the candidate you passed on last week may still be available. Few employers ever do it.</p>
+            <p>They should. With recall, the same 20% rule lands a top-5% hire <strong data-th="S_p5_20R" data-fmt="pct">85%</strong> of the time, even though good candidates get hired elsewhere while you wait. Recall matters most as insurance for the case where nobody beats your early benchmark.</p>
+            <p class="note">We assume the whole search lasts about as long as an average job search, so the first candidate you saw has about a 37% chance of still being available at the end.</p>
+          </div>
+        </div>
+
+        <div class="step" data-mode="conveyor" data-window="0.37" data-r="0.44">
+          <div class="card">
+            <p>Now the catch from Act II. You don't see how good people are. You see how they interview.</p>
+            <p>These are the same candidates, now placed by a structured interview's read. The colours still show the truth. The rule is the same; it just ranks by the wrong thing.</p>
+          </div>
+        </div>
+
+        <div class="step" data-mode="chart" data-r="0.44" data-recall="both">
+          <div class="card">
+            <p>With a real interview, looking at 20% first lands a top-5% hire only <strong data-th="S_p5_20s" data-fmt="pct">24%</strong> of the time, or <strong data-th="S_p5_20sR" data-fmt="pct">30%</strong> with recall. At the textbook 37% it's <strong data-th="S_p5_37s" data-fmt="pct">21%</strong>.</p>
+            <p>The stopping rule moves this by a few points, and recall by a few more. Your read is the bottleneck, and the pool you draw from is the lever.</p>
+          </div>
+        </div>
+
+        <div class="step" data-mode="chart" data-r="0.44" data-recall="both">
+          <div class="card card-quote">
+            <p class="pull display">Look at a fifth, keep your shortlist warm, then go back to sourcing.</p>
+            <p>Decide how many candidates you expect to see, and treat the first 10&ndash;20% as a benchmark. Hire the first person who beats it. Keep the best runners-up warm, and go back to them if nobody does. And since your read of any one person is noisy, time spent finding better candidates beats time spent perfecting when to stop.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="playground" id="act-5-play" aria-labelledby="play-5-title">
+      <header class="play-head float-in">
+        <p class="eyebrow">Try it yourself</p>
+        <h3 class="display" id="play-5-title">Pick your stopping rule</h3>
+        <p>Each point is thousands of simulated searches. Choose how many candidates you'll see, how well you can read them, and whether you'll go back to people you passed on.</p>
+      </header>
+      <div class="a4-grid">
+        <div class="panel chart-panel">
+          <div class="panel-head-row">
+            <h4>Chance of a top hire</h4>
+            <div class="job-switch" role="group" aria-label="Job type">
+            <button type="button" data-job="professional" class="active">Professional</button>
+            <button type="button" data-job="unskilled">Unskilled</button>
+            <button type="button" data-job="uniform">Worst case</button>
+          </div>
+          </div>
+          <div class="line-legend"><span><i style="background:var(--accent)"></i>top-5% hire</span><span><i style="background:var(--blue)"></i>top-10% hire</span><span><i style="background:var(--ink-faint)"></i>top-20% hire</span></div>
+          <canvas id="a5chart"></canvas>
+          <div class="a2-readouts five">
+            <div><span>Top-5% hire</span><b class="mono" id="a5p5"></b></div>
+            <div><span>Top-10% hire</span><b class="mono" id="a5p10"></b></div>
+            <div><span>Average hire</span><b class="mono" id="a5mean"></b></div>
+            <div><span>Median hire</span><b class="mono" id="a5median"></b></div>
+            <div><span>Candidates seen</span><b class="mono" id="a5seen"></b></div>
+          </div>
+          <p class="help">Percentiles are among the candidates you could see. If nobody beats your benchmark you take the last one, which drags the average below the median.</p>
+        </div>
+        <div class="panel a4-side">
+          <div class="ctrl-group">
+            <label for="a5f">Look first at <span class="readout mono" id="a5fOut">20%</span></label>
+            <input type="range" id="a5f" min="0" max="10" value="4">
+          </div>
+          <div class="ctrl-group">
+            <span class="label">Candidates you'll see</span>
+            <div class="view-toggle" role="group" aria-label="Candidates">
+              <button type="button" data-sn="20">20</button>
+              <button type="button" data-sn="100" class="active">100</button>
+              <button type="button" data-sn="200">200</button>
+            </div>
+          </div>
+          <div class="ctrl-group">
+            <span class="label">How well you read them</span>
+            <div class="view-toggle" role="group" aria-label="Interview">
+              <button type="button" data-sr="0.18">Unstructured</button>
+              <button type="button" data-sr="0.44" class="active">Structured</button>
+              <button type="button" data-sr="1">Perfect</button>
+            </div>
+          </div>
+          <div class="ctrl-group">
+            <span class="label">Go back to people you passed on</span>
+            <div class="view-toggle" role="group" aria-label="Recall">
+              <button type="button" data-srecall="0">No</button>
+              <button type="button" data-srecall="1" class="active">Yes, if still available</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <section class="playbook" id="playbook" aria-labelledby="playbook-title">
+    <div class="playbook-inner">
+      <p class="eyebrow">The playbook</p>
+      <h2 class="display" id="playbook-title">Five rules for hiring in a lemon market</h2>
+      <ol class="rules">
+        <li class="float-in"><span class="rn display">I</span><div><b>Assume the open pool is skewed.</b> The people still looking are disproportionately the ones who oversell: <strong data-th="PXlt1_A" data-fmt="pct">75%</strong> of them in this model.</div></li>
+        <li class="float-in"><span class="rn display">II</span><div><b>Don't expect one interview to settle it.</b> Use structured interviews, run several, and always compare candidates. Ranking is what interviews are good at.</div></li>
+        <li class="float-in"><span class="rn display">III</span><div><b>Source from people who have jobs, through your best people.</b> Ask &ldquo;Who's the best person you've worked with?&rdquo;, not &ldquo;Know anyone looking?&rdquo;</div></li>
+        <li class="float-in"><span class="rn display">IV</span><div><b>Make the strong offer first.</b> A counter-offer is evidence you chose well, and there's plenty of headroom to win. If they counter, counter back.</div></li>
+        <li class="float-in"><span class="rn display">V</span><div><b>Look at a fifth, then leap.</b> Benchmark on the first 10&ndash;20% of candidates, hire the first who beats them, and keep your shortlist warm.</div></li>
+      </ol>
+    </div>
   </section>
 </main>
 

@@ -20,7 +20,7 @@ Requires Node 18+.
 
 ## Layout
 
-The page is a scrolling essay in five acts (hiring only for now). Acts I-IV are built; V is to come.
+The page is a scrolling essay in five acts (hiring only for now). All five acts are built, plus a closing playbook.
 
 | Path | What it is |
 | --- | --- |
@@ -30,9 +30,11 @@ The page is a scrolling essay in five acts (hiring only for now). Acts I-IV are 
 | `src/act2.js` | Act II: one candidate's range of worth before and after an interview, and the interview playground. |
 | `src/act3.js` | Act III: the sourcing ladder (quintile bars by channel), scroll story and playground. |
 | `src/act4.js` | Act IV: counter-offers (who gets countered, the winner's curse), the calculator and the pipeline under counters. |
+| `src/act5.js` | Act V: stopping rules (look-then-leap, recall, noisy reads), from precomputed data in `src/data/stopping.json`. |
 | `src/density.js` | Shared density-curve drawing for Acts II and IV. |
 | `src/jobs.js` | Page-wide job type (Professional / Unskilled / Worst case) and the `data-th` numbers in the copy. |
 | `src/stepper.js` | Shared scroll-to-step logic for the scrolling stories. |
+| `scripts/stopping-data.mjs` | Regenerates `src/data/stopping.json` (about 30 s). Rerun after changing the model or job types. |
 | `scripts/targets.mjs` | Regenerates the handoff's test-target tables for any job type (see `docs/test-targets-lognormal.md`). |
 | `src/chrome.js` | Masthead act rail, hero parallax dots, fade-in on scroll. |
 | `src/colors.js` | Theme colors and canvas helpers shared by the charts. |
