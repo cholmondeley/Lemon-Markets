@@ -20,24 +20,34 @@ Requires Node 18+.
 
 ## Layout
 
+The page is a scrolling essay in five acts (hiring only for now). Acts I-IV are built; V is to come.
+
 | Path | What it is |
 | --- | --- |
 | `src/model.js` | The model: agent generation, one simulation step, pool statistics, closed-form theory. No DOM. |
-| `src/main.js` | UI, canvas rendering, controls, animation loop. |
+| `src/story.js` | Act I scrolling story: one seeded population drawn as a mirrored dot histogram, driven by `data-*` attributes on each `.step` in `index.html`. |
+| `src/playground.js` | Act I "Try it yourself" panel: the live simulator. |
+| `src/act2.js` | Act II: one candidate's range of worth before and after an interview, and the interview playground. |
+| `src/act3.js` | Act III: the sourcing ladder (quintile bars by channel), scroll story and playground. |
+| `src/act4.js` | Act IV: counter-offers (who gets countered, the winner's curse), the calculator and the pipeline under counters. |
+| `src/density.js` | Shared density-curve drawing for Acts II and IV. |
+| `src/jobs.js` | Page-wide job type (Professional / Unskilled / Worst case) and the `data-th` numbers in the copy. |
+| `src/stepper.js` | Shared scroll-to-step logic for the scrolling stories. |
+| `scripts/targets.mjs` | Regenerates the handoff's test-target tables for any job type (see `docs/test-targets-lognormal.md`). |
+| `src/chrome.js` | Masthead act rail, hero parallax dots, fade-in on scroll. |
+| `src/colors.js` | Theme colors and canvas helpers shared by the charts. |
 | `src/styles.css` | Styles (light and dark themes via CSS variables). |
-| `test/model.test.js` | Simulation-vs-theory tests. |
+| `test/model.test.js` | Simulation-vs-theory tests, including the Act I headline numbers. |
 | `docs/methodology.txt` | Full math and code walkthrough, written for outside review. |
 
 ## Parameter names
 
 | On the page | In the model |
 | --- | --- |
-| Market Churn | gamma = alpha_O / beta_O (how much time even an honest person spends on the market relative to off it) |
-| Pool Size | N |
-| Your Screening Skill | r, a validity correlation; narrows the truth-ratio spread by sqrt(1 - r^2) |
-| Truth Ratio | X = actual quality / advertised quality |
+| Market churn | gamma = alpha_O / beta_O: search time divided by tenure for someone exactly as advertised (default 0.04). Not the unemployment rate; P(available) is about 2x gamma. |
+| Pool size | N |
+| Truth ratio | X = actual quality / advertised quality, mean 1. Lognormal with CV 0.48 (Professional, default) or 0.19 (Unskilled); Uniform(0, 2] as the essay's worst case |
 
-Screening benchmarks (0.18 unstructured, 0.44 structured interviews) are from Sackett,
-Zhang, Berry & Lievens (2022), *Journal of Applied Psychology*, Table 2, validity
-corrected for criterion unreliability. The mapping from r to the truth-ratio spread is
-this project's own stylized assumption; see `docs/methodology.txt`, section 5.
+The market runs unscreened. Screening (a validity correlation r, with benchmarks 0.18 and 0.44 from
+Sackett, Zhang, Berry & Lievens 2022) comes back in Act II as a property of reading one candidate,
+not as a change to the population.

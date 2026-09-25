@@ -4,145 +4,742 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Lemon Market</title>
-<meta name="description" content="An interactive simulation of how selection bias floods dating and hiring pools with overselling, based on Boson Cutter's Markov-chain model.">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Domine:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<meta name="description" content="An explorable essay on adverse selection in hiring: why the people still looking are disproportionately the ones who oversell, and what to do about it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Domine:wght@500;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 </head>
 <body>
-<div class="app">
-  <header class="top">
-    <div class="titleblock">
-      <p class="eyebrow">an explorable model of selection bias</p>
-      <h1 class="display">The Lemon Market</h1>
-      <p>Why the person still available might not be the catch they look like. Play with the market and watch the pool of "available" people quietly fill up with overselling.</p>
+
+<header class="masthead">
+  <a class="brand display" href="#top"><span class="brand-mark" aria-hidden="true"></span>The Lemon Market</a>
+  <nav class="rail" aria-label="Acts">
+    <a class="rail-seg" data-act="act-1" href="#act-1"><b>I</b><span>The pool</span></a>
+    <a class="rail-seg" data-act="act-2" href="#act-2"><b>II</b><span>One candidate</span></a>
+    <a class="rail-seg" data-act="act-3" href="#act-3"><b>III</b><span>Where you look</span></a>
+    <a class="rail-seg" data-act="act-4" href="#act-4"><b>IV</b><span>Counter-offers</span></a>
+    <span class="rail-seg is-soon" title="Coming soon"><b>V</b><span>When to stop</span></span>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="hero-field" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <p class="eyebrow">An explorable essay in five acts</p>
+      <h1 class="display">The <span class="lemon-underline">Lemon</span> Market</h1>
+      <p class="dek">Why the best people are rarely the ones looking for a job, and what you can do about it when you're hiring.</p>
+      <a class="scroll-cue" href="#prologue"><span>Scroll to begin</span><i aria-hidden="true"></i></a>
     </div>
-    <div class="domain-toggle" role="group" aria-label="Choose a market">
-      <button type="button" data-domain="hiring" class="active">Hiring</button>
-      <button type="button" data-domain="dating">Dating</button>
+  </section>
+
+  <section class="prose" id="prologue">
+    <p class="lede float-in">In 1970 the economist George Akerlof asked why used cars sell at such a discount. His answer: the seller knows whether the car is a lemon and the buyer doesn't. So buyers discount every car, owners of good cars decline to sell at that price, and the lot fills up with lemons. The name for this is <em>adverse selection</em>.</p>
+    <p class="float-in">Hiring looks like a cleaner market. There's no dealer steering you toward the bad cars, and you get to interview people. But the lemon problem shows up anyway, by a different route. <strong>No one has to hold anything back. The ordinary cycle of hiring and leaving does the sorting.</strong></p>
+    <p class="float-in">This essay follows that logic through five acts. It starts with the problem, then covers the four levers you have against it: how hard you look at each person, where you find them, what a counter-offer tells you, and when you stop looking.</p>
+  </section>
+
+  <section class="act" id="act-1">
+    <header class="act-head float-in">
+      <span class="act-num display" aria-hidden="true">I</span>
+      <div>
+        <p class="eyebrow">Act I &middot; The problem</p>
+        <h2 class="display">The people still looking</h2>
+        <p class="dek">A market that sorts on what people claim and keeps them on what they deliver fills its open pool with oversellers, without anyone lying more.</p>
+      </div>
+    </header>
+
+    <div class="scrolly" id="act-1-story">
+      <figure class="stage" data-step="0">
+        <div class="stage-top">
+          <span class="stage-title"><span data-total>500</span> candidates with the same résumé quality</span>
+          <span class="clock mono" data-steps="3 4 5 6 7" data-clock-readout>Month 0</span>
+        </div>
+        <div class="stage-sub">
+          <div class="job-switch" role="group" aria-label="Job type">
+            <button type="button" data-job="professional" class="active">Professional</button>
+            <button type="button" data-job="unskilled">Unskilled</button>
+            <button type="button" data-job="uniform">Worst case</button>
+          </div>
+        </div>
+        <div class="stage-plot">
+          <canvas role="img" aria-label="Dot chart of several hundred people arranged by truth ratio. People who are looking for work sit above the axis and employed people sit below it. As time passes, oversellers pile up among those looking."></canvas>
+          <div class="callout" data-steps="4"><span>Oversellers pile up here: hired on résumé quality, but they underperform and go back on the market sooner.</span></div>
+        </div>
+        <div class="chips">
+          <div class="chip warn" data-steps="4">
+            <b class="mono"><span data-th="PXlt1_A" data-fmt="pct">75%</span></b><span>of those looking oversell</span>
+            <small class="mono">this run: <i data-live="liars"></i> of <i data-live="looking"></i></small>
+          </div>
+          <div class="chip" data-steps="5">
+            <b class="mono"><span data-th="EXA" data-fmt="dec2">0.82</span></b><span>average truth ratio among those looking</span>
+            <small class="mono">this run: <i data-live="mean"></i></small>
+          </div>
+          <div class="chip warn" data-steps="5">
+            <b class="mono"><span data-th="PQ1_A" data-fmt="pct">34%</span></b><span>come from the bottom fifth</span>
+            <small class="mono">this run: <i data-live="q1"></i> of <i data-live="looking"></i></small>
+          </div>
+          <div class="chip" data-steps="6 7">
+            <b class="mono"><span data-th="PA" data-fmt="pct1">4.6%</span></b><span>of everyone is looking at any moment</span>
+            <small class="mono">this run: <i data-live="looking"></i> of <i data-live="total"></i></small>
+          </div>
+          <div class="chip good" data-steps="6 7">
+            <b class="mono"><span data-th="EXU" data-fmt="dec2">1.01</span></b><span>average truth ratio among the employed</span>
+          </div>
+        </div>
+        <figcaption class="legend">
+          <span><i class="sw sw-red"></i>oversells</span>
+          <span><i class="sw sw-mid"></i>as advertised</span>
+          <span><i class="sw sw-blue"></i>undersells</span>
+        </figcaption>
+      </figure>
+
+      <div class="steps">
+        <div class="step" data-layout="cloud" data-clock="zero">
+          <div class="card">
+            <p>Picture <span data-total>500</span> people whose résumés look <strong>equally good</strong>. Same titles, same keywords, same confident bullet points. On paper you couldn't tell them apart.</p>
+          </div>
+        </div>
+
+        <div class="step" data-layout="mirror" data-clock="zero">
+          <div class="card">
+            <p>Each of them has a <strong>truth ratio</strong>: what they actually deliver, divided by what their résumé promises.</p>
+            <p>Below 1, they <span class="t-red">oversell</span>. Above 1, they're <span class="t-blue">better than they look</span>. On average, people deliver exactly what they advertise. But most fall a little short and a few are far better, so <span data-th="PXlt1" data-fmt="pct">59%</span> of them oversell to some degree.</p>
+            <p class="note">We're modeling professional, complex white-collar work, where real output varies a lot around what a résumé predicts: the spread is about 48% of the average. The switch above the chart shows unskilled jobs, where output varies less from person to person, so a résumé has less room to mislead and matters less. It also shows the source essay's worst-case assumption.</p>
+          </div>
+        </div>
+
+        <div class="step" data-layout="mirror" data-clock="zero" data-marks="employed">
+          <div class="card">
+            <p>Now the market runs, with one asymmetry.</p>
+            <p><strong>Getting hired depends on the résumé.</strong> Because the résumés are identical, everyone gets offers at the same pace.</p>
+            <p><strong>Staying hired depends on the work.</strong> Oversellers get found out and leave sooner, in proportion to how much they oversold. Someone at 0.5 is back on the market twice as fast as someone at 1.0.</p>
+            <p>Everyone starts out looking.</p>
+          </div>
+        </div>
+
+        <div class="step step-scrub" data-layout="mirror" data-clock="scrub" data-marks="employed">
+          <div class="card">
+            <p class="kicker">Scroll to run the clock</p>
+            <p>Offers pull people down into jobs at random. The honest and the underrated <span class="t-blue">stay put</span>. The oversellers <span class="t-red">bounce back up</span> almost as fast as they're hired.</p>
+            <p class="note">Scroll back up to rewind. Every reader sees the same run.</p>
+          </div>
+        </div>
+
+        <div class="step" data-layout="mirror" data-clock="live" data-focus="looking" data-marks="ghost employed">
+          <div class="card">
+            <p>About two years in, the market has settled. Look at who is still looking.</p>
+            <p class="big"><strong class="t-red"><span data-th="PXlt1_A" data-fmt="pct">75%</span></strong> of them oversell.</p>
+            <p>We started at <span data-th="PXlt1" data-fmt="pct">59%</span>. Nobody started lying more. The market kept sending the oversellers back.</p>
+          </div>
+        </div>
+
+        <div class="step" data-layout="mirror" data-clock="live" data-focus="looking" data-marks="q1 mean employed">
+          <div class="card">
+            <p>The average truth ratio among those looking is <strong><span data-th="EXA" data-fmt="dec2">0.82</span></strong>: they deliver about <strong><span data-th="EXA" data-fmt="cents">82 cents</span> on each dollar</strong> their résumé promises.</p>
+            <p><strong class="t-red"><span data-th="PQ1_A" data-fmt="pct">34%</span></strong> of them come from the bottom fifth of true ability. The top fifth, the people you most want, are just <strong class="t-blue"><span data-th="PQ5_A" data-fmt="pct">10%</span></strong>. Each group is 20% of the population.</p>
+          </div>
+        </div>
+
+        <div class="step" data-layout="mirror" data-clock="live" data-marks="employed">
+          <div class="card">
+            <p>The employed, meanwhile, are fine. On average they deliver what they advertise, or a little more.</p>
+            <p>But only about <strong><span data-th="PA" data-fmt="pct">5%</span></strong> of people are out of work at any moment, and <strong>they are the people a job posting reaches most easily</strong>.</p>
+            <p class="note">People who search while still employed are counted with the employed here. Act III looks at them.</p>
+          </div>
+        </div>
+
+        <div class="step" data-layout="mirror" data-clock="live" data-marks="employed">
+          <div class="card card-quote">
+            <p class="pull display">The pool doesn't lie about any one person. It lies about the average.</p>
+            <p>This is adverse selection with no villain. The rest of the essay covers what you can do about it: read each candidate more carefully, look in better places, treat a counter-offer as information, and know when to stop.</p>
+          </div>
+        </div>
+      </div>
     </div>
-  </header>
 
-  <div class="layout">
-    <section class="stats-row">
-      <div class="panel stat-card warn">
-        <span class="stat-label" id="statLiarsLabel">Share of the market that's overselling</span>
-        <span class="stat-value mono" id="statLiars">&mdash;</span>
-        <span class="stat-theory mono" id="statLiarsTheory"></span>
-      </div>
-      <div class="panel stat-card">
-        <span class="stat-label" id="statOverstateLabel">Average overstatement</span>
-        <span class="stat-value mono" id="statOverstate">&mdash;</span>
-        <span class="stat-theory mono" id="statOverstateTheory"></span>
-      </div>
-      <div class="panel stat-card">
-        <span class="stat-label">Share of everyone currently searching</span>
-        <span class="stat-value mono" id="statFracAvail">&mdash;</span>
-        <span class="stat-theory mono" id="statFracAvailTheory"></span>
+    <section class="playground" id="act-1-play" aria-labelledby="play-1-title">
+      <header class="play-head float-in">
+        <p class="eyebrow">Try it yourself</p>
+        <h3 class="display" id="play-1-title">Run your own market</h3>
+        <p>The same model, live and random. Press play, change how fast people cycle through jobs, and switch between the people looking and the people already employed.</p>
+      </header>
+
+      <div class="play-grid">
+        <div class="stats-row">
+          <div class="panel stat-card warn">
+            <span class="stat-label" id="statLiarsLabel">Share of job hunters who oversell</span>
+            <span class="stat-value mono" id="statLiars">&mdash;</span>
+            <span class="stat-theory mono" id="statLiarsTheory"></span>
+          </div>
+          <div class="panel stat-card">
+            <span class="stat-label">Average truth ratio</span>
+            <span class="stat-value mono" id="statMean">&mdash;</span>
+            <span class="stat-theory mono" id="statMeanTheory"></span>
+          </div>
+          <div class="panel stat-card">
+            <span class="stat-label">Share of everyone currently looking</span>
+            <span class="stat-value mono" id="statFracAvail">&mdash;</span>
+            <span class="stat-theory mono" id="statFracAvailTheory"></span>
+          </div>
+        </div>
+
+        <div class="charts-row">
+          <div class="panel chart-panel">
+            <h4>Truth ratio in the current pool</h4>
+            <p class="sub">Actual ability &divide; what the résumé claims. 1.0 = as advertised. The pale band is the population before any sorting.</p>
+            <div class="hist-wrap">
+              <canvas id="histCanvas"></canvas>
+              <div class="hist-scrim" id="histScrim"></div>
+              <button type="button" id="playBtn" class="paused" aria-label="Play">
+                <svg class="ic-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z"/></svg>
+                <svg class="ic-pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="5.5" y="4" width="4.5" height="16" rx="1"/><rect x="14" y="4" width="4.5" height="16" rx="1"/></svg>
+              </button>
+            </div>
+            <div class="transport">
+              <button class="btn" id="resetBtn" type="button">Reset to t = 0</button>
+              <button class="btn" id="ffBtn" type="button">Jump to steady state</button>
+              <span class="tval mono" id="tReadout">t = 0.0</span>
+              <div class="speed">
+                <label for="speedSlider">Speed <span class="readout mono" id="speedReadout">0.5&times;</span></label>
+                <input type="range" id="speedSlider" min="1" max="10" value="1">
+              </div>
+            </div>
+          </div>
+          <div class="panel chart-panel time-panel">
+            <h4>Average truth ratio over time</h4>
+            <p class="sub">Dashed line = the theory's steady state.</p>
+            <div class="time-wrap"><canvas id="timeCanvas"></canvas></div>
+          </div>
+        </div>
+
+        <div class="panel pool-panel">
+          <canvas id="poolCanvas"></canvas>
+        </div>
+
+        <div class="panel controls">
+          <div class="ctrl-group ctrl-wide">
+            <label for="gammaSlider">Market churn <span class="readout mono" id="gammaReadout">0.04</span></label>
+            <input type="range" id="gammaSlider" min="0" max="100" value="12">
+            <div class="tickrow">
+              <span class="mono share" id="gammaShare"></span>
+              <button type="button" data-preset="hiring">reset to hiring default</button>
+            </div>
+            <p class="help"><strong>Search time &divide; tenure</strong> for someone who is exactly as advertised. A two-month search for every four-year job is about 0.04. <span id="gammaHelp"></span></p>
+          </div>
+          <div class="ctrl-group">
+            <label for="nSlider">People in this market <span class="readout mono" id="nReadout">260</span></label>
+            <input type="range" id="nSlider" min="60" max="500" value="260" step="10">
+            <p class="help">Looking plus employed, all with the same résumé quality. At steady state <strong id="nApplicants"></strong> of them are &ldquo;equal résumé quality&rdquo; applicants at any moment.</p>
+          </div>
+          <div class="ctrl-group">
+            <span class="label">Job type</span>
+            <div class="job-switch wide" role="group" aria-label="Job type">
+            <button type="button" data-job="professional" class="active">Professional</button>
+            <button type="button" data-job="unskilled">Unskilled</button>
+            <button type="button" data-job="uniform">Worst case</button>
+          </div>
+            <p class="help">How far real output strays from the résumé. Professional: spread 48% of the average. Unskilled: 19%, so the résumé matters less. Worst case: the essay's even spread from 0 to 2.</p>
+          </div>
+          <div class="ctrl-group">
+            <span class="label">Looking at</span>
+            <div class="view-toggle" role="group" aria-label="Which pool">
+              <button type="button" class="active" id="viewAvailBtn">Looking</button>
+              <button type="button" id="viewTakenBtn">Employed</button>
+            </div>
+            <p class="help" id="viewHelp"></p>
+          </div>
+        </div>
       </div>
     </section>
+  </section>
 
-    <section class="charts-row">
-      <div class="panel chart-panel">
-        <h3>Truth Ratio in the current pool</h3>
-        <p class="sub">Actual quality &divide; advertised quality. 1.0 = honest. The pale band is the truth before any selection happens.</p>
-        <div class="hist-wrap">
-          <canvas id="histCanvas"></canvas>
-          <div class="hist-scrim" id="histScrim"></div>
-          <button type="button" id="playBtn" class="paused" aria-label="Play">
-            <svg class="ic-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z"/></svg>
-            <svg class="ic-pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="5.5" y="4" width="4.5" height="16" rx="1"/><rect x="14" y="4" width="4.5" height="16" rx="1"/></svg>
-          </button>
+  <section class="act" id="act-2">
+    <header class="act-head float-in">
+      <span class="act-num display" aria-hidden="true">II</span>
+      <div>
+        <p class="eyebrow">Act II &middot; One candidate</p>
+        <h2 class="display">Reading one candidate barely helps</h2>
+        <p class="dek">Even a good interview leaves you nearly as unsure about one person as you were before. Interviews pay off when you compare people.</p>
+      </div>
+    </header>
+
+    <div class="scrolly" id="act-2-story">
+      <figure class="stage" data-step="0">
+        <div class="stage-top">
+          <span class="stage-title">What one candidate might really be worth</span>
         </div>
-        <div class="transport">
-          <button class="btn" id="resetBtn" type="button">Reset to t=0</button>
-          <button class="btn" id="ffBtn" type="button">Jump to steady state</button>
-          <span class="tval mono" id="tReadout">t = 0.0</span>
-          <div class="speed">
-            <label for="speedSlider">Speed <span class="readout mono" id="speedReadout">0.5&times;</span></label>
-            <input type="range" id="speedSlider" min="1" max="10" value="1">
+        <div class="stage-sub">
+          <div class="job-switch" role="group" aria-label="Job type">
+            <button type="button" data-job="professional" class="active">Professional</button>
+            <button type="button" data-job="unskilled">Unskilled</button>
+            <button type="button" data-job="uniform">Worst case</button>
           </div>
-          <p class="tip">Tip: reset and look at the pool <i>before</i> pressing play &mdash; that's the honest, unskewed truth. Then watch how fast it turns.</p>
+        </div>
+        <div class="stage-plot">
+          <canvas role="img" aria-label="Two density curves of the truth ratio a candidate might have: before an interview, and after one. After a typical interview the curve is almost unchanged."></canvas>
+          <div class="inset" data-steps="4">
+          <svg class="inset-curve" id="a2curve" viewBox="0 0 220 136" role="img" aria-label="Curve: how much one assessment narrows your uncertainty as its validity r rises. It stays small until r is very high."></svg>
+            <span class="inset-cap">How much one read narrows the range</span>
+          </div>
+        </div>
+        <div class="chips">
+          <div class="chip" data-steps="1"><b class="mono"><span data-th="N18" data-fmt="pct1">1.1%</span></b><span>narrower, unstructured interview (r&nbsp;=&nbsp;.18)</span></div>
+          <div class="chip" data-steps="2"><b class="mono"><span data-th="N44" data-fmt="pct1">8.2%</span></b><span>narrower, structured interview (r&nbsp;=&nbsp;.44)</span></div>
+          <div class="chip" data-steps="3"><b class="mono"><span data-th="N90" data-fmt="pct">52%</span></b><span>narrower at r&nbsp;=&nbsp;.9, which no method has reached</span></div>
+          <div class="chip good" data-steps="5"><b class="mono" data-th="LIFT44" data-fmt="plus2">+0.19</b><span>from interviewing five and hiring the best (structured)</span></div>
+        </div>
+      </figure>
+
+      <div class="steps">
+        <div class="step" data-r="0">
+          <div class="card">
+            <p>Take one person from the looking pool. Before you talk to them, all you know is where they came from.</p>
+            <p>In that pool the typical truth ratio is <strong data-th="P50A" data-fmt="dec2">0.74</strong>, and 80% of people fall between <strong data-th="P10A" data-fmt="dec2">0.41</strong> and <strong data-th="P90A" data-fmt="dec2">1.32</strong>. That's the range this person could be in.</p>
+          </div>
+        </div>
+
+        <div class="step" data-r="0.18">
+          <div class="card">
+            <p>You interview them the way most companies do: an unstructured conversation. <strong>It goes well.</strong></p>
+            <p>How much did you learn? An unstructured interview predicts job performance with a validity of about <strong>r = .18</strong>. That narrows the range of what this person might be worth by <strong><span data-th="N18" data-fmt="pct1">1.1%</span></strong>. The curve barely moves.</p>
+            <p class="note">"Goes well" here means a better interview than about five in six candidates give.</p>
+          </div>
+        </div>
+
+        <div class="step" data-r="0.44">
+          <div class="card">
+            <p>Switch to a <strong>structured interview</strong>: the same questions for everyone, scored against a rubric. It's the best-validated interview format, at about <strong>r = .44</strong>.</p>
+            <p>Same good result. The range narrows by <strong><span data-th="N44" data-fmt="pct1">8.2%</span></strong>. Most of your uncertainty is still there.</p>
+            <p class="note">Validities from Sackett, Zhang, Berry &amp; Lievens (2022). Narrowing is the drop in the spread of what the person might be worth, averaged over every possible interview result in this pool.</p>
+          </div>
+        </div>
+
+        <div class="step" data-r="0.9">
+          <div class="card">
+            <p>Now suppose you had a near-perfect read, <strong>r = .9</strong>, better than any hiring method ever measured.</p>
+            <p>Even that narrows the range by only <strong><span data-th="N90" data-fmt="pct">52%</span></strong>. <span data-th="S90" data-fmt="pct">48%</span> of your uncertainty about this person survives.</p>
+          </div>
+        </div>
+
+        <div class="step" data-r="0.44">
+          <div class="card">
+            <p>Why so little? A validity of .44 means your read accounts for r&sup2; = <strong>19%</strong> of the differences between people. Uncertainty is a spread, and a spread shrinks with the square root of what's left: &radic;(1 &minus; .19) &asymp; 0.90, or 10% narrower on a textbook bell curve. In this skewed pool it's a little less, <strong><span data-th="N44" data-fmt="pct1">8.2%</span></strong>.</p>
+            <p>So uncertainty falls slowly at first and drops fast only near r = 1, which no interview comes close to.</p>
+          </div>
+        </div>
+
+        <div class="step" data-mode="slate">
+          <div class="card card-quote">
+            <p class="pull display">An interview can't pin one person down. It can rank several.</p>
+            <p>Interview five people from the same pool and hire the one who does best. With structured interviews, the person you hire has an expected truth ratio of <strong data-th="B44" data-fmt="dec2">1.01</strong>, up from <strong data-th="B0" data-fmt="dec2">0.82</strong> for a single candidate. The interview is the same. Now it only has to put people in order.</p>
+            <p>In practice, do both: interview each finalist more than once, with different interviewers, and see more candidates than feels necessary. Where those candidates come from matters even more, and that's Act III.</p>
+          </div>
         </div>
       </div>
-      <div class="panel chart-panel time-panel">
-        <h3>Average honesty over time</h3>
-        <p class="sub">Dashed line = what the theory predicts at steady state.</p>
-        <div class="time-wrap"><canvas id="timeCanvas"></canvas></div>
+    </div>
+
+    <section class="playground" id="act-2-play" aria-labelledby="play-2-title">
+      <header class="play-head float-in">
+        <p class="eyebrow">Try it yourself</p>
+        <h3 class="display" id="play-2-title">Interview someone</h3>
+        <p>We draw a real person from the looking pool. The yellow line is their true ratio, which you'd never see in real life (hide it if you'd rather guess). Interview them, and switch between interview formats to see how much the same interviews tell you. A structured interview, at about r = .44, is close to the best any method has reached.</p>
+      </header>
+      <div class="a2-grid">
+        <div class="panel chart-panel">
+          <div class="panel-head-row">
+            <h4>This candidate</h4>
+            <div class="view-toggle compact" role="group" aria-label="Interview format">
+              <button type="button" data-method="0.18">Unstructured</button>
+              <button type="button" data-method="0.44" class="active">Structured</button>
+            </div>
+          </div>
+          <p class="sub">The curve is where their truth ratio could be, given everything you know. <span class="mono share" id="a2narrow"></span></p>
+          <canvas id="a2Band"></canvas>
+          <div class="a2-readouts">
+            <div><span>Interview scores</span><b class="mono" id="a2score">none yet</b></div>
+            <div><span>Best estimate</span><b class="mono" id="a2est">&mdash;</b></div>
+            <div><span>Truth</span><b class="mono" id="a2truth">&mdash;</b></div>
+          </div>
+          <div class="transport">
+            <button class="btn btn-primary" id="a2interview" type="button">Interview</button>
+            <button class="btn" id="a2reveal" type="button">Hide truth</button>
+            <button class="btn" id="a2new" type="button">New candidate</button>
+          </div>
+          <p class="tip" id="a2hint" hidden>Switch formats to re-read the same interviews with a better or worse method.</p>
+        </div>
+        <div class="panel chart-panel">
+          <div class="panel-head-row">
+            <h4>Hire the best of several</h4>
+            <div class="job-switch" role="group" aria-label="Job type">
+              <button type="button" data-job="professional" class="active">Professional</button>
+              <button type="button" data-job="unskilled">Unskilled</button>
+              <button type="button" data-job="uniform">Worst case</button>
+            </div>
+          </div>
+          <p class="sub">Expected truth ratio of the person you hire, by how many you interview. Dashed line = as advertised. The job type is shared with the rest of the page.</p>
+          <canvas id="a2Best"></canvas>
+          <p class="sub axis-cap">Candidates interviewed &rarr;</p>
+        </div>
+        <div class="panel try-list">
+          <h4>Things to try</h4>
+          <ol>
+            <li><strong>Interview the same person three or four times.</strong> Watch the scores jump around, then watch the curve tighten as they add up. That's the case for several interviews, each run by a different interviewer. (We treat each interview as an independent read. Real interviews share some error, so the gain in practice is smaller.)</li>
+            <li><strong>Draw several candidates and interview each once.</strong> Notice how alike the &ldquo;after&rdquo; curves look.</li>
+            <li><strong>Keep drawing until the yellow truth line is far to the right,</strong> a real star. Interview them once and see how little the curve moves toward them. Then interview them a few more times.</li>
+            <li><strong>Now look at the chart on the right.</strong> Seeing more candidates moves the quality of your hire far more than reading one candidate harder. Do both.</li>
+          </ol>
+        </div>
       </div>
     </section>
+  </section>
 
-    <section class="panel pool-panel">
-      <div class="panel-head">
-        <h2>The Pool, Live</h2>
-        <div class="legend">
-          <span><i style="background:var(--red)"></i>overselling</span>
-          <span><i style="background:var(--ink-faint)"></i>as advertised</span>
-          <span><i style="background:var(--blue)"></i>underselling (hidden gem)</span>
+  <section class="act" id="act-3">
+    <header class="act-head float-in">
+      <span class="act-num display" aria-hidden="true">III</span>
+      <div>
+        <p class="eyebrow">Act III &middot; Where you look</p>
+        <h2 class="display">Where you look matters more than how hard</h2>
+        <p class="dek">The same interview does very different work depending on the pool it's used on. The best hires come from people who already have jobs, found through someone who has seen their work. Referrals, in other words, and specifically referrals from your best people.</p>
+      </div>
+    </header>
+
+    <div class="scrolly" id="act-3-story">
+      <figure class="stage stage-ladder" data-step="0">
+        <div class="stage-top">
+          <span class="stage-title">Where the person you hire really lands</span>
+        </div>
+        <div class="stage-sub">
+          <div class="job-switch" role="group" aria-label="Job type">
+            <button type="button" data-job="professional" class="active">Professional</button>
+            <button type="button" data-job="unskilled">Unskilled</button>
+            <button type="button" data-job="uniform">Worst case</button>
+          </div>
+        </div>
+        <div class="ladder-host"></div>
+        <figcaption>
+          <div class="ladder-legend">
+            <span><i class="sw q1"></i>Bottom 20%</span><span><i class="sw q2"></i>20&ndash;40%</span><span><i class="sw q3"></i>40&ndash;60%</span><span><i class="sw q4"></i>60&ndash;80%</span><span><i class="sw q5"></i>Top 20%</span>
+            <span class="legend-right">Right: mean percentile of true quality</span>
+          </div>
+        </figcaption>
+      </figure>
+
+      <div class="steps">
+        <div class="step">
+          <div class="card">
+            <p>Each row is a way of hiring. Each time, you draw <strong>five</strong> candidates, read them as well as that channel allows, and hire whoever reads best. The bar shows where your hires really land, by fifth of true quality across everyone.</p>
+            <p>Start on the open market with no real assessment, hiring on charm alone. <strong data-th="L_charm_q1" data-fmt="pct">34%</strong> of hires come from the bottom fifth. The average hire sits at the <strong data-th="L_charm" data-fmt="ord">38th</strong> percentile.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="card">
+            <p>Better interviews help. An unstructured interview gets you to the <strong data-th="L_unstructured" data-fmt="ord">43rd</strong> percentile, and a structured one to the <strong data-th="L_structured" data-fmt="ord">50th</strong>.</p>
+            <p>But that's the ceiling for the open market. The best interview format is still ranking five people from a pool that's full of oversellers.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="card">
+            <p>Now change the pool instead of the interview. Hire <strong>at random</strong> from people who already have jobs, with no interview at all.</p>
+            <p>The hire lands at the <strong data-th="L_poach" data-fmt="ord">51st</strong> percentile, against the <strong data-th="L_structured" data-fmt="ord">50th</strong> for the best interview on the open market. In professional jobs, the employed pool starts about where the open market's best effort ends.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="card">
+            <p>Put the structured interview back, and poaching reaches the <strong data-th="L_poachS" data-fmt="ord">65th</strong> percentile. Same interview, better pool.</p>
+            <p class="note">Poaching has costs this model leaves out: you usually have to pay more, and the current employer may counter. Act IV covers counter-offers.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="card">
+            <p>Referrals are the third route. You only get one name, so the choosing happens in the referrer's head: they think through the people they could send and pick the one they rate best. We assume they weigh three people, which is generous. Most referrers probably consider two or three.</p>
+            <p>It matters who's being referred. A friend who is <strong>currently job hunting</strong> still comes from the looking pool. Even with a well-informed judge, it lands at the <strong data-th="L_friend" data-fmt="ord">52nd</strong> percentile, about where a structured interview on the open market gets you.</p>
+            <p class="note">Someone who has worked with a person reads them with a validity of about r = .49, the figure for peer ratings (Schmidt &amp; Hunter, 1998).</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="card">
+            <p>Now ask someone who has worked with a person who is <strong>employed elsewhere</strong>. The judge knows the work, and the pool isn't full of oversellers.</p>
+            <p>The hire lands at the <strong data-th="L_excol" data-fmt="ord">67th</strong> percentile.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="card">
+            <p>Best of all, ask your strongest people. Good people tend to know good people. Say the referrer is at the 90th percentile, and their contacts' quality correlates &rho; = .3 with theirs.</p>
+            <p>The hire lands at the <strong data-th="L_ap3" data-fmt="ord">77th</strong> percentile, or the <strong data-th="L_ap5" data-fmt="ord">82nd</strong> at &rho; = .5. <strong data-th="L_ap5_q5" data-fmt="pct">67%</strong> of those hires are from the top fifth.</p>
+            <p class="note">&rho; is assumed, not estimated. Nobody has measured how closely a strong performer's network tracks their own quality.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="card">
+            <p>Those values of &rho; may be cautious. People sort strongly by background, education and ability into friend groups and marriages, so a strong performer's network could track their quality far more closely.</p>
+            <p>At &rho; = .8, the hire lands at the <strong data-th="L_ap8" data-fmt="ord">88th</strong> percentile, and <strong data-th="L_ap8_q5" data-fmt="pct">80%</strong> of those hires are from the top fifth. At that point the network does most of the work. Even if the referrer sends whoever comes to mind first, the hire lands around the 80th percentile.</p>
+          </div>
+        </div>
+
+        <div class="step" data-focus="all">
+          <div class="card card-quote">
+            <p class="pull display">Nepotism is a referral with a slate of one.</p>
+            <p>Real-world studies point the same way, with smaller gaps than this model shows. Referred workers quit less and do better on the rare, high-impact parts of the job. But bigger referral bonuses bring more referrals of lower quality, so ask your best people, not everyone. And a referral you don't compare against anyone, like handing the company to a family member, does badly.</p>
+            <p>So ask your best people, and ask the right question: &ldquo;Who's the best person you've worked with?&rdquo;, not &ldquo;Know anyone who's looking?&rdquo; The first makes them compare and points past the looking pool. The second does neither.</p>
+          </div>
         </div>
       </div>
-      <canvas id="poolCanvas"></canvas>
+    </div>
+
+    <section class="playground" id="act-3-play" aria-labelledby="play-3-title">
+      <header class="play-head float-in">
+        <p class="eyebrow">Try it yourself</p>
+        <h3 class="display" id="play-3-title">Build your sourcing ladder</h3>
+        <p>Change how closely a strong referrer's network tracks their own quality, how strong the referrer is, how many candidates you interview, and how many people your referrer thinks through before sending one. Set the referrer to one.</p>
+      </header>
+      <div class="play-grid">
+        <div class="panel ladder-panel">
+          <div class="panel-head-row">
+            <h4>Your sourcing ladder</h4>
+            <div class="job-switch" role="group" aria-label="Job type">
+              <button type="button" data-job="professional" class="active">Professional</button>
+              <button type="button" data-job="unskilled">Unskilled</button>
+              <button type="button" data-job="uniform">Worst case</button>
+            </div>
+          </div>
+          <div id="a3ladder"></div>
+          <div class="inline-ctrls" id="a3ctrlInterview">
+            <div class="ctrl-group">
+              <label for="a3k">Candidates you interview <span class="readout mono" id="a3kOut">5</span></label>
+              <input type="range" id="a3k" min="1" max="10" value="5">
+              <p class="help" id="a3kNote">Applies to the open market and poaching rows above.</p>
+            </div>
+          </div>
+          <div class="inline-ctrls three" id="a3ctrlReferral">
+            <div class="ctrl-group">
+              <label for="a3kr">People your referrer weighs <span class="readout mono" id="a3krOut">3</span></label>
+              <input type="range" id="a3kr" min="1" max="10" value="3">
+              <p class="help" id="a3krNote">How many people they think through before sending you one.</p>
+            </div>
+            <div class="ctrl-group">
+              <label for="a3rho">Network homophily &rho; <span class="readout mono" id="a3rhoOut">0.30</span></label>
+              <input type="range" id="a3rho" min="0" max="90" value="30">
+              <p class="help">How closely the A-player's contacts resemble them in quality. 0 means a random draw.</p>
+            </div>
+            <div class="ctrl-group">
+              <span class="label">A-player referrer</span>
+              <div class="view-toggle" role="group" aria-label="Referrer percentile">
+                <button type="button" data-zref="90" class="active">90th pct</button>
+                <button type="button" data-zref="99">99th pct</button>
+              </div>
+              <p class="help">How strong the person you ask is.</p>
+            </div>
+          </div>
+          <div class="ladder-legend">
+            <span><i class="sw q1"></i>Bottom 20%</span><span><i class="sw q2"></i>20&ndash;40%</span><span><i class="sw q3"></i>40&ndash;60%</span><span><i class="sw q4"></i>60&ndash;80%</span><span><i class="sw q5"></i>Top 20%</span>
+            <span class="legend-right">Right: mean percentile of true quality</span>
+          </div>
+          <p class="ladder-foot">Ex-colleague judge r = .49 (peer ratings). &rho; = network homophily (assumed, not estimated). Model gaps are larger than measured real-world referral effects.</p>
+        </div>
+        <div class="evidence">
+          <div class="ev float-in"><b>Burks, Cowgill, Hoffman &amp; Housman</b><i>QJE, 2015</i><p>Referred workers are 10&ndash;30% less likely to quit, and better on rare, high-impact measures. They're similar on routine ones.</p></div>
+          <div class="ev float-in"><b>Pallais &amp; Sands</b><i>JPE, 2016</i><p>Referrals carry information about workers beyond what employers can see on paper.</p></div>
+          <div class="ev float-in"><b>Friebel, Heinz, Hoffman &amp; Zubanov</b><i>JPE, 2023</i><p>In a field experiment, bigger referral bonuses brought more referrals but of lower quality. Target whom you ask.</p></div>
+          <div class="ev float-in"><b>Bennedsen, Nielsen, P&eacute;rez-Gonz&aacute;lez &amp; Wolfenzon</b><i>QJE, 2007</i><p>Family CEO successions cut operating returns on assets by at least 4 points. A slate of one, regressed to the mean.</p></div>
+        </div>
+      </div>
     </section>
+  </section>
 
-    <section class="panel controls">
-      <h2 class="section-title">Market settings</h2>
-      <div class="controls-grid">
-        <div class="ctrl-group">
-          <label for="gammaSlider">Market Churn <span class="readout mono" id="gammaReadout">0.07</span></label>
-          <input type="range" id="gammaSlider" min="0" max="100" value="34">
-          <div class="tickrow">
-            <button type="button" data-preset="hiring">slow (hiring-like)</button>
-            <button type="button" data-preset="dating">fast (dating-like)</button>
+  <section class="act" id="act-4">
+    <header class="act-head float-in">
+      <span class="act-num display" aria-hidden="true">IV</span>
+      <div>
+        <p class="eyebrow">Act IV &middot; Counter-offers</p>
+        <h2 class="display">A counter-offer is information</h2>
+        <p class="dek">When someone's employer fights to keep them, the best-informed party in the market is telling you they're good. Even after the winner's curse, that's worth paying for.</p>
+      </div>
+    </header>
+
+    <div class="scrolly" id="act-4-story">
+      <figure class="stage stage-counter" data-step="0" data-view="chart">
+        <div class="stage-top">
+          <span class="stage-title">Who gets countered, and who you win</span>
+        </div>
+        <div class="stage-sub">
+          <div class="job-switch" role="group" aria-label="Job type">
+            <button type="button" data-job="professional" class="active">Professional</button>
+            <button type="button" data-job="unskilled">Unskilled</button>
+            <button type="button" data-job="uniform">Worst case</button>
           </div>
-          <p class="help" id="gammaHelp">How much even a genuinely great match still cycles back onto the market.</p>
+        </div>
+        <div class="stage-plot">
+          <canvas role="img" aria-label="Density of truth ratios among employed people with an outside offer. The countered slice sits far to the right; the countered people you win sit a little to its left."></canvas>
+          <div class="ladder-layer">
+            <div class="ladder-host"></div>
+            <div class="ladder-legend">
+            <span><i class="sw q1"></i>Bottom 20%</span><span><i class="sw q2"></i>20&ndash;40%</span><span><i class="sw q3"></i>40&ndash;60%</span><span><i class="sw q4"></i>60&ndash;80%</span><span><i class="sw q5"></i>Top 20%</span>
+            <span class="legend-right">Right: mean percentile of true quality</span>
+          </div>
+          </div>
+        </div>
+        <div class="chips">
+          <div class="chip good" data-steps="3 4"><b class="mono" data-th="C_lift" data-fmt="plusPct">+43%</b><span>a countered hire you win, over one nobody fought for</span></div>
+          <div class="chip" data-steps="4"><b class="mono" data-th="C_val" data-fmt="usd">$120,000</b><span>a year of extra value, where an as-advertised hire creates $300,000</span></div>
+        </div>
+      </figure>
+
+      <div class="steps">
+        <div class="step" data-view="pool">
+          <div class="card">
+            <p>You've found someone good who already has a job, and made them an offer. Now their employer gets a say.</p>
+            <p>This chart is everyone with a job and an outside offer. On average they deliver about what their résumé says.</p>
+          </div>
         </div>
 
-        <div class="ctrl-group">
-          <label for="nSlider">Pool Size <span class="readout mono" id="nReadout">260</span></label>
-          <input type="range" id="nSlider" min="60" max="500" value="260" step="10">
-          <p class="help">How many people we're simulating at once.</p>
+        <div class="step" data-view="split">
+          <div class="card">
+            <p>Most employers let people go. About <strong>12%</strong> of people with an outside offer get some kind of counter-offer.</p>
+            <p>The employer has watched this person work for years, a far better read than any interview: about <strong>r = .7</strong>, against .44 for the best interview. Say it counters when its read of them is in its top 12%. Those people average <strong data-th="C_cnt" data-fmt="dec2">1.75</strong>. Everyone else averages <strong data-th="C_not" data-fmt="dec2">0.91</strong>.</p>
+            <p class="note">The 12% is from Faberman, Mueller, &#350;ahin &amp; Topa (2022). For the employer's read: two supervisors rating the same person agree at about .52 (Viswesvaran, Ones &amp; Schmidt, 1996), so one supervisor tracks true performance at about &radic;.52 &asymp; .7. Several people weighing in on a counter would push it higher. Counters made for other reasons, like replacement cost, would pull it lower.</p>
+          </div>
         </div>
 
-        <div class="ctrl-group">
-          <label for="screenSlider"><span>Your Screening Skill<sup>*</sup></span> <span class="readout mono" id="screenReadout">0.31</span></label>
-          <input type="range" id="screenSlider" min="0" max="90" value="31">
-          <div class="tickrow">
-            <button type="button" data-screen="18">unstructured interview .18</button>
-            <button type="button" data-screen="44">structured .44</button>
+        <div class="step" data-view="countered">
+          <div class="card">
+            <p>So a counter-offer is the best-informed party in the market telling you this person is good.</p>
+            <p>It's common to treat a counter as a reason to walk away. In this model, it's the strongest evidence you'll get that you picked well.</p>
           </div>
-          <p class="help">How well your vetting predicts who's actually good. 0 = coin flip, 1 = perfect. Better screening narrows the gap between what people <i>are</i> and what they <i>claim</i>.</p>
         </div>
 
-        <div class="ctrl-group">
-          <label>Looking at</label>
-          <div class="view-toggle" role="group">
-            <button type="button" data-view="A" class="active" id="viewAvailBtn">On the market</button>
-            <button type="button" data-view="U" id="viewTakenBtn">Already taken</button>
+        <div class="step" data-view="won">
+          <div class="card">
+            <p>There's a catch, the <strong>winner's curse</strong>. The employer will match your offer up to what it thinks the person is worth, so you only win where your offer beats its valuation. That means the countered people it valued least.</p>
+            <p>Say you win half of these fights, the half the employer valued least. The people you win still deliver <strong data-th="C_won" data-fmt="dec2">1.34</strong>&times; what their résumé suggests. Someone nobody fought for delivers <strong data-th="C_not" data-fmt="dec2">0.94</strong>&times;. That's <strong data-th="C_lift" data-fmt="pct">43%</strong> more output from the same résumé.</p>
           </div>
-          <p class="help" id="viewHelp">The pool of people currently searching.</p>
+        </div>
+
+        <div class="step" data-view="won">
+          <div class="card">
+            <p>What's that worth? Not salary: you only open a role if the hire should create well more value than they cost. Say an as-advertised hire here earns $150,000 and creates $300,000 a year.</p>
+            <p>The gap between <strong data-th="C_won" data-fmt="dec2">1.47</strong>&times; and <strong data-th="C_not" data-fmt="dec2">0.91</strong>&times; is <strong data-th="C_liftX" data-fmt="dec2">0.57</strong> of an as-advertised hire's output, or about <strong data-th="C_val" data-fmt="usd">$120,000</strong> a year of extra value. That's your break-even: you could pay a countered candidate up to that much more than someone nobody fought for and still come out even. Anything less is profit.</p>
+            <p class="note">The calculator below lets you change the counter rate, the employer's read, how many fights you win, the value of the role and the expected tenure.</p>
+          </div>
+        </div>
+
+        <div class="step" data-view="ladder">
+          <div class="card">
+            <p>One more thing a counter can't do: improve your pipeline. It can't add anyone, only take away someone you already wanted. And it goes after your best people, because the employer counters the people it values most.</p>
+            <p>So the best channels pay the most. Your first choice from an A-player referral (&rho; = .8) gets countered <strong data-th="LCF_ap8" data-fmt="pct">40%</strong> of the time, against <strong data-th="LCF_poach" data-fmt="pct">12%</strong> for a random poach. Walk away from every counter and those referrals slip from the <strong data-th="LC_ap8_none" data-fmt="ord">86th</strong> percentile to the <strong data-th="LC_ap8_walk" data-fmt="ord">80th</strong>. Win the half the employer valued least and you recover to the <strong data-th="LC_ap8_half" data-fmt="ord">82nd</strong>.</p>
+          </div>
+        </div>
+
+        <div class="step" data-view="ladder">
+          <div class="card card-quote">
+            <p class="pull display">Make the strong offer first.</p>
+            <p>Strong referrals drive a lot of value, and the break-even leaves a lot of headroom. So an initial offer that looks overly generous is likely a net positive and a cost-efficient move. Paying a premium once is cheaper than losing your best candidate to a counter, or winning them back in a bidding war. And if they counter anyway, counter back.</p>
+            <p class="note">The model doesn't simulate how the size of your first offer changes the chance of a counter. This conclusion comes from the size of the break-even, not from a simulated bidding war.</p>
+          </div>
         </div>
       </div>
-      <p class="footnote"><sup>*</sup> Screening skill is a validity correlation: how strongly your assessment of a candidate tracks their real performance. Hiring research puts it at about 0.18 for unstructured interviews and 0.44 for structured interviews (Sackett et al., 2022, <i>Journal of Applied Psychology</i>, Table 2, validity corrected for criterion unreliability; the paper's headline estimates, which also correct for range restriction, are 0.19 and 0.42). These are hiring benchmarks; there is no equivalent measured figure for dating, so on the Dating tab treat the scale as illustrative. The model shrinks the claim-versus-reality gap by a factor of &radic;(1 &minus; r&sup2;), the share of the spread your assessment can't explain, so even good screening leaves most of the gap in place.</p>
+    </div>
+
+    <section class="playground" id="act-4-play" aria-labelledby="play-4-title">
+      <header class="play-head float-in">
+        <p class="eyebrow">Try it yourself</p>
+        <h3 class="display" id="play-4-title">Counter-offer calculator</h3>
+        <p>How much is a countered candidate worth, and how much should you be willing to pay to win them? Then see what counters do to your pipeline.</p>
+      </header>
+      <div class="a4-grid">
+        <div class="panel chart-panel">
+          <canvas id="a4chart"></canvas>
+          <table class="a4-table">
+            <thead><tr><th></th><th>Truth ratio</th><th>Percentile</th></tr></thead>
+            <tbody>
+              <tr><td>Countered</td><td class="mono" id="a4cntX"></td><td class="mono" id="a4cntP"></td></tr>
+              <tr class="hl"><td>Countered, and you win</td><td class="mono" id="a4wonX"></td><td class="mono" id="a4wonP"></td></tr>
+              <tr><td>Not countered</td><td class="mono" id="a4notX"></td><td class="mono" id="a4notP"></td></tr>
+            </tbody>
+          </table>
+          <div class="a4-verdict">
+            <p>A countered hire you win delivers <b class="mono" id="a4wonX2"></b>&times; their résumé. Someone nobody fought for delivers <b class="mono" id="a4notX2"></b>&times;. That's <b class="mono" id="a4lift"></b> more output, or <span class="mono" id="a4liftX"></span> of an as-advertised hire.</p>
+            <p class="big">Break-even: on a <span class="mono" id="a4salaryTxt">$150,000</span> salary, you could pay up to <b class="mono" id="a4payYr"></b> a year more (<span id="a4payShare"></span> on top), or <b class="mono" id="a4payTot"></b> over <span id="a4years">3 years</span>. Anything less is profit.</p>
+            <p class="help">Extra value = the output gap &times; the value an as-advertised hire creates. Everyone here has the same résumé.</p>
+          </div>
+        </div>
+        <div class="panel a4-side">
+          <h4>Assumptions</h4>
+          <ul class="assume">
+            <li><b>12%</b> of people with an outside offer get countered (Faberman, Mueller, &#350;ahin &amp; Topa, 2022).</li>
+            <li>The employer's read of them has validity <b>r = .7</b>, from supervisor-rating reliability (Viswesvaran, Ones &amp; Schmidt, 1996).</li>
+            <li>You win the <b>half</b> of counter-fights where the employer valued them least (the winner's curse).</li>
+            <li>An as-advertised hire earns <b>$150,000</b> and creates <b>$300,000</b> a year.</li>
+          </ul>
+          <details class="your-numbers">
+            <summary>Use your own numbers</summary>
+            <div class="ctrl-group two">
+              <label for="a4value">Value per year ($)</label>
+              <input type="number" id="a4value" min="20000" max="10000000" step="10000" value="300000" class="num">
+              <label for="a4salary">Salary ($)</label>
+              <input type="number" id="a4salary" min="20000" max="2000000" step="5000" value="150000" class="num">
+              <p class="help span2">Value: what an as-advertised hire in this role creates each year. It should be well above total comp, or you wouldn't open the role.</p>
+            </div>
+            <div class="ctrl-group">
+              <label for="a4tenure">Expected tenure (years)</label>
+              <input type="number" id="a4tenure" min="1" max="15" step="1" value="3" class="num">
+            </div>
+          </details>
+        </div>
+        <div class="panel ladder-panel a4-ladder">
+          <div class="panel-head-row">
+            <h4>Your pipeline when employers counter</h4>
+            <div class="view-toggle compact" role="group" aria-label="Counter-offers">
+              <button type="button" data-cmode="none">No counters</button>
+              <button type="button" data-cmode="walk">You walk away</button>
+              <button type="button" data-cmode="half" class="active">You counter back</button>
+            </div>
+          </div>
+          <div id="a4ladder"></div>
+          <div class="ladder-legend">
+            <span><i class="sw q1"></i>Bottom 20%</span><span><i class="sw q2"></i>20&ndash;40%</span><span><i class="sw q3"></i>40&ndash;60%</span><span><i class="sw q4"></i>60&ndash;80%</span><span><i class="sw q5"></i>Top 20%</span>
+            <span class="legend-right">Right: mean percentile of true quality</span>
+          </div>
+          <p class="ladder-foot">Employed-pool channels. You interview five; referrers weigh three. You offer down your ranked list. A countered candidate is lost unless you win the counter-counter, and by the winner's curse you win those the employer valued least. Uses the assumptions above. The share shows how often each channel's first choice gets countered. Change in brackets is against no counters.</p>
+          <div class="panel-foot-switch"><div class="job-switch" role="group" aria-label="Job type">
+            <button type="button" data-job="professional" class="active">Professional</button>
+            <button type="button" data-job="unskilled">Unskilled</button>
+            <button type="button" data-job="uniform">Worst case</button>
+          </div></div>
+        </div>
+      </div>
     </section>
+  </section>
 
-    <details class="panel explainer" id="explainer">
-      <summary>How this actually works</summary>
-      <div class="explainer-body">
-        <div>
-          <h4>The setup</h4>
-          <p>Everyone has an <b>actual quality</b> (how good they really are) and an <b>advertised quality</b> (how good they look on the first pass &mdash; a r&eacute;sum&eacute;, a dating profile). People get discovered at a rate based on how they look. They get found out &mdash; and sent back onto the market &mdash; at a rate based on who they actually are.</p>
-        </div>
-        <div>
-          <h4>Why liars pile up</h4>
-          <p>An honest, high-quality match gets taken and <b>stays</b> taken &mdash; they leave the pool for good. Someone overselling gets taken too, but gets found out and bounced back quickly. Run that forward, and the people who keep reappearing in the pool are disproportionately the ones who oversold. The pool doesn't lie about individuals &mdash; it lies about the <b>average</b>.</p>
-        </div>
-        <div>
-          <h4>What actually helps</h4>
-          <p><b>Move fast</b> on someone before the market has had time to sort them (reset the sim and look at t=0). <b>Poach</b> people who aren't even looking &mdash; in a fast-churning market, the ones already "taken" are the real high performers (try the "already taken" view). Or just <b>get better at screening</b> &mdash; narrowing the gap between claims and reality has the same effect as raising your bar.</p>
-        </div>
-      </div>
-      <p class="cite">Model and equations adapted from Connor's essay <a href="https://bosoncutter.substack.com/p/deception-is-amplified-by-default" target="_blank" rel="noopener">"Deception is Amplified by Default"</a> on Boson Cutter. This page simulates the same continuous-time Markov chain by Monte Carlo rather than solving it in closed form, so you can watch the skew build in real time.</p>
-    </details>
+  <section class="next-up float-in" aria-label="Coming next">
+    <p class="eyebrow">Next &middot; Act V</p>
+    <h2 class="display">When to stop looking</h2>
+    <p>The textbook answer is to look at 37% of candidates and then take the next one who beats them all. In a market where the good ones get hired while you deliberate, stopping much earlier gives up very little.</p>
+    <span class="soon-tag">In production</span>
+  </section>
+</main>
+
+<footer class="colophon">
+  <div class="colophon-inner">
+    <div>
+      <h4>Where the model comes from</h4>
+      <p>The market model is from Connor's essay <a href="https://bosoncutter.substack.com/p/deception-is-amplified-by-default" target="_blank" rel="noopener">&ldquo;Deception is Amplified by Default&rdquo;</a> (Boson Cutter, 2026). This page simulates the same continuous-time Markov chain by Monte Carlo and checks it against the closed forms. The lemons framing is from G. Akerlof, &ldquo;The Market for &lsquo;Lemons&rsquo;&rdquo;, <i>Quarterly Journal of Economics</i>, 1970.</p>
+    </div>
+    <div>
+      <h4>What to keep in mind</h4>
+      <p>Everyone shares one churn rate, and people who oversell leave in exact proportion to how much they oversold. Truth ratios follow a lognormal distribution with an average of 1. Its spread is set from the variation in output among people doing the same job: about 48% of the average for high-complexity work and 19% for unskilled and semi-skilled work (Hunter, Schmidt &amp; Judiesch, 1990). The source essay's even spread from 0 to 2 puts much more weight on near-total overselling, so it's offered as a worst case. The model has no state for searching while employed, so people who job-hunt from a job are counted with the employed. If many of your applicants search from a job, your pool is likely less lemon-heavy than these numbers suggest.</p>
+      <p><a href="https://github.com/cholmondeley/Lemon-Markets/blob/main/docs/methodology.txt" target="_blank" rel="noopener">Full methodology and code notes &rarr;</a></p>
+    </div>
   </div>
-</div>
+</footer>
+
 <script type="module" src="/src/main.js"></script>
 </body>
 </html>
