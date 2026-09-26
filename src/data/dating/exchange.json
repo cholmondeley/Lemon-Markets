@@ -1,0 +1,904 @@
+{
+ "source": "dcalc_app_v2.parquet: single women 22-29, single men 28-42 (ACS weights; NHANES-imputed bodies).",
+ "women": 9959091.0,
+ "men": 13155858.0,
+ "tiers": [
+  {
+   "whr": 0.8,
+   "women": 2853404.75,
+   "share": 0.2865125834941864,
+   "income": 70300.0,
+   "net_worth": 190000.0,
+   "income_if_fit": 0.0
+  },
+  {
+   "whr": 0.77,
+   "women": 1400774.5,
+   "share": 0.1406528502702713,
+   "income": 101900.0,
+   "net_worth": 460000.0,
+   "income_if_fit": 0.0
+  },
+  {
+   "whr": 0.74,
+   "women": 398731.5,
+   "share": 0.04003693535923958,
+   "income": 163100.0,
+   "net_worth": 1100000.0,
+   "income_if_fit": 12200.0
+  },
+  {
+   "whr": 0.72,
+   "women": 212945.0,
+   "share": 0.02138197235763073,
+   "income": 203900.0,
+   "net_worth": 1800000.0,
+   "income_if_fit": 44800.0
+  },
+  {
+   "whr": 0.7,
+   "women": 50455.125,
+   "share": 0.00506623787805438,
+   "income": 371100.0,
+   "net_worth": 5600000.0,
+   "income_if_fit": 98800.0
+  },
+  {
+   "whr": 0.666,
+   "women": 4901.5,
+   "share": 0.0004921634099446237,
+   "income": 1088500.0,
+   "net_worth": 37000000.0,
+   "income_if_fit": 234400.0
+  }
+ ],
+ "abs_worth": [
+  {
+   "income": 75000,
+   "fit_share": 0.006941081024706364,
+   "equivalent_income": 305800.0
+  },
+  {
+   "income": 100000,
+   "fit_share": 0.0037760459817945957,
+   "equivalent_income": 373800.0
+  },
+  {
+   "income": 140000,
+   "fit_share": 0.001521289930678904,
+   "equivalent_income": 539200.0
+  },
+  {
+   "income": 200000,
+   "fit_share": 0.0005988681805320084,
+   "equivalent_income": 805200.0
+  }
+ ],
+ "men_counts": {
+  "income_140k": 604723.0,
+  "net_worth_1m": 482317.25,
+  "net_worth_10m": 24046.5,
+  "fit": 566821.75,
+  "six_six_six": 11675.125
+ },
+ "metros": [
+  {
+   "cbsa_id": 41860,
+   "name": "San Francisco-Oakland-Fremont, CA",
+   "women_whr74": 4944.25,
+   "men_1m": 13560.625,
+   "men_140k": 38298.0,
+   "women_per_millionaire": 0.3646034002304077
+  },
+  {
+   "cbsa_id": 42660,
+   "name": "Seattle-Tacoma-Bellevue, WA",
+   "women_whr74": 5214.25,
+   "men_1m": 12359.875,
+   "men_140k": 30342.0,
+   "women_per_millionaire": 0.421869158744812
+  },
+  {
+   "cbsa_id": 19740,
+   "name": "Denver-Aurora-Centennial, CO",
+   "women_whr74": 3444.625,
+   "men_1m": 7506.5,
+   "men_140k": 11435.5,
+   "women_per_millionaire": 0.45888563990592957
+  },
+  {
+   "cbsa_id": 41740,
+   "name": "San Diego-Chula Vista-Carlsbad, CA",
+   "women_whr74": 3579.5,
+   "men_1m": 6936.25,
+   "men_140k": 13436.0,
+   "women_per_millionaire": 0.5160569548606873
+  },
+  {
+   "cbsa_id": 31080,
+   "name": "Los Angeles-Long Beach-Anaheim, CA",
+   "women_whr74": 16179.875,
+   "men_1m": 28662.625,
+   "men_140k": 46269.0,
+   "women_per_millionaire": 0.5644938349723816
+  },
+  {
+   "cbsa_id": 33460,
+   "name": "Minneapolis-St. Paul-Bloomington, MN-WI",
+   "women_whr74": 3839.5,
+   "men_1m": 6397.875,
+   "men_140k": 5843.0,
+   "women_per_millionaire": 0.6001211404800415
+  },
+  {
+   "cbsa_id": 12420,
+   "name": "Austin-Round Rock-San Marcos, TX",
+   "women_whr74": 3428.5,
+   "men_1m": 5701.125,
+   "men_140k": 12577.0,
+   "women_per_millionaire": 0.6013725399971008
+  },
+  {
+   "cbsa_id": 38900,
+   "name": "Portland-Vancouver-Hillsboro, OR-WA",
+   "women_whr74": 2573.0,
+   "men_1m": 4174.0,
+   "men_140k": 4246.0,
+   "women_per_millionaire": 0.6164350509643555
+  },
+  {
+   "cbsa_id": 29820,
+   "name": "Las Vegas-Henderson-North Las Vegas, NV",
+   "women_whr74": 2411.5,
+   "men_1m": 3885.875,
+   "men_140k": 4426.0,
+   "women_per_millionaire": 0.6205809712409973
+  },
+  {
+   "cbsa_id": 38060,
+   "name": "Phoenix-Mesa-Chandler, AZ",
+   "women_whr74": 5737.625,
+   "men_1m": 8436.0,
+   "men_140k": 7810.625,
+   "women_per_millionaire": 0.6801357269287109
+  },
+  {
+   "cbsa_id": 38300,
+   "name": "Pittsburgh, PA",
+   "women_whr74": 2690.75,
+   "men_1m": 3823.75,
+   "men_140k": 3530.5,
+   "women_per_millionaire": 0.7036940455436707
+  },
+  {
+   "cbsa_id": 35620,
+   "name": "New York-Newark-Jersey City, NY-NJ",
+   "women_whr74": 31445.375,
+   "men_1m": 42818.25,
+   "men_140k": 76274.5,
+   "women_per_millionaire": 0.7343918681144714
+  },
+  {
+   "cbsa_id": 41700,
+   "name": "San Antonio-New Braunfels, TX",
+   "women_whr74": 2643.375,
+   "men_1m": 3581.5,
+   "men_140k": 962.25,
+   "women_per_millionaire": 0.738063633441925
+  },
+  {
+   "cbsa_id": 33100,
+   "name": "Miami-Fort Lauderdale-West Palm Beach, FL",
+   "women_whr74": 8330.125,
+   "men_1m": 10551.125,
+   "men_140k": 12768.0,
+   "women_per_millionaire": 0.7895011305809021
+  },
+  {
+   "cbsa_id": 40900,
+   "name": "Sacramento-Roseville-Folsom, CA",
+   "women_whr74": 2818.5,
+   "men_1m": 3504.75,
+   "men_140k": 4142.0,
+   "women_per_millionaire": 0.8041943311691284
+  },
+  {
+   "cbsa_id": 47900,
+   "name": "Washington-Arlington-Alexandria, DC-VA-MD-WV",
+   "women_whr74": 11479.75,
+   "men_1m": 14085.625,
+   "men_140k": 28430.375,
+   "women_per_millionaire": 0.8149975538253784
+  },
+  {
+   "cbsa_id": 17140,
+   "name": "Cincinnati, OH-KY-IN",
+   "women_whr74": 2480.375,
+   "men_1m": 2855.5,
+   "men_140k": 3618.375,
+   "women_per_millionaire": 0.8686307072639465
+  },
+  {
+   "cbsa_id": 14460,
+   "name": "Boston-Cambridge-Newton, MA-NH",
+   "women_whr74": 8329.5,
+   "men_1m": 9488.375,
+   "men_140k": 18378.0,
+   "women_per_millionaire": 0.8778637051582336
+  },
+  {
+   "cbsa_id": 40140,
+   "name": "Riverside-San Bernardino-Ontario, CA",
+   "women_whr74": 4861.625,
+   "men_1m": 5500.125,
+   "men_140k": 5578.0,
+   "women_per_millionaire": 0.8839117288589478
+  },
+  {
+   "cbsa_id": 19100,
+   "name": "Dallas-Fort Worth-Arlington, TX",
+   "women_whr74": 11736.0,
+   "men_1m": 12996.5,
+   "men_140k": 14497.125,
+   "women_per_millionaire": 0.9030123353004456
+  },
+  {
+   "cbsa_id": 36740,
+   "name": "Orlando-Kissimmee-Sanford, FL",
+   "women_whr74": 3615.125,
+   "men_1m": 3954.125,
+   "men_140k": 5027.0,
+   "women_per_millionaire": 0.9142667651176453
+  },
+  {
+   "cbsa_id": 12580,
+   "name": "Baltimore-Columbia-Towson, MD",
+   "women_whr74": 4382.125,
+   "men_1m": 4706.625,
+   "men_140k": 5640.0,
+   "women_per_millionaire": 0.9310546517372131
+  },
+  {
+   "cbsa_id": 16980,
+   "name": "Chicago-Naperville-Elgin, IL-IN",
+   "women_whr74": 14900.125,
+   "men_1m": 15098.375,
+   "men_140k": 24330.875,
+   "women_per_millionaire": 0.9868694543838501
+  },
+  {
+   "cbsa_id": 26420,
+   "name": "Houston-Pasadena-The Woodlands, TX",
+   "women_whr74": 9536.5,
+   "men_1m": 9434.375,
+   "men_140k": 11513.125,
+   "women_per_millionaire": 1.0108247995376587
+  },
+  {
+   "cbsa_id": 45300,
+   "name": "Tampa-St. Petersburg-Clearwater, FL",
+   "women_whr74": 3744.25,
+   "men_1m": 3697.0,
+   "men_140k": 4127.0,
+   "women_per_millionaire": 1.0127806663513184
+  },
+  {
+   "cbsa_id": 16740,
+   "name": "Charlotte-Concord-Gastonia, NC-SC",
+   "women_whr74": 4048.125,
+   "men_1m": 3883.0,
+   "men_140k": 5190.125,
+   "women_per_millionaire": 1.042525053024292
+  },
+  {
+   "cbsa_id": 19820,
+   "name": "Detroit-Warren-Dearborn, MI",
+   "women_whr74": 6566.0,
+   "men_1m": 5994.0,
+   "men_140k": 6198.125,
+   "women_per_millionaire": 1.095428705215454
+  },
+  {
+   "cbsa_id": 37980,
+   "name": "Philadelphia-Camden-Wilmington, PA-NJ-DE-MD",
+   "women_whr74": 9226.125,
+   "men_1m": 8370.875,
+   "men_140k": 11927.0,
+   "women_per_millionaire": 1.1021697521209717
+  },
+  {
+   "cbsa_id": 12060,
+   "name": "Atlanta-Sandy Springs-Roswell, GA",
+   "women_whr74": 11095.25,
+   "men_1m": 9052.5,
+   "men_140k": 10861.75,
+   "women_per_millionaire": 1.2256559133529663
+  },
+  {
+   "cbsa_id": 41180,
+   "name": "St. Louis, MO-IL",
+   "women_whr74": 3965.875,
+   "men_1m": 3005.75,
+   "men_140k": 3228.0,
+   "women_per_millionaire": 1.3194293975830078
+  }
+ ],
+ "glp1": [
+  {
+   "start_pct": 0.75,
+   "whr": 0.7940000295639038,
+   "waist": 28.799999237060547,
+   "hip": 36.272037506103516,
+   "drug": "semaglutide",
+   "hip_share": 0.3,
+   "glute_in": 0.0,
+   "new_whr": 0.719279944896698,
+   "new_pct": 0.9789542034268379,
+   "qualifies_074": true
+  },
+  {
+   "start_pct": 0.75,
+   "whr": 0.7940000295639038,
+   "waist": 28.799999237060547,
+   "hip": 36.272037506103516,
+   "drug": "semaglutide",
+   "hip_share": 0.3,
+   "glute_in": 1.0,
+   "new_whr": 0.6994296908378601,
+   "new_pct": 0.9950550580397248,
+   "qualifies_074": true
+  },
+  {
+   "start_pct": 0.75,
+   "whr": 0.7940000295639038,
+   "waist": 28.799999237060547,
+   "hip": 36.272037506103516,
+   "drug": "semaglutide",
+   "hip_share": 0.5,
+   "glute_in": 0.0,
+   "new_whr": 0.7336722016334534,
+   "new_pct": 0.9666968584060669,
+   "qualifies_074": true
+  },
+  {
+   "start_pct": 0.75,
+   "whr": 0.7940000295639038,
+   "waist": 28.799999237060547,
+   "hip": 36.272037506103516,
+   "drug": "semaglutide",
+   "hip_share": 0.5,
+   "glute_in": 1.0,
+   "new_whr": 0.713030993938446,
+   "new_pct": 0.9846721701323986,
+   "qualifies_074": true
+  },
+  {
+   "start_pct": 0.75,
+   "whr": 0.7940000295639038,
+   "waist": 28.799999237060547,
+   "hip": 36.272037506103516,
+   "drug": "semaglutide",
+   "hip_share": 0.7,
+   "glute_in": 0.0,
+   "new_whr": 0.7486521601676941,
+   "new_pct": 0.9320907145738602,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.75,
+   "whr": 0.7940000295639038,
+   "waist": 28.799999237060547,
+   "hip": 36.272037506103516,
+   "drug": "semaglutide",
+   "hip_share": 0.7,
+   "glute_in": 1.0,
+   "new_whr": 0.727171778678894,
+   "new_pct": 0.9760793689638376,
+   "qualifies_074": true
+  },
+  {
+   "start_pct": 0.75,
+   "whr": 0.7940000295639038,
+   "waist": 28.799999237060547,
+   "hip": 36.272037506103516,
+   "drug": "tirzepatide",
+   "hip_share": 0.3,
+   "glute_in": 0.0,
+   "new_whr": 0.68683260679245,
+   "new_pct": 0.9967006400693208,
+   "qualifies_074": true
+  },
+  {
+   "start_pct": 0.75,
+   "whr": 0.7940000295639038,
+   "waist": 28.799999237060547,
+   "hip": 36.272037506103516,
+   "drug": "tirzepatide",
+   "hip_share": 0.3,
+   "glute_in": 1.0,
+   "new_whr": 0.6676490902900696,
+   "new_pct": 0.9994697934598662,
+   "qualifies_074": true
+  },
+  {
+   "start_pct": 0.75,
+   "whr": 0.7940000295639038,
+   "waist": 28.799999237060547,
+   "hip": 36.272037506103516,
+   "drug": "tirzepatide",
+   "hip_share": 0.5,
+   "glute_in": 0.0,
+   "new_whr": 0.7067163586616516,
+   "new_pct": 0.9914037715643644,
+   "qualifies_074": true
+  },
+  {
+   "start_pct": 0.75,
+   "whr": 0.7940000295639038,
+   "waist": 28.799999237060547,
+   "hip": 36.272037506103516,
+   "drug": "tirzepatide",
+   "hip_share": 0.5,
+   "glute_in": 1.0,
+   "new_whr": 0.6864224076271057,
+   "new_pct": 0.9967006400693208,
+   "qualifies_074": true
+  },
+  {
+   "start_pct": 0.75,
+   "whr": 0.7940000295639038,
+   "waist": 28.799999237060547,
+   "hip": 36.272037506103516,
+   "drug": "tirzepatide",
+   "hip_share": 0.7,
+   "glute_in": 0.0,
+   "new_whr": 0.727785587310791,
+   "new_pct": 0.9760793689638376,
+   "qualifies_074": true
+  },
+  {
+   "start_pct": 0.75,
+   "whr": 0.7940000295639038,
+   "waist": 28.799999237060547,
+   "hip": 36.272037506103516,
+   "drug": "tirzepatide",
+   "hip_share": 0.7,
+   "glute_in": 1.0,
+   "new_whr": 0.7062820196151733,
+   "new_pct": 0.9914037715643644,
+   "qualifies_074": true
+  },
+  {
+   "start_pct": 0.5,
+   "whr": 0.8420000076293945,
+   "waist": 30.0,
+   "hip": 35.629451751708984,
+   "drug": "semaglutide",
+   "hip_share": 0.3,
+   "glute_in": 0.0,
+   "new_whr": 0.7641221284866333,
+   "new_pct": 0.8817680403590202,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.5,
+   "whr": 0.8420000076293945,
+   "waist": 30.0,
+   "hip": 35.629451751708984,
+   "drug": "semaglutide",
+   "hip_share": 0.3,
+   "glute_in": 1.0,
+   "new_whr": 0.7426275014877319,
+   "new_pct": 0.9556394889950752,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.5,
+   "whr": 0.8420000076293945,
+   "waist": 30.0,
+   "hip": 35.629451751708984,
+   "drug": "semaglutide",
+   "hip_share": 0.5,
+   "glute_in": 0.0,
+   "new_whr": 0.7803850769996643,
+   "new_pct": 0.8122701346874237,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.5,
+   "whr": 0.8420000076293945,
+   "waist": 30.0,
+   "hip": 35.629451751708984,
+   "drug": "semaglutide",
+   "hip_share": 0.5,
+   "glute_in": 1.0,
+   "new_whr": 0.757979154586792,
+   "new_pct": 0.8985439315438271,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.5,
+   "whr": 0.8420000076293945,
+   "waist": 30.0,
+   "hip": 35.629451751708984,
+   "drug": "semaglutide",
+   "hip_share": 0.7,
+   "glute_in": 0.0,
+   "new_whr": 0.7973554134368896,
+   "new_pct": 0.7310763597488403,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.5,
+   "whr": 0.8420000076293945,
+   "waist": 30.0,
+   "hip": 35.629451751708984,
+   "drug": "semaglutide",
+   "hip_share": 0.7,
+   "glute_in": 1.0,
+   "new_whr": 0.7739790081977844,
+   "new_pct": 0.841572180390358,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.5,
+   "whr": 0.8420000076293945,
+   "waist": 30.0,
+   "hip": 35.629451751708984,
+   "drug": "tirzepatide",
+   "hip_share": 0.3,
+   "glute_in": 0.0,
+   "new_whr": 0.7302169799804688,
+   "new_pct": 0.9712124951183796,
+   "qualifies_074": true
+  },
+  {
+   "start_pct": 0.5,
+   "whr": 0.8420000076293945,
+   "waist": 30.0,
+   "hip": 35.629451751708984,
+   "drug": "tirzepatide",
+   "hip_share": 0.3,
+   "glute_in": 1.0,
+   "new_whr": 0.7094127535820007,
+   "new_pct": 0.9893985679373145,
+   "qualifies_074": true
+  },
+  {
+   "start_pct": 0.5,
+   "whr": 0.8420000076293945,
+   "waist": 30.0,
+   "hip": 35.629451751708984,
+   "drug": "tirzepatide",
+   "hip_share": 0.5,
+   "glute_in": 0.0,
+   "new_whr": 0.7527331113815308,
+   "new_pct": 0.907786138355732,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.5,
+   "whr": 0.8420000076293945,
+   "waist": 30.0,
+   "hip": 35.629451751708984,
+   "drug": "tirzepatide",
+   "hip_share": 0.5,
+   "glute_in": 1.0,
+   "new_whr": 0.7306455373764038,
+   "new_pct": 0.9712124951183796,
+   "qualifies_074": true
+  },
+  {
+   "start_pct": 0.5,
+   "whr": 0.8420000076293945,
+   "waist": 30.0,
+   "hip": 35.629451751708984,
+   "drug": "tirzepatide",
+   "hip_share": 0.7,
+   "glute_in": 0.0,
+   "new_whr": 0.7766820192337036,
+   "new_pct": 0.8252204954624176,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.5,
+   "whr": 0.8420000076293945,
+   "waist": 30.0,
+   "hip": 35.629451751708984,
+   "drug": "tirzepatide",
+   "hip_share": 0.7,
+   "glute_in": 1.0,
+   "new_whr": 0.7531884908676147,
+   "new_pct": 0.9065248519182205,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.25,
+   "whr": 0.9010000228881836,
+   "waist": 33.79999923706055,
+   "hip": 37.51387023925781,
+   "drug": "semaglutide",
+   "hip_share": 0.3,
+   "glute_in": 0.0,
+   "new_whr": 0.8194600939750671,
+   "new_pct": 0.6055965721607208,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.25,
+   "whr": 0.9010000228881836,
+   "waist": 33.79999923706055,
+   "hip": 37.51387023925781,
+   "drug": "semaglutide",
+   "hip_share": 0.3,
+   "glute_in": 1.0,
+   "new_whr": 0.7974889278411865,
+   "new_pct": 0.7310763597488403,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.25,
+   "whr": 0.9010000228881836,
+   "waist": 33.79999923706055,
+   "hip": 37.51387023925781,
+   "drug": "semaglutide",
+   "hip_share": 0.5,
+   "glute_in": 0.0,
+   "new_whr": 0.8381927609443665,
+   "new_pct": 0.5190476179122925,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.25,
+   "whr": 0.9010000228881836,
+   "waist": 33.79999923706055,
+   "hip": 37.51387023925781,
+   "drug": "semaglutide",
+   "hip_share": 0.5,
+   "glute_in": 1.0,
+   "new_whr": 0.8152197003364563,
+   "new_pct": 0.6249925792217255,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.25,
+   "whr": 0.9010000228881836,
+   "waist": 33.79999923706055,
+   "hip": 37.51387023925781,
+   "drug": "semaglutide",
+   "hip_share": 0.7,
+   "glute_in": 0.0,
+   "new_whr": 0.8578019142150879,
+   "new_pct": 0.4133574962615967,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.25,
+   "whr": 0.9010000228881836,
+   "waist": 33.79999923706055,
+   "hip": 37.51387023925781,
+   "drug": "semaglutide",
+   "hip_share": 0.7,
+   "glute_in": 1.0,
+   "new_whr": 0.8337568044662476,
+   "new_pct": 0.5392991304397583,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.25,
+   "whr": 0.9010000228881836,
+   "waist": 33.79999923706055,
+   "hip": 37.51387023925781,
+   "drug": "tirzepatide",
+   "hip_share": 0.3,
+   "glute_in": 0.0,
+   "new_whr": 0.7838487029075623,
+   "new_pct": 0.797553151845932,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.25,
+   "whr": 0.9010000228881836,
+   "waist": 33.79999923706055,
+   "hip": 37.51387023925781,
+   "drug": "tirzepatide",
+   "hip_share": 0.3,
+   "glute_in": 1.0,
+   "new_whr": 0.762542724609375,
+   "new_pct": 0.8850720152258873,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.25,
+   "whr": 0.9010000228881836,
+   "waist": 33.79999923706055,
+   "hip": 37.51387023925781,
+   "drug": "tirzepatide",
+   "hip_share": 0.5,
+   "glute_in": 0.0,
+   "new_whr": 0.8098526000976562,
+   "new_pct": 0.6611051261425018,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.25,
+   "whr": 0.9010000228881836,
+   "waist": 33.79999923706055,
+   "hip": 37.51387023925781,
+   "drug": "tirzepatide",
+   "hip_share": 0.5,
+   "glute_in": 1.0,
+   "new_whr": 0.7871300578117371,
+   "new_pct": 0.7808820605278015,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.25,
+   "whr": 0.9010000228881836,
+   "waist": 33.79999923706055,
+   "hip": 37.51387023925781,
+   "drug": "tirzepatide",
+   "hip_share": 0.7,
+   "glute_in": 0.0,
+   "new_whr": 0.8376411199569702,
+   "new_pct": 0.5201191604137421,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.25,
+   "whr": 0.9010000228881836,
+   "waist": 33.79999923706055,
+   "hip": 37.51387023925781,
+   "drug": "tirzepatide",
+   "hip_share": 0.7,
+   "glute_in": 1.0,
+   "new_whr": 0.8133558034896851,
+   "new_pct": 0.6337487995624542,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.09999999999999998,
+   "whr": 0.9520000219345093,
+   "waist": 50.20000076293945,
+   "hip": 52.7310905456543,
+   "drug": "semaglutide",
+   "hip_share": 0.3,
+   "glute_in": 0.0,
+   "new_whr": 0.8674907684326172,
+   "new_pct": 0.3758300542831421,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.09999999999999998,
+   "whr": 0.9520000219345093,
+   "waist": 50.20000076293945,
+   "hip": 52.7310905456543,
+   "drug": "semaglutide",
+   "hip_share": 0.3,
+   "glute_in": 1.0,
+   "new_whr": 0.8507837653160095,
+   "new_pct": 0.4412378668785095,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.09999999999999998,
+   "whr": 0.9520000219345093,
+   "waist": 50.20000076293945,
+   "hip": 52.7310905456543,
+   "drug": "semaglutide",
+   "hip_share": 0.5,
+   "glute_in": 0.0,
+   "new_whr": 0.8885118961334229,
+   "new_pct": 0.29052847623825073,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.09999999999999998,
+   "whr": 0.9520000219345093,
+   "waist": 50.20000076293945,
+   "hip": 52.7310905456543,
+   "drug": "semaglutide",
+   "hip_share": 0.5,
+   "glute_in": 1.0,
+   "new_whr": 0.8709936141967773,
+   "new_pct": 0.3692018389701843,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.09999999999999998,
+   "whr": 0.9520000219345093,
+   "waist": 50.20000076293945,
+   "hip": 52.7310905456543,
+   "drug": "semaglutide",
+   "hip_share": 0.7,
+   "glute_in": 0.0,
+   "new_whr": 0.910577118396759,
+   "new_pct": 0.2176748514175415,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.09999999999999998,
+   "whr": 0.9520000219345093,
+   "waist": 50.20000076293945,
+   "hip": 52.7310905456543,
+   "drug": "semaglutide",
+   "hip_share": 0.7,
+   "glute_in": 1.0,
+   "new_whr": 0.8921869397163391,
+   "new_pct": 0.2750077247619629,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.09999999999999998,
+   "whr": 0.9520000219345093,
+   "waist": 50.20000076293945,
+   "hip": 52.7310905456543,
+   "drug": "tirzepatide",
+   "hip_share": 0.3,
+   "glute_in": 0.0,
+   "new_whr": 0.8304815888404846,
+   "new_pct": 0.5565674602985382,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.09999999999999998,
+   "whr": 0.9520000219345093,
+   "waist": 50.20000076293945,
+   "hip": 52.7310905456543,
+   "drug": "tirzepatide",
+   "hip_share": 0.3,
+   "glute_in": 1.0,
+   "new_whr": 0.8142520189285278,
+   "new_pct": 0.6300109922885895,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.09999999999999998,
+   "whr": 0.9520000219345093,
+   "waist": 50.20000076293945,
+   "hip": 52.7310905456543,
+   "drug": "tirzepatide",
+   "hip_share": 0.5,
+   "glute_in": 0.0,
+   "new_whr": 0.8597293496131897,
+   "new_pct": 0.40768206119537354,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.09999999999999998,
+   "whr": 0.9520000219345093,
+   "waist": 50.20000076293945,
+   "hip": 52.7310905456543,
+   "drug": "tirzepatide",
+   "hip_share": 0.5,
+   "glute_in": 1.0,
+   "new_whr": 0.8423485159873962,
+   "new_pct": 0.49904441833496094,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.09999999999999998,
+   "whr": 0.9520000219345093,
+   "waist": 50.20000076293945,
+   "hip": 52.7310905456543,
+   "drug": "tirzepatide",
+   "hip_share": 0.7,
+   "glute_in": 0.0,
+   "new_whr": 0.8911123871803284,
+   "new_pct": 0.2798730134963989,
+   "qualifies_074": false
+  },
+  {
+   "start_pct": 0.09999999999999998,
+   "whr": 0.9520000219345093,
+   "waist": 50.20000076293945,
+   "hip": 52.7310905456543,
+   "drug": "tirzepatide",
+   "hip_share": 0.7,
+   "glute_in": 1.0,
+   "new_whr": 0.8724532127380371,
+   "new_pct": 0.36328333616256714,
+   "qualifies_074": false
+  }
+ ]
+}

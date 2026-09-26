@@ -48,7 +48,12 @@ const BASE = {
   gammaSex: 1,       // dates with more-desired men more often end in sex (fits NSFG: 3.4 partners)
   womenCasual: 0.15,
   read2: { a: 0.3, c: 0.25 },   // what a first date shows (Connelly & Ones: strangers who interact)
+  bodyShare: 0.6,    // how much of a woman's appeal is her body (WHR); assumption, swept 0.4-0.8
 };
+const ex = read('../../src/data/dating/exchange.json');
+// Her appeal percentile after a WHR change, other traits at the median: z = bodyShare * z_WHR.
+const appealFromWhr = (whrPct, share = BASE.bodyShare) => normCdf(share * D.zTop(1 - whrPct));
+const glp = (drug, glute, start = 0.5, hipShare = 0.5) => ex.glp1.find((g) => g.drug === drug && g.glute_in === glute && Math.abs(g.start_pct - start) < 1e-6 && g.hip_share === hipShare);
 const CHANNELS = {
   app: { label: 'App', a: rhoW, c: 0.1, views: 15000 },
   friends: { label: 'Friends', a: 0.3, c: 0.45, views: 60, like: 0.2, dates: 6 },
@@ -323,13 +328,56 @@ const leverRows = [
   lever('Weights looks less (a = 0.15)', { start: 27, a: 0.15 }),
   lever('Friends\' introductions instead of the app', { start: 27, ch: 'friends' }),
   lever('Gives more men months of dating (3 a year)', { start: 27, n: 3 }),
+  lever('GLP-1 (semaglutide-sized waist loss)', { start: 27, v: appealFromWhr(glp('semaglutide', 0).new_pct) }),
+  lever('GLP-1 (tirzepatide-sized) plus glute training', { start: 27, v: appealFromWhr(glp('tirzepatide', 1).new_pct) }),
   lever('Combined on the app from 27: 15-year range, less on looks, 3 a year', { start: 27, gap: 15, a: 0.15, n: 3 }),
   lever('Same, from 23', { start: 23, gap: 15, a: 0.15, n: 3 }),
+  lever('Same from 23, plus tirzepatide and glutes', { start: 23, gap: 15, a: 0.15, n: 3, v: appealFromWhr(glp('tirzepatide', 1).new_pct) }),
 ];
 say('## L. Her levers, alone and together', '',
   'Median woman, five-year search. Each row changes one thing from the baseline; the last two combine the app levers (the model runs one',
   'channel per search, and friends supply only ~6 first dates a year, so mixing channels is left out).');
 say(table(['Strategy', 'Any committed man', 'Committed top-10% man', 'Top 5%', 'Top 1%'], leverRows));
+
+// ---------- M. Reaching up: the millionaire husband and the top-5% wife ----------
+const k = (x) => `$${Math.round(x / 1000)}k`, mm = (x) => (x >= 1e6 ? `$${(x / 1e6).toFixed(1)}M` : k(x));
+say('## M. Reaching up', '',
+  `Exchange rates (the author's "There's no such thing as rich enough"): single women 22-29 (${(ex.women / 1e6).toFixed(1)}M) against single men 28-42`,
+  `(${(ex.men / 1e6).toFixed(1)}M). For each WHR tier, the income or net worth that as many men clear as women clear the tier. Under assortative`,
+  'matching on market value, those are the men a woman at that tier can reach, and the women a man at that bar can reach.');
+say(table(['Her WHR', 'Share of single women 22-29', 'Men earning', 'or worth', 'Fit men earning'], ex.tiers.map((t) => [`≤ ${t.whr}`, pct(t.share, 2), `${k(t.income)}+`, `${mm(t.net_worth)}+`, t.income_if_fit > 0 ? `${k(t.income_if_fit)}+` : 'any'])));
+say('Abs (fit, per the parquet) are worth about 4x income: ' + ex.abs_worth.map((a) => `a fit man earning ${k(a.income)} is as rare as any man earning ${k(a.equivalent_income)}`).join('; ') + '.');
+const mt = ex.metros;
+say(`Where each side has leverage (women at WHR ≤ 0.74 per single man worth $1M+, largest metros): fewest in ${mt.slice(0, 5).map((m) => `${m.name.split('-')[0].split(',')[0]} ${m.women_per_millionaire.toFixed(1)}`).join(', ')};`,
+  `most in ${mt.slice(-5).reverse().map((m) => `${m.name.split('-')[0].split(',')[0]} ${m.women_per_millionaire.toFixed(1)}`).join(', ')}. Below 1, millionaires outnumber qualifying women.`);
+
+const glpRows = [];
+for (const start of [0.25, 0.5, 0.75]) for (const [drug, glute, label] of [['semaglutide', 0, 'Semaglutide-sized'], ['tirzepatide', 0, 'Tirzepatide-sized'], ['tirzepatide', 1, 'Tirzepatide + 1 in glutes']]) {
+  const g = glp(drug, glute, start), v0 = appealFromWhr(start), v1 = appealFromWhr(g.new_pct);
+  const tier = ex.tiers.filter((t) => g.new_whr <= t.whr).at(-1);
+  const r = [0, 0.9, 0.99].map((bar) => herYears({ v: v1, bar }).odds), r0 = [0, 0.9, 0.99].map((bar) => herYears({ v: v0, bar }).odds);
+  glpRows.push([ord(start), g.whr.toFixed(3), label, g.new_whr.toFixed(3), ord(g.new_pct), `${ord(v0)} → ${ord(v1)}`, tier ? `${k(tier.income)}+ / ${mm(tier.net_worth)}+` : 'below the tiers',
+    `${pct(r0[0])} → ${pct(r[0])}`, `${pct(r0[1])} → ${pct(r[1])}`, `${pct(r0[2], 1)} → ${pct(r[2], 1)}`]);
+}
+say('### For women: GLP-1s and the gym', '',
+  'One woman changes; her peers do not. Waist falls by a share of baseline (semaglutide 2.4 mg ~12%, STEP 1; tirzepatide 15 mg ~17%,',
+  'SURMOUNT-1: -19.9 cm); hips fall by half the waist loss in cm (assumed); glute training adds an inch of hip (assumed). Her appeal moves by',
+  `${BASE.bodyShare} x her WHR z-score (other traits at the median). Odds: five years from 25, any committed man / top 10% / top 1%.`);
+say(table(['Her WHR percentile', 'WHR', 'Intervention', 'New WHR', 'New WHR percentile', 'Appeal', 'Men she can reach', 'Any committed man', 'Top 10%', 'Top 1%'], glpRows));
+const shareRows = [0.4, 0.6, 0.8].map((sh) => { const v1 = appealFromWhr(glp('tirzepatide', 1).new_pct, sh); return [sh, ord(v1), pct(herYears({ v: v1, bar: 0 }).odds), pct(herYears({ v: v1 }).odds)]; });
+say('How much of her appeal is her body (median woman, tirzepatide plus glutes):');
+say(table(['Body share of appeal', 'Appeal', 'Any committed man', 'Top 10%'], shareRows));
+const hipRows = [0.3, 0.5, 0.7].map((h) => { const g = glp('tirzepatide', 0, 0.5, h); return [h, g.new_whr.toFixed(3), ord(g.new_pct)]; });
+say('If hips hold up better or worse (median woman, tirzepatide, no glute work; hip loss as a share of waist loss in cm):');
+say(table(['Hip share', 'New WHR', 'New WHR percentile'], hipRows));
+say('The millionaire-husband recipe, in the model\'s terms: get to WHR ≤ 0.74 (the $1M tier), start early, widen the age range upward (the',
+  'empirical reach table in K: a 10+ year gap multiplies the chance of a top-10% husband 4.4x for brides 18-22 and 1.7x for 23-26), finish a',
+  'degree (wives in recent top-1% marriages are 82-90% BA+), and look where millionaires outnumber qualifying women (SF, Seattle, Denver).');
+say('### For men: the top-5% wife', '',
+  `A WHR ≤ 0.74 woman is about 1 in 25 single women 22-29. The same count of single men 28-42 earn ${k(ex.tiers[2].income)}+ or are worth ${mm(ex.tiers[2].net_worth)}+;`,
+  `fit men need only ${k(ex.tiers[2].income_if_fit)}+ (${ex.men_counts.fit >= ex.tiers[2].women ? 'fit men alone outnumber her tier' : ''}). Abs are the cheapest lever (worth ~4x income),`,
+  `then income, then geography (St. Louis, Atlanta, Philadelphia, Detroit have the most qualifying women per millionaire). Section F shows`,
+  'what appeal buys him on the apps: dates and commitment rise with it, but his odds of a partner as rare as he is stay low.');
 
 // ---------- J. What moves her odds ----------
 const base = herYears();
@@ -337,6 +385,7 @@ const tornado = [
   [`Commitment strength ${(BASE.commitMedian * 0.67).toFixed(2)} → ${(BASE.commitMedian * 1.33).toFixed(2)}`, herYears({ commitMedian: BASE.commitMedian * 0.67 }), herYears({ commitMedian: BASE.commitMedian * 1.33 })],
   ['Her weight on looks 0.48 → 0.15', base, herYears({ a: 0.15 })],
   ['Her appeal median → 90th', base, herYears({ v: 0.9 })],
+  ['GLP-1 + glutes (median WHR → 97th)', base, herYears({ v: appealFromWhr(glp('tirzepatide', 1).new_pct) })],
   ['Start age 25 → 32', base, herYears({ start: 32 })],
   ['Proper dates per year 1 → 4', herYears({ n: 1 }), herYears({ n: 4 })],
   ['Quality shown on a first date 0.15 → 0.4', herYears({ read2: { a: 0.3, c: 0.15 } }), herYears({ read2: { a: 0.3, c: 0.4 } })],

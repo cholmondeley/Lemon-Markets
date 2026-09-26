@@ -232,8 +232,76 @@ channel per search, and friends supply only ~6 first dates a year, so mixing cha
 | Weights looks less (a = 0.15) | 33% | 10% | 6.2% | 1.8% |
 | Friends' introductions instead of the app | 34% | 10% | 5.5% | 1.4% |
 | Gives more men months of dating (3 a year) | 38% | 12% | 7.4% | 2.1% |
+| GLP-1 (semaglutide-sized waist loss) | 36% | 12% | 7.6% | 2.3% |
+| GLP-1 (tirzepatide-sized) plus glute training | 46% | 17% | 10.5% | 3.2% |
 | Combined on the app from 27: 15-year range, less on looks, 3 a year | 52% | 14% | 8.0% | 2.1% |
 | Same, from 23 | 56% | 16% | 9.5% | 2.5% |
+| Same from 23, plus tirzepatide and glutes | 77% | 27% | 16.6% | 4.6% |
+
+## M. Reaching up
+
+Exchange rates (the author's "There's no such thing as rich enough"): single women 22-29 (10.0M) against single men 28-42
+(13.2M). For each WHR tier, the income or net worth that as many men clear as women clear the tier. Under assortative
+matching on market value, those are the men a woman at that tier can reach, and the women a man at that bar can reach.
+
+| Her WHR | Share of single women 22-29 | Men earning | or worth | Fit men earning |
+|---|---|---|---|---|
+| ≤ 0.8 | 28.65% | $70k+ | $190k+ | any |
+| ≤ 0.77 | 14.07% | $102k+ | $460k+ | any |
+| ≤ 0.74 | 4.00% | $163k+ | $1.1M+ | $12k+ |
+| ≤ 0.72 | 2.14% | $204k+ | $1.8M+ | $45k+ |
+| ≤ 0.7 | 0.51% | $371k+ | $5.6M+ | $99k+ |
+| ≤ 0.666 | 0.05% | $1089k+ | $37.0M+ | $234k+ |
+
+Abs (fit, per the parquet) are worth about 4x income: a fit man earning $75k is as rare as any man earning $306k; a fit man earning $100k is as rare as any man earning $374k; a fit man earning $140k is as rare as any man earning $539k; a fit man earning $200k is as rare as any man earning $805k.
+
+Where each side has leverage (women at WHR ≤ 0.74 per single man worth $1M+, largest metros): fewest in San Francisco 0.4, Seattle 0.4, Denver 0.5, San Diego 0.5, Los Angeles 0.6;
+most in St. Louis 1.3, Atlanta 1.2, Philadelphia 1.1, Detroit 1.1, Charlotte 1.0. Below 1, millionaires outnumber qualifying women.
+
+### For women: GLP-1s and the gym
+
+One woman changes; her peers do not. Waist falls by a share of baseline (semaglutide 2.4 mg ~12%, STEP 1; tirzepatide 15 mg ~17%,
+SURMOUNT-1: -19.9 cm); hips fall by half the waist loss in cm (assumed); glute training adds an inch of hip (assumed). Her appeal moves by
+0.6 x her WHR z-score (other traits at the median). Odds: five years from 25, any committed man / top 10% / top 1%.
+
+| Her WHR percentile | WHR | Intervention | New WHR | New WHR percentile | Appeal | Men she can reach | Any committed man | Top 10% | Top 1% |
+|---|---|---|---|---|---|---|---|---|---|
+| 25th | 0.901 | Semaglutide-sized | 0.838 | 52nd | 34th → 51st | below the tiers | 26% → 35% | 8% → 12% | 1.6% → 2.3% |
+| 25th | 0.901 | Tirzepatide-sized | 0.810 | 66th | 34th → 60th | below the tiers | 26% → 40% | 8% → 14% | 1.6% → 2.8% |
+| 25th | 0.901 | Tirzepatide + 1 in glutes | 0.787 | 78th | 34th → 68th | $70k+ / $190k+ | 26% → 45% | 8% → 17% | 1.6% → 3.3% |
+| 50th | 0.842 | Semaglutide-sized | 0.780 | 81st | 50th → 70th | $70k+ / $190k+ | 34% → 46% | 12% → 17% | 2.3% → 3.5% |
+| 50th | 0.842 | Tirzepatide-sized | 0.753 | 91st | 50th → 79th | $102k+ / $460k+ | 34% → 52% | 12% → 20% | 2.3% → 4.1% |
+| 50th | 0.842 | Tirzepatide + 1 in glutes | 0.731 | 97th | 50th → 87th | $163k+ / $1.1M+ | 34% → 59% | 12% → 24% | 2.3% → 5.1% |
+| 75th | 0.794 | Semaglutide-sized | 0.734 | 97th | 66th → 86th | $163k+ / $1.1M+ | 43% → 58% | 16% → 24% | 3.2% → 5.0% |
+| 75th | 0.794 | Tirzepatide-sized | 0.707 | 99th | 66th → 92nd | $204k+ / $1.8M+ | 43% → 64% | 16% → 27% | 3.2% → 5.9% |
+| 75th | 0.794 | Tirzepatide + 1 in glutes | 0.686 | 100th | 66th → 95th | $371k+ / $5.6M+ | 43% → 67% | 16% → 29% | 3.2% → 6.4% |
+
+How much of her appeal is her body (median woman, tirzepatide plus glutes):
+
+| Body share of appeal | Appeal | Any committed man | Top 10% |
+|---|---|---|---|
+| 0.4 | 78th | 51% | 20% |
+| 0.6 | 87th | 59% | 24% |
+| 0.8 | 94th | 66% | 28% |
+
+If hips hold up better or worse (median woman, tirzepatide, no glute work; hip loss as a share of waist loss in cm):
+
+| Hip share | New WHR | New WHR percentile |
+|---|---|---|
+| 0.3 | 0.730 | 97th |
+| 0.5 | 0.753 | 91st |
+| 0.7 | 0.777 | 83rd |
+
+The millionaire-husband recipe, in the model's terms: get to WHR ≤ 0.74 (the $1M tier), start early, widen the age range upward (the
+empirical reach table in K: a 10+ year gap multiplies the chance of a top-10% husband 4.4x for brides 18-22 and 1.7x for 23-26), finish a
+degree (wives in recent top-1% marriages are 82-90% BA+), and look where millionaires outnumber qualifying women (SF, Seattle, Denver).
+
+### For men: the top-5% wife
+
+A WHR ≤ 0.74 woman is about 1 in 25 single women 22-29. The same count of single men 28-42 earn $163k+ or are worth $1.1M+;
+fit men need only $12k+ (fit men alone outnumber her tier). Abs are the cheapest lever (worth ~4x income),
+then income, then geography (St. Louis, Atlanta, Philadelphia, Detroit have the most qualifying women per millionaire). Section F shows
+what appeal buys him on the apps: dates and commitment rise with it, but his odds of a partner as rare as he is stay low.
 
 ## J. What moves her odds most
 
@@ -244,6 +312,7 @@ Median woman, five years from 25, committed top-10% man: default 12%.
 | Commitment strength 0.20 → 0.40 | 5% | 22% | 16 pts |
 | Her weight on looks 0.48 → 0.15 | 12% | 13% | 1 pts |
 | Her appeal median → 90th | 12% | 26% | 14 pts |
+| GLP-1 + glutes (median WHR → 97th) | 12% | 24% | 12 pts |
 | Start age 25 → 32 | 12% | 5% | -7 pts |
 | Proper dates per year 1 → 4 | 7% | 21% | 14 pts |
 | Quality shown on a first date 0.15 → 0.4 | 10% | 15% | 5 pts |
