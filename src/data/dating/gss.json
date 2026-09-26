@@ -1,6 +1,38 @@
 {
  "source": "GSS 1972-2024 R3a, survey years 2000+ (weighted, wtssps else wtssall)",
  "men": {
+  "notebook_tiers": {
+   "noncollege_high_income_prestige": {
+    "unweighted": 0.27722772277227725,
+    "weighted": 0.2154185706397424,
+    "n": 101
+   },
+   "noncollege_all": {
+    "unweighted": 0.2237593984962406,
+    "weighted": 0.20228356271934023,
+    "n": 3325
+   },
+   "homemaker_all": {
+    "unweighted": 0.20634920634920634,
+    "weighted": 0.2158847086862817,
+    "n": 126
+   },
+   "college_all": {
+    "unweighted": 0.1647555823777912,
+    "weighted": 0.1555649665286958,
+    "n": 1657
+   },
+   "college_homemaker": {
+    "unweighted": 0.045454545454545456,
+    "weighted": 0.040407926340868254,
+    "n": 22
+   },
+   "college_high_income_prestige": {
+    "unweighted": 0.2198952879581152,
+    "weighted": 0.21799520284482343,
+    "n": 191
+   }
+  },
   "by_partner_quintile": [
    {
     "quintile": 1,
@@ -165,6 +197,38 @@
   }
  },
  "women": {
+  "notebook_tiers": {
+   "noncollege_high_income_prestige": {
+    "unweighted": 0.18604651162790697,
+    "weighted": 0.12412603250965407,
+    "n": 43
+   },
+   "noncollege_all": {
+    "unweighted": 0.1680210849989018,
+    "weighted": 0.14463340305785416,
+    "n": 4553
+   },
+   "homemaker_all": {
+    "unweighted": 0.11128903122497999,
+    "weighted": 0.09810395258051467,
+    "n": 1249
+   },
+   "college_all": {
+    "unweighted": 0.11945870275314979,
+    "weighted": 0.10611888801695135,
+    "n": 2143
+   },
+   "college_homemaker": {
+    "unweighted": 0.06493506493506493,
+    "weighted": 0.0679110672615241,
+    "n": 308
+   },
+   "college_high_income_prestige": {
+    "unweighted": 0.15019762845849802,
+    "weighted": 0.13936097882370452,
+    "n": 253
+   }
+  },
   "by_partner_quintile": [
    {
     "quintile": 1,

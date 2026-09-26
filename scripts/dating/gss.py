@@ -24,7 +24,7 @@ DEFAULT = Path.home() / "src/revimg/notebooks/us_public_data/GSS_stata/gss7224_r
 SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT
 OUT = ROOT / "src/data/dating/gss.json"
 COLS = ["year", "sex", "age", "marital", "evstray", "numwomen", "nummen", "degree",
-        "conrinc", "prestg10", "wtssall", "wtssps"]
+        "conrinc", "prestg10", "wrkstat", "wtssall", "wtssps"]
 SINCE = 2000
 
 
@@ -86,7 +86,25 @@ def main():
         conc["median_partners"] = float(a.bc.median())
         conc["n"] = int(len(a))
 
-        out[name] = {"by_partner_quintile": by_q, "by_partner_band": by_band,
+        # The author's "Infidelity Tier List" (Cheating Analysis.ipynb, cells 407-410), reproduced
+        # exactly: ages 20-60, cut points pooled over all years for this sex (missing income and
+        # prestige filled with 0), top decile of both; unweighted, with a weighted column alongside.
+        t = s[s.age.between(20, 60)].copy()
+        inc, pre = t.conrinc.fillna(0), t.prestg10.fillna(0)
+        col_t, keep = t.degree.fillna(0) >= 3, t.evstray.isin([1, 2])
+        top = (inc >= inc.quantile(0.9)) & (pre >= pre.quantile(0.9))
+        nc_top = (inc >= inc.quantile(0.9)) & (pre >= pre.quantile(0.7 if sex == 1 else 0.0)) & \
+            (pre <= pre.quantile(1.0 if sex == 1 else 0.4))
+        cohorts = {"noncollege_high_income_prestige": ~col_t & nc_top, "noncollege_all": ~col_t,
+                   "homemaker_all": (t.wrkstat == 7) & (t.marital != 5), "college_all": col_t,
+                   "college_homemaker": col_t & (t.wrkstat == 7), "college_high_income_prestige": col_t & top}
+        notebook = {}
+        for k, m in cohorts.items():
+            g = t[m & keep]
+            notebook[k] = {"unweighted": float(g.cheated.mean()), "weighted": float(np.average(g.cheated, weights=g.w)),
+                           "n": int(len(g))}
+
+        out[name] = {"notebook_tiers": notebook,"by_partner_quintile": by_q, "by_partner_band": by_band,
                      "by_income_decile": by_inc, "tiers": tiers, "partner_concentration_25_45": conc}
 
     OUT.write_text(json.dumps(out, indent=1))

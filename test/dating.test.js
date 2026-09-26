@@ -99,3 +99,57 @@ test('trait rarity: independent traits multiply, identical traits do not', () =>
   assert.ok(mid > 1e-3 && mid < 0.1);
   close(traitRarity({ k: 3, q: 0.1, rho: 1e-9 }), 1e-3, 1e-5);
 });
+
+// ---------- chained model ----------
+import { population, singlePool, describe, search, cohort, backRule, likeRateCurve, normalize } from '../src/dating/chain.js';
+
+test('chain grid: weights sum to 1, casual share and quality marginal are as specified', () => {
+  const pop = population({ rhoQz: 0.3, casual: 0.2 });
+  const sum = pop.cells.reduce((s, c) => s + c.w, 0);
+  close(sum, 1, 1e-9);
+  close(describe(pop.cells).serious, 0.8, 1e-9);
+  const mQ = pop.cells.reduce((s, c) => s + c.w * c.Q, 0), vQ = pop.cells.reduce((s, c) => s + c.w * c.Q * c.Q, 0);
+  close(mQ, 0, 1e-9);
+  close(vQ, 1, 2e-3);
+  close(describe(pop.cells, 0.9).good, 0.8 * 0.1, 2e-3);
+});
+
+test('single pool: no pairing off leaves the population unchanged', () => {
+  const pop = population({ casual: 0.2 });
+  const s = singlePool(pop, { demand: () => 1, x50: 0, kc: 0.1, lemon: 0 });
+  close(s.singleShare, 1, 1e-12);
+  close(describe(s.cells).serious, 0.8, 1e-9);
+});
+
+test('search: a blind read with everyone liking back evaluates the pool as it is', () => {
+  const pop = population({ casual: 0.3 });
+  const r = search(pop.cells, { a: 0, c: 0, rhoQz: 0.2, likeRate: 0.1, back: () => 1, views: 1e6, n: 10 });
+  close(r.serious, 0.7, 1e-6);
+  close(r.qPct, 0.5, 1e-3);
+  assert.equal(r.evaluated, 10);
+});
+
+test('search: fewer matches than capacity means everyone matched is evaluated', () => {
+  const pop = population();
+  const r = search(pop.cells, { a: 0.5, c: 0.1, rhoQz: 0.2, likeRate: 0.05, back: () => 0.2, views: 100, n: 10 });
+  close(r.matches, 100 * 0.05 * 0.2, 1e-3);
+  close(r.evaluated, r.matches, 1e-12);
+});
+
+test('cohort reproduces the census never-married curve it is fitted to', () => {
+  const pop = population({ nz: 41, ne: 41 });
+  const census = { 20: 0.95, 25: 0.8, 30: 0.55, 35: 0.4 };
+  for (let a = 20; a <= 35; a++) if (census[a] == null) { const lo = Math.floor(a / 5) * 5; census[a] = census[lo] + (census[lo + 5] - census[lo]) * (a - lo) / 5; }
+  const c = cohort(pop, { demand: (u) => 0.5 + u, kc: 0.1, census, start: 20, end: 35 });
+  for (const a of [25, 30, 35]) close(c[a].never, census[a], 1e-6, `age ${a}`);
+  // Casual men are over-represented among those left.
+  assert.ok(describe(c[35].cells).serious < describe(c[20].cells).serious);
+});
+
+test('back rule: with no consensus, a candidate likes the searcher at his own like rate', () => {
+  const rate = likeRateCurve((u) => 1 + u, 0.3);
+  close(rate(0.5), 0.3, 1e-6);
+  const back = backRule(rate, 0, 2);
+  close(back({ u: 0.9 }), rate(0.9), 1e-6);
+  assert.ok(rate(0.9) < rate(0.5));
+});
