@@ -320,3 +320,52 @@ export function channelOdds(ch, { n = 10, N = 1000, years = 1 } = {}) {
   const met = ch.met * years, p = Math.min(1, n / met);
   return { p, odds: findOdds({ n, p, N, r: ch.r }), median: bestRarity({ n, p, r: ch.r }) };
 }
+
+// ---------- tail dependence: Student-t copula ----------
+// Everything above works on percentiles through normal scores: a Gaussian copula, where how traits
+// co-move is set by their correlations and extremes do not cluster (no tail dependence). A t-copula
+// with nu degrees of freedom keeps the same correlations but shares one random scale across traits,
+// so being far out on one makes being far out on the others likelier. nu = Infinity is Gaussian.
+function lnGamma(x) {
+  const g = [676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61503916999185,
+    12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+  if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - lnGamma(1 - x);
+  x -= 1;
+  let a = 0.99999999999980993;
+  for (let i = 0; i < 8; i++) a += g[i] / (x + i + 1);
+  const t = x + 7.5;
+  return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);
+}
+// E[f(s)] with s = sqrt(W / nu), W ~ chi-square(nu): integrate over log W.
+export function mixT(f, nu, n = 400) {
+  const c = -(nu / 2) * Math.log(2) - lnGamma(nu / 2);
+  const lo = Math.log(1e-8), hi = Math.log(nu + 60 * Math.sqrt(2 * nu));
+  return simpson((lw) => { const w = Math.exp(lw); return Math.exp(c + (nu / 2) * lw - w / 2) * f(Math.sqrt(w / nu)); }, lo, hi, n);
+}
+// Upper tail of Student t, and the value exceeded with probability p.
+export const tSf = (x, nu) => mixT((s) => normSf(x * s), nu);
+export function tTop(p, nu) {
+  if (!Number.isFinite(nu)) return zTop(p);
+  let lo = -50, hi = 5000;
+  for (let it = 0; it < 100; it++) { const m = (lo + hi) / 2; if (tSf(m, nu) > p) lo = m; else hi = m; }
+  return (lo + hi) / 2;
+}
+// Equicorrelated orthant P(all k > z) for normals with pairwise correlation rho.
+function gaussAllAbove(z, k, rho) {
+  if (rho <= 0) return Math.pow(normSf(z), k);
+  const a = Math.sqrt(rho), s = Math.sqrt(1 - rho);
+  return simpson((v) => normPdf(v) * Math.pow(normSf((z - a * v) / s), k), -9, 9, 400);
+}
+// traitRarity under a t-copula (nu = Infinity gives the Gaussian result).
+export function traitRarityT({ k, q, rho = 0, nu = Infinity }) {
+  if (!Number.isFinite(nu)) return traitRarity({ k, q, rho });
+  const t = tTop(q, nu);
+  return mixT((s) => gaussAllAbove(t * s, k, rho), nu, 200);
+}
+// hitRate under a t-copula between true quality and the up-front read.
+export function hitRateT(N, p, r, nu = Infinity) {
+  if (!Number.isFinite(nu)) return hitRate(N, p, r);
+  if (p >= 1) return 1 / N;
+  const a = tTop(1 / N, nu), b = tTop(p, nu);
+  return mixT((s) => bvnUpper(a * s, b * s, r), nu, 200) / p;
+}

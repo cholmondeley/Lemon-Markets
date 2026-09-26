@@ -167,3 +167,16 @@ test('app funnel: dates men receive add up to dates active women give (when men 
   close(none.all.dates, 0, 1e-12);
   assert.ok(f.topDates.top10 > 0.1);   // dates concentrate on the best-looking men
 });
+
+import { tSf, tTop, traitRarityT, hitRateT } from '../src/dating/model.js';
+
+test('t-copula: t tails match known quantiles and fall back to the Gaussian', () => {
+  close(tSf(2.015, 5), 0.05, 5e-4);          // t(5) 95th percentile is 2.015
+  close(tTop(0.025, 10), 2.228, 5e-3);        // t(10) 97.5th percentile is 2.228
+  close(traitRarityT({ k: 3, q: 0.1, rho: 0.2, nu: Infinity }), traitRarity({ k: 3, q: 0.1, rho: 0.2 }), 1e-12);
+  // Heavier tails make joint extremes likelier at the same correlation.
+  assert.ok(traitRarityT({ k: 3, q: 0.01, rho: 0.2, nu: 4 }) > traitRarity({ k: 3, q: 0.01, rho: 0.2 }));
+  // Independent t marginals still share a scale, so even rho = 0 is not independence.
+  assert.ok(traitRarityT({ k: 3, q: 0.01, rho: 0, nu: 4 }) > 1e-6);
+  close(hitRateT(1000, 0.01, 0.5, Infinity), hitRate(1000, 0.01, 0.5), 1e-12);
+});

@@ -155,14 +155,23 @@ fit 5.3% (the parquet's fit and abs flags are identical); all three 1 in 1,127; 
 1 in 137k. Single women 22-27 (8.0M): WHR ≤ 0.74 4.2%,
 plus BA 1 in 51, plus $100k+ 1 in 1,179.
 
-How rare "good on everything" is:
+How rare "good on everything" is. Gaussian copula at three correlations, then t-copulas at ρ = 0.2 (tail dependence:
+extremes cluster; see the NLSY97 check in `src/data/dating/tails.json`):
 
-| Traits | Bar on each | Independent | ρ = 0.2 | ρ = 0.4 |
-|---|---|---|---|---|
-| 3 | top 10% | 1 in 1,000 | 1 in 240 | 1 in 94 |
-| 4 | top 10% | 1 in 10,000 | 1 in 781 | 1 in 187 |
-| 3 | top 5% | 1 in 8,000 | 1 in 1,145 | 1 in 329 |
-| 5 | top 20% | 1 in 3,125 | 1 in 250 | 1 in 68 |
+| Traits | Bar on each | Independent | ρ = 0.2 | ρ = 0.4 | ρ = 0.2, t(8) | ρ = 0.2, t(4) |
+|---|---|---|---|---|---|---|
+| 3 | top 10% | 1 in 1,000 | 1 in 240 | 1 in 94 | 1 in 162 | 1 in 121 |
+| 4 | top 10% | 1 in 10,000 | 1 in 781 | 1 in 187 | 1 in 427 | 1 in 281 |
+| 3 | top 5% | 1 in 8,000 | 1 in 1,145 | 1 in 329 | 1 in 525 | 1 in 322 |
+| 3 | top 1% | 1 in 1.0M | 1 in 41k | 1 in 5,800 | 1 in 5,608 | 1 in 2,271 |
+| 5 | top 20% | 1 in 3,125 | 1 in 250 | 1 in 68 | 1 in 191 | 1 in 153 |
+
+Search odds (20 evaluated from the top 1% of up-front reads) under a Gaussian vs a t(4) copula between true quality and the read:
+
+| Read r | 1 in 1k Gaussian | 1 in 1k t(4) | 1 in 10k Gaussian | 1 in 10k t(4) | 1 in 100k Gaussian | 1 in 100k t(4) |
+|---|---|---|---|---|---|---|
+| 0.5 | 37.4% | 69.7% | 6.7% | 13.8% | 0.9% | 1.6% |
+| 0.35 | 20.1% | 59.8% | 3.1% | 11.4% | 0.4% | 1.4% |
 
 ## 7. Channels (illustrative)
 

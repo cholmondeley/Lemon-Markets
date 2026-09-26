@@ -304,3 +304,16 @@ export function appFunnel({ men, women, a, c, rhoQz, rhoM, likeM, likeW, exposur
   };
   return { all: summarize(() => true), byBand, womenSexRate, datedWomen, summarize, women: womenOut, topDates: { top5: topShare(0.05), top10: topShare(0.1), top20: topShare(0.2) }, perMan, dates };
 }
+
+// ---------- single people at a given age: never married plus back on the market ----------
+// The never-married cohort at that age, mixed with people who married and are single again. The
+// second group is weighted by having married by that age (1 - never-married survival) times the
+// stationary chance of being single (singlePool's pSingle: commitment filter and lemon effect), so
+// it leans toward people who are worse partners than they look. shares = census single-never and
+// single-previously-married shares at that age.
+export function singleAtAge(pop, never, single, { neverShare, prevShare }) {
+  const nm = never.cells, surv = never.never;
+  const prev = pop.cells.map((c, i) => ({ ...c, w: Math.max(0, c.w - nm[i].w * surv) * single.cells[i].pSingle }));
+  const pNorm = normalize(prev), tot = neverShare + prevShare;
+  return nm.map((c, i) => ({ ...c, w: (c.w * neverShare + pNorm[i].w * prevShare) / tot }));
+}

@@ -11,7 +11,7 @@ const pools = read('../../src/data/dating/pools.json');
 const gss = read('../../src/data/dating/gss.json');
 
 const pct = (v, d = 0) => (v * 100).toFixed(d) + '%';
-const oneIn = (p) => { const n = 1 / p; return n >= 1e6 ? `1 in ${(n / 1e6).toFixed(1)}M` : n >= 1e4 ? `1 in ${Math.round(n / 1e3)}k` : `1 in ${Math.round(n).toLocaleString('en-US')}`; };
+const oneIn = (p) => { const n = 1 / p; return n >= 999500 ? `1 in ${(n / 1e6).toFixed(1)}M` : n >= 1e4 ? `1 in ${Math.round(n / 1e3)}k` : `1 in ${Math.round(n).toLocaleString('en-US')}`; };
 const table = (head, rows) => [`| ${head.join(' | ')} |`, `|${head.map(() => '---').join('|')}|`, ...rows.map((r) => `| ${r.join(' | ')} |`)].join('\n');
 const md = [];
 const say = (...s) => md.push(...s, '');
@@ -159,9 +159,16 @@ say('### The rarity you are', '',
   `${oneIn(rar.men_single_25_35.finance_meme)}. Single women 22-27 (${(rar.women_single_22_27.pool / 1e6).toFixed(1)}M): WHR ≤ 0.74 ${pct(rar.women_single_22_27.whr_le_074, 1)},`,
   `plus BA ${oneIn(rar.women_single_22_27.whr_ba)}, plus $100k+ ${oneIn(rar.women_single_22_27.whr_ba_earn_100k)}.`);
 const trRows = [];
-for (const [k, q] of [[3, 0.1], [4, 0.1], [3, 0.05], [5, 0.2]]) trRows.push([k, `top ${pct(q)}`, ...[0, 0.2, 0.4].map((rho) => oneIn(D.traitRarity({ k, q, rho })))]);
-say('How rare "good on everything" is:');
-say(table(['Traits', 'Bar on each', 'Independent', 'ρ = 0.2', 'ρ = 0.4'], trRows));
+for (const [k, q] of [[3, 0.1], [4, 0.1], [3, 0.05], [3, 0.01], [5, 0.2]]) {
+  trRows.push([k, `top ${pct(q)}`, ...[0, 0.2, 0.4].map((rho) => oneIn(D.traitRarity({ k, q, rho }))),
+    ...[8, 4].map((nu) => oneIn(D.traitRarityT({ k, q, rho: 0.2, nu })))]);
+}
+say('How rare "good on everything" is. Gaussian copula at three correlations, then t-copulas at ρ = 0.2 (tail dependence:',
+  'extremes cluster; see the NLSY97 check in `src/data/dating/tails.json`):');
+say(table(['Traits', 'Bar on each', 'Independent', 'ρ = 0.2', 'ρ = 0.4', 'ρ = 0.2, t(8)', 'ρ = 0.2, t(4)'], trRows));
+const tRows = [0.5, 0.35].map((r) => [r, ...[1e3, 1e4, 1e5].flatMap((N) => [pct(D.findOdds({ n: 20, p: 0.01, N, r }), 1), pct(1 - Math.pow(1 - D.hitRateT(N, 0.01, r, 4), 20), 1)])]);
+say('Search odds (20 evaluated from the top 1% of up-front reads) under a Gaussian vs a t(4) copula between true quality and the read:');
+say(table(['Read r', '1 in 1k Gaussian', '1 in 1k t(4)', '1 in 10k Gaussian', '1 in 10k t(4)', '1 in 100k Gaussian', '1 in 100k t(4)'], tRows));
 
 // ---------- 7. Channels ----------
 const chRows = D.DATING_CHANNELS.map((ch) => {

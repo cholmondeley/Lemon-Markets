@@ -70,18 +70,36 @@ const cohortM = (o = {}) => {
   return cohortCache.get(key);
 };
 
+// Single men at age M: never married (cohort) plus previously married and single again, in census
+// proportions. Cached per assumption set.
+const singleCache = new Map();
+const menSingleC = (o = {}) => {
+  const key = JSON.stringify([o.rhoQz ?? BASE.rhoQz, o.kc ?? kc, o.lemon ?? BASE.lemon]);
+  if (!singleCache.has(key)) singleCache.set(key, menSingle(o));
+  return singleCache.get(key);
+};
+const menAt = (sex, age) => pools.by_age.find((r) => r.sex === sex && r.age === Math.min(70, age));
+const poolAt = (M, o = {}) => {
+  const r = menAt('men', M);
+  return C.singleAtAge(menPop(o), cohortM(o)[Math.min(60, M)], menSingleC(o), { neverShare: r.single_never, prevShare: r.single_prev });
+};
+// A man's options fall with his age: the share of women whose age range includes him (OkCupid men's
+// curve), relative to a 29-year-old.
+const menOptionsAt = (M) => D.curveAt(ok, 'men', Math.min(M, 48)) / D.curveAt(ok, 'men', 29);
+
 // A woman at appeal percentile v searching for `years` from age `start`. Each year: her pool is
 // never-married men two years older, men's interest in her is at that age's OkCupid level (a shift in
 // her appeal, so the men with the most options drop away first), she likes and dates by her read,
 // properly dates the best two by what a first date shows, and succeeds if one is above the quality
 // bar and commits to her. Years are independent tries.
 function herYears({ start = 25, years = BASE.years, v = 0.5, ch = 'app', bar = BASE.bar, commit = true, ...o } = {}) {
-  const C0 = CHANNELS[ch], his = hisCommit(o), hers = herCommit(o);
+  const C0 = CHANNELS[ch], hers = herCommit(o), gap = o.gap ?? 2;
   let miss = 1;
   const rows = [];
   for (let t = 0; t < years; t++) {
-    const age = start + t, af = D.curveAt(ok, 'women', age);
-    const pool = o.pool ?? cohortM(o)[Math.min(60, age + 2)].cells;
+    const age = start + t, af = D.curveAt(ok, 'women', age), M = age + gap;
+    const pool = o.pool ?? poolAt(M, o);
+    const his = hisCommit({ ...o, options: (o.options ?? 1) * menOptionsAt(M) });
     const y0 = D.zTop(1 - v);
     const y = af < 0.999 ? C.shiftForFactor(pool, likeM, rhoM, y0, af) : y0;
     const r = C.search(pool, {
@@ -205,8 +223,8 @@ const ageRows = [22, 25, 28, 30, 33, 35, 38].map((start) => {
   return [start, pct(D.curveAt(ok, 'women', start)), pct(any.first.pool.serious), pct(any.odds), pct(adapt.odds), cen != null ? pct(cen) : '', pct(good.odds), pct(D.fecundityUsed(data.geruso, start + 5, 20))];
 });
 say('## E. Her age', '',
-  'Median woman, five-year search starting at each age; each year her pull declines (OkCupid) and her pool is the never-married men',
-  'two years older, who are more often casual as they age (section H). Census = share of never-married women that age who marry in the',
+  'Median woman, five-year search starting at each age; each year her pull declines (OkCupid) and her pool is the single men two',
+  'years older (never married plus divorced, in census proportions), who are more often casual as they age (section H). Census = share of never-married women that age who marry in the',
   'next five years (cross-section).');
 say(table(['Start age', 'Interest vs peak', 'Pool says serious', 'Any committed man', 'Same, choosing less on looks (a = 0.15)', 'Census', 'Committed top-10% man', 'Fecundity used by end'], ageRows));
 
@@ -263,10 +281,28 @@ say('## I. Options and commitment', '',
   'Women born in the 1940s were 89% married by 30; the 1980s cohort 58%, the 1990s ~52% (cohort chart).');
 say(table(['Options vs today', 'A 90th-percentile serious man commits to a median woman', 'Median woman: any committed man in 5 years', 'Committed top-10% man'], optRows));
 
+// ---------- K. Age gaps ----------
+const gapRows = [];
+for (const start of [23, 27, 31]) for (const gap of [2, 5, 10, 15]) {
+  const any = herYears({ start, gap, bar: 0 }), good = herYears({ start, gap });
+  gapRows.push([start, `+${gap}`, pct(menOptionsAt(start + gap)), pct(any.first.pool.serious), ord(any.first.zPct), pct(any.first.commits), pct(any.odds), pct(good.odds)]);
+}
+const ag = read('../../src/data/dating/agegap.json');
+say('## K. Age gaps', '',
+  'Median woman, five years, searching single men `gap` years older (never married plus divorced, in census proportions). Men\'s options',
+  'fall with age (OkCupid: the share of women whose age range includes them), so older men\'s bars are lower; men of every age find',
+  'women in their early twenties most attractive (Rudder), so her appeal to them does not fall with the gap.');
+say(table(['Her age', 'Gap', 'His options vs a 29-year-old', 'Pool says serious', 'Appeal of men she dates', 'Both commit (per man)', 'Any committed man', 'Committed top-10% man'], gapRows));
+const rb = ag.recent_5y.bands, rc = ag.recent_5y_husband_30_45.bands;
+say(`ACS 2024, marriages in the last five years, husband 10+ years older, by his income percentile (men 25-64): ${rb.map((x) => `${x.band} ${pct(x.gap10, 1)}`).join(', ')}.`,
+  `Husbands in the top 1% who married recently are older (median ${rb[5].median_h_age}, vs ${rb[1].median_h_age} for the 50th-75th). Holding husbands to 30-45:`,
+  `${rc.map((x) => `${x.band} ${pct(x.gap10, 1)}`).join(', ')}. Top earners marry later, and late-marrying men marry younger women; a woman in her`,
+  `mid-twenties reaches them only with a gap. Wives in recent top-1% marriages: ${pct(rb[5].wife_ba_plus)} BA+ (${pct(rc[5].wife_ba_plus)} with husbands 30-45).`);
+
 // ---------- J. What moves her odds ----------
 const base = herYears();
 const tornado = [
-  ['Commitment strength (median) 0.15 → 0.3', herYears({ commitMedian: 0.15 }), herYears({ commitMedian: 0.3 })],
+  [`Commitment strength ${(BASE.commitMedian * 0.67).toFixed(2)} → ${(BASE.commitMedian * 1.33).toFixed(2)}`, herYears({ commitMedian: BASE.commitMedian * 0.67 }), herYears({ commitMedian: BASE.commitMedian * 1.33 })],
   ['Her weight on looks 0.48 → 0.15', base, herYears({ a: 0.15 })],
   ['Her appeal median → 90th', base, herYears({ v: 0.9 })],
   ['Start age 25 → 32', base, herYears({ start: 32 })],
@@ -274,6 +310,7 @@ const tornado = [
   ['Quality shown on a first date 0.15 → 0.4', herYears({ read2: { a: 0.3, c: 0.15 } }), herYears({ read2: { a: 0.3, c: 0.4 } })],
   ['Appeal-quality ρ 0 → 0.2', herYears({ rhoQz: 0 }), herYears({ rhoQz: 0.2 })],
   ['Casual pair-off rate k_c 0 → 0.2', herYears({ kc: 0 }), herYears({ kc: 0.2 })],
+  ['Age gap +2 → +10', base, herYears({ gap: 10 })],
 ].map(([k, lo, hi]) => [k, pct(lo.odds), pct(hi.odds), `${((hi.odds - lo.odds) * 100).toFixed(0)} pts`]);
 say('## J. What moves her odds most', '', `Median woman, five years from 25, committed top-10% man: default ${pct(base.odds)}.`);
 say(table(['Assumption', 'Low', 'High', 'Swing'], tornado));

@@ -49,6 +49,9 @@ def by_age(df):
             w = a.PWGTP
             row = {"sex": name, "age": age, "pop": float(w.sum()),
                    "single": wavg(a.single, w), "never_married": wavg(a.married == 5, w),
+                   # Single and never married vs single after a marriage (divorced, separated, widowed).
+                   "single_never": wavg(a.single & (a.married == 5), w),
+                   "single_prev": wavg(a.single & a.married.isin([2, 3, 4]), w),
                    "ba_plus": wavg(a.educ >= BA, w), "obese": wavg(a.obese, w)}
             if sex == 2:
                 q = wquant(a.whr, w, [0.1, 0.25, 0.5, 0.75, 0.9])
