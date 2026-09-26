@@ -67,16 +67,20 @@ export function singlePool(pop, { demand, x50, kc, lemon = 0 }) {
   return { cells: normalize(cells), singleShare: cells.reduce((s, c) => s + c.w, 0) };
 }
 
-export function describe(cells, bar = 0.9) {
-  const zb = zTop(1 - bar);
-  let serious = 0, qPct = 0, zPct = 0, good = 0;
+// commit(cell): chance this person would commit to the searcher (1 if not modeled). `good` is the
+// share who are serious, above the quality bar and would commit.
+export function describe(cells, bar = 0.9, commit = null) {
+  const zb = bar <= 0 ? -Infinity : zTop(1 - bar);   // bar 0: no quality requirement
+  let serious = 0, qPct = 0, zPct = 0, good = 0, commits = 0;
   for (const c of cells) {
+    const k = commit ? commit(c) : (c.serious ? 1 : 0);
     serious += c.w * (c.serious ? 1 : 0);
+    commits += c.w * k;
     qPct += c.w * normCdf(c.Q);
     zPct += c.w * c.u;
-    if (c.serious && c.Q >= zb) good += c.w;
+    if (c.Q >= zb) good += c.w * (commit ? k : (c.serious ? 1 : 0));
   }
-  return { serious, qPct, zPct, good };
+  return { serious, commits, qPct, zPct, good };
 }
 
 // ---------- how picky each person is ----------
@@ -113,6 +117,27 @@ export function shiftForFactor(pool, rate, rho, y, factor) {
   return (lo + hi) / 2;
 }
 
+// ---------- commitment: will he (or she) commit to this person? ----------
+// After months of dating, a serious person commits only if the partner clears their bar, and the bar
+// rises with their options (McCall, as in likeRateCurve but for committing, not liking). The partner's
+// value to them is beta * (partner's appeal y) + sqrt(1 - beta^2) * chemistry. `median` is the chance
+// a serious median person commits to a median partner. Casual people commit at kc times that.
+// Returns (cell of the committer, partner appeal y) -> probability.
+// options scales everyone's options at once (0.25 = a world with a quarter of today's choices).
+export function commitRule(demand, { median = 0.2, beta = 0.56, kc = 0.1, options = 1 } = {}) {
+  const base = likeRateCurve(demand, median);
+  let rate = base;
+  if (options !== 1) {
+    // Same L0 as today, scaled: invert the acceptance at the median to recover L0.
+    let lo = 1e-3, hi = 1e4;
+    for (let it = 0; it < 80; it++) { const m = Math.sqrt(lo * hi); if (reservation(m).accept > median) lo = m; else hi = m; }
+    const L0 = Math.sqrt(lo * hi) / demand(0.5);
+    rate = (u) => reservation(options * L0 * demand(u)).accept;
+  }
+  const s = Math.sqrt(1 - beta * beta);
+  return (cell, y) => (cell.serious ? 1 : kc) * normSf(zTop(rate(cell.u)) - (beta * y) / s);
+}
+
 // ---------- stage 3-4: search ----------
 // A read of a candidate: S = a z + c Q + noise, scaled to unit variance in the population (a: how
 // much looks drive it, c: how much real quality shows through).
@@ -139,7 +164,7 @@ export function keepTop(cells, N, K, { a, c, rhoQz }) {
 //             the best n of the people dated.
 // Success = at least one of those evaluated is serious and above `bar` on quality.
 // Without `dates`, the n best-reading matches are evaluated directly (no first-date stage).
-export function search(pool, { a, c, rhoQz, exposure = 0, likeRate, back, views, dates = null, read2 = null, n = 10, bar = 0.9 }) {
+export function search(pool, { a, c, rhoQz, exposure = 0, likeRate, back, views, dates = null, read2 = null, n = 10, bar = 0.9, commit = null }) {
   const sd = readSd(a, c, rhoQz);
   const shown = normalize(pool.map((x) => ({ ...x, w: x.w * Math.exp(exposure * x.z) })));
   const mu = shown.map((x) => a * x.z + c * x.Q);
@@ -162,10 +187,10 @@ export function search(pool, { a, c, rhoQz, exposure = 0, likeRate, back, views,
   const first = { cells: normalize(shown.map((x, i) => ({ ...x, w: x.w * normSf((t1 - mu[i]) / sd) * bk[i] }))), count: Math.min(matches, K) };
   // After a first date the read is a fresh, better one (read2); keeping the best n of those dated.
   const final = dates != null && read2 ? keepTop(first.cells, first.count, n, { ...read2, rhoQz }) : { cells: first.cells, count: Math.min(n, first.count) };
-  const d = describe(final.cells, bar);
+  const d = describe(final.cells, bar, commit);
   return {
     matches, dated: dates != null ? first.count : null, evaluated: final.count, keepShare: first.count / Math.max(matches, 1e-12),
-    ...d, datedPool: dates != null ? describe(first.cells, bar) : null, odds: 1 - Math.pow(1 - d.good, final.count), pool: describe(pool, bar),
+    ...d, datedPool: dates != null ? describe(first.cells, bar, commit) : null, odds: 1 - Math.pow(1 - d.good, final.count), pool: describe(pool, bar, commit),
   };
 }
 
