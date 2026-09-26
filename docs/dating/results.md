@@ -198,7 +198,7 @@ Median woman, five years from 25, committed top-10% man: default 12%.
 
 | Assumption | Low | High | Swing |
 |---|---|---|---|
-| Commitment strength (median) 0.15 → 0.3 | 3% | 12% | 9 pts |
+| Commitment strength 0.20 → 0.40 | 5% | 22% | 16 pts |
 | Her weight on looks 0.48 → 0.15 | 12% | 13% | 1 pts |
 | Her appeal median → 90th | 12% | 26% | 14 pts |
 | Start age 25 → 32 | 12% | 5% | -7 pts |
