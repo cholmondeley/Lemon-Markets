@@ -31,33 +31,33 @@ Lana Li's Hinge data (a 35-year-old NYC founder, three years): ~680 likes, ~115 
 
 Chance a single man on the apps commits to a woman after months of dating her, by his appeal and hers. "Says serious" is his stated
 intent on the app (the commitment filter, calibrated to luap); commitment also needs her to clear his bar, which rises with his options.
-A serious median man commits to a median woman 31% of the time (and she to him), fitted so a median woman on an app has the
+A serious median man commits to a median woman 30% of the time (and she to him), fitted so a median woman on an app has the
 census chance of marrying between 25 and 30 (34%) when both must commit.
 
 | His appeal | Says serious | Commits: her 10th | Her 50th | Her 90th | Her 99th |
 |---|---|---|---|---|---|
-| 25th | 72% | 9% | 28% | 53% | 67% |
-| 50th | 61% | 6% | 20% | 42% | 56% |
-| 75th | 54% | 4% | 15% | 34% | 48% |
+| 25th | 72% | 8% | 27% | 52% | 66% |
+| 50th | 61% | 5% | 20% | 41% | 55% |
+| 75th | 54% | 3% | 14% | 33% | 47% |
 | 90th | 50% | 2% | 11% | 28% | 42% |
-| 95th | 47% | 2% | 9% | 25% | 39% |
+| 95th | 47% | 2% | 9% | 24% | 38% |
 | 99th | 42% | 1% | 7% | 20% | 33% |
 
 Chance a man is still single after N first dates. The first two columns are the author's check (40% and 50% per woman);
 the rest use the model: a first date becomes months of dating only if it is among his best two a year, then both must commit.
 
-| First dates | At 40% | At 50% | 0-50 (2.4% per date) | 50-75 (4.2% per date) | 75-90 (2.3% per date) | 90-95 (1.2% per date) | 95-99 (0.6% per date) | 99-100 (0.3% per date) |
+| First dates | At 40% | At 50% | 0-50 (2.3% per date) | 50-75 (4.0% per date) | 75-90 (2.2% per date) | 90-95 (1.2% per date) | 95-99 (0.6% per date) | 99-100 (0.2% per date) |
 |---|---|---|---|---|---|---|---|---|
 | 1 | 60% | 50% | 98% | 96% | 98% | 99% | 99% | 100% |
-| 2 | 36% | 25% | 95% | 92% | 96% | 98% | 99% | 99% |
-| 4 | 13% | 6% | 91% | 84% | 91% | 95% | 97% | 99% |
-| 6 | 5% | 2% | 86% | 77% | 87% | 93% | 96% | 98% |
-| 8 | 2% | 0% | 82% | 71% | 83% | 91% | 95% | 98% |
-| 10 | 1% | 0% | 78% | 65% | 79% | 88% | 94% | 97% |
-| 15 | 0% | 0% | 69% | 52% | 71% | 83% | 91% | 96% |
-| 20 | 0% | 0% | 61% | 42% | 63% | 78% | 88% | 95% |
-| 30 | 0% | 0% | 48% | 27% | 50% | 69% | 82% | 93% |
-| 50 | 0% | 0% | 30% | 12% | 32% | 54% | 72% | 88% |
+| 2 | 36% | 25% | 95% | 92% | 96% | 98% | 99% | 100% |
+| 4 | 13% | 6% | 91% | 85% | 92% | 95% | 98% | 99% |
+| 6 | 5% | 2% | 87% | 78% | 88% | 93% | 96% | 99% |
+| 8 | 2% | 0% | 83% | 72% | 84% | 91% | 95% | 98% |
+| 10 | 1% | 0% | 79% | 66% | 80% | 89% | 94% | 98% |
+| 15 | 0% | 0% | 71% | 54% | 72% | 84% | 91% | 96% |
+| 20 | 0% | 0% | 63% | 44% | 65% | 79% | 88% | 95% |
+| 30 | 0% | 0% | 50% | 29% | 52% | 70% | 83% | 93% |
+| 50 | 0% | 0% | 31% | 13% | 34% | 56% | 73% | 88% |
 
 ## C. Her search, by her appeal
 
@@ -67,12 +67,12 @@ previous version of this model): without it, a 10th-percentile woman looked as w
 
 | Her appeal | Matches (yr 1) | Appeal of men she dates | Both commit (per man dated for months) | Any committed man | Committed top-10% man | Committed man her equal (at least median) | No commitment step |
 |---|---|---|---|---|---|---|---|
-| 10th | 45 | 85th | 2% | 12% | 4% | 9% | 78% |
-| 25th | 76 | 89th | 3% | 21% | 7% | 17% | 77% |
-| 50th | 119 | 91st | 6% | 34% | 12% | 29% | 75% |
-| 75th | 169 | 93rd | 10% | 49% | 19% | 32% | 73% |
-| 90th | 213 | 94th | 14% | 60% | 26% | 26% | 71% |
-| 99th | 273 | 95th | 20% | 73% | 35% | 8% | 69% |
+| 10th | 45 | 86th | 2% | 11% | 3% | 9% | 79% |
+| 25th | 75 | 89th | 3% | 21% | 7% | 17% | 78% |
+| 50th | 118 | 91st | 6% | 34% | 12% | 28% | 76% |
+| 75th | 168 | 93rd | 9% | 49% | 19% | 31% | 75% |
+| 90th | 212 | 94th | 14% | 62% | 26% | 26% | 73% |
+| 99th | 273 | 95th | 20% | 76% | 36% | 8% | 72% |
 
 More appeal helps her get commitment, but far less than it helps her get attention: a 99th-percentile woman is 1 in 100 and
 still finds a man of her rarity who commits in a minority of five-year searches.
@@ -84,10 +84,10 @@ options and commit least. Census check: of never-married women, 34% marry betwee
 
 | a | Appeal of men she dates | They commit | Any committed man 25-30 | Any committed man 30-35 | Committed top-10% man 25-30 |
 |---|---|---|---|---|---|
-| 0.48 | 91st | 6% | 34% | 13% | 12% |
-| 0.30 | 83rd | 7% | 39% | 17% | 13% |
-| 0.15 | 75th | 7% | 41% | 20% | 14% |
-| 0.00 | 66th | 7% | 42% | 22% | 14% |
+| 0.48 | 91st | 6% | 34% | 19% | 12% |
+| 0.30 | 84th | 6% | 38% | 23% | 13% |
+| 0.15 | 76th | 6% | 40% | 25% | 13% |
+| 0.00 | 66th | 6% | 41% | 27% | 13% |
 
 At the app-wide weight the model matches 25-30 (by construction) and falls short at 30-35; the census rate for 30-35 needs a much
 lower weight on looks. Read the other way: the women who marry in their thirties are the ones choosing on something other than looks.
@@ -95,19 +95,19 @@ The model also leaves out what else changes in the thirties: divorced and older 
 
 ## E. Her age
 
-Median woman, five-year search starting at each age; each year her pull declines (OkCupid) and her pool is the never-married men
-two years older, who are more often casual as they age (section H). Census = share of never-married women that age who marry in the
+Median woman, five-year search starting at each age; each year her pull declines (OkCupid) and her pool is the single men two
+years older (never married plus divorced, in census proportions), who are more often casual as they age (section H). Census = share of never-married women that age who marry in the
 next five years (cross-section).
 
 | Start age | Interest vs peak | Pool says serious | Any committed man | Same, choosing less on looks (a = 0.15) | Census | Committed top-10% man | Fecundity used by end |
 |---|---|---|---|---|---|---|---|
-| 22 | 100% | 77% | 50% | 53% | 28% | 20% | 53% |
-| 25 | 95% | 74% | 34% | 41% | 34% | 12% | 69% |
-| 28 | 75% | 69% | 20% | 28% | 35% | 7% | 81% |
-| 30 | 65% | 65% | 13% | 20% | 35% | 4% | 87% |
-| 33 | 44% | 58% | 7% | 12% | 33% | 2% | 94% |
-| 35 | 38% | 54% | 5% | 9% | 26% | 1% | 96% |
-| 38 | 27% | 50% | 3% | 6% | 18% | 1% | 99% |
+| 22 | 100% | 78% | 47% | 50% | 28% | 18% | 53% |
+| 25 | 95% | 74% | 34% | 40% | 34% | 12% | 69% |
+| 28 | 75% | 70% | 24% | 30% | 35% | 7% | 81% |
+| 30 | 65% | 68% | 19% | 25% | 35% | 6% | 87% |
+| 33 | 44% | 63% | 16% | 20% | 33% | 4% | 94% |
+| 35 | 38% | 61% | 15% | 17% | 26% | 4% | 96% |
+| 38 | 27% | 59% | 13% | 15% | 18% | 3% | 99% |
 
 ## F. His search, by his appeal
 
@@ -117,11 +117,11 @@ options, his with his). "His equal" asks for a woman at least as rare on quality
 | His appeal | First dates in 5 years | Appeal of women who date him | Both commit (per woman dated for months) | Any committed woman | Committed top-10% woman | Committed woman his equal |
 |---|---|---|---|---|---|---|
 | 0-50 | 0.9 | 26th | 3% | 3% | 0% | 1% |
-| 50-75 | 7.0 | 34th | 7% | 38% | 3% | 13% |
-| 75-90 | 22.3 | 40th | 10% | 67% | 10% | 17% |
-| 90-95 | 45.0 | 44th | 13% | 75% | 15% | 12% |
-| 95-99 | 91.5 | 48th | 16% | 83% | 21% | 7% |
-| 99-100 | 254 | 55th | 21% | 91% | 33% | 3% |
+| 50-75 | 7.0 | 34th | 6% | 36% | 3% | 13% |
+| 75-90 | 22.3 | 40th | 10% | 65% | 9% | 16% |
+| 90-95 | 45.0 | 44th | 13% | 74% | 14% | 11% |
+| 95-99 | 91.5 | 48th | 15% | 81% | 21% | 7% |
+| 99-100 | 254 | 55th | 20% | 90% | 32% | 3% |
 
 ## G. Channels
 
@@ -130,12 +130,12 @@ a friend who knows him (.45), a coworker (.27), a profile (.10); friends supply 
 
 | Appeal-quality ρ | Lemon | App | Friends | Work |
 |---|---|---|---|---|
-| 0 | 0 | 11% (6% commit) | 12% (5% commit) | 5% (5% commit) |
-| 0 | 0.3 | 8% (5% commit) | 9% (5% commit) | 4% (5% commit) |
-| 0.1 | 0 | 14% (6% commit) | 12% (6% commit) | 5% (5% commit) |
-| 0.1 | 0.3 | 10% (5% commit) | 9% (5% commit) | 3% (5% commit) |
-| 0.2 | 0 | 16% (5% commit) | 12% (6% commit) | 4% (5% commit) |
-| 0.2 | 0.3 | 12% (5% commit) | 9% (5% commit) | 3% (5% commit) |
+| 0 | 0 | 11% (5% commit) | 11% (5% commit) | 4% (5% commit) |
+| 0 | 0.3 | 8% (5% commit) | 9% (5% commit) | 3% (5% commit) |
+| 0.1 | 0 | 13% (5% commit) | 11% (5% commit) | 4% (5% commit) |
+| 0.1 | 0.3 | 9% (5% commit) | 9% (5% commit) | 3% (5% commit) |
+| 0.2 | 0 | 15% (5% commit) | 11% (5% commit) | 4% (5% commit) |
+| 0.2 | 0.3 | 11% (5% commit) | 8% (5% commit) | 3% (5% commit) |
 
 ## H. Never-married men by age
 
@@ -161,10 +161,36 @@ Women born in the 1940s were 89% married by 30; the 1980s cohort 58%, the 1990s 
 
 | Options vs today | A 90th-percentile serious man commits to a median woman | Median woman: any committed man in 5 years | Committed top-10% man |
 |---|---|---|---|
-| × 0.25 | 34% | 59% | 24% |
-| × 0.5 | 27% | 48% | 18% |
-| × 1 | 20% | 34% | 12% |
+| × 0.25 | 33% | 60% | 24% |
+| × 0.5 | 26% | 48% | 18% |
+| × 1 | 19% | 34% | 12% |
 | × 2 | 14% | 22% | 7% |
+
+## K. Age gaps
+
+Median woman, five years, searching single men `gap` years older (never married plus divorced, in census proportions). Men's options
+fall with age (OkCupid: the share of women whose age range includes them), so older men's bars are lower; men of every age find
+women in their early twenties most attractive (Rudder), so her appeal to them does not fall with the gap.
+
+| Her age | Gap | His options vs a 29-year-old | Pool says serious | Appeal of men she dates | Both commit (per man) | Any committed man | Committed top-10% man |
+|---|---|---|---|---|---|---|---|
+| 23 | +2 | 108% | 77% | 93rd | 7% | 43% | 16% |
+| 23 | +5 | 107% | 73% | 91st | 5% | 36% | 12% |
+| 23 | +10 | 75% | 66% | 90th | 4% | 33% | 10% |
+| 23 | +15 | 48% | 59% | 90th | 5% | 41% | 12% |
+| 27 | +2 | 100% | 72% | 89th | 4% | 27% | 9% |
+| 27 | +5 | 85% | 68% | 89th | 3% | 25% | 7% |
+| 27 | +10 | 49% | 61% | 89th | 4% | 30% | 8% |
+| 27 | +15 | 32% | 58% | 89th | 5% | 40% | 11% |
+| 31 | +2 | 75% | 66% | 87th | 2% | 18% | 5% |
+| 31 | +5 | 55% | 62% | 87th | 2% | 20% | 5% |
+| 31 | +10 | 33% | 58% | 87th | 3% | 27% | 7% |
+| 31 | +15 | 20% | 57% | 87th | 5% | 36% | 9% |
+
+ACS 2024, marriages in the last five years, husband 10+ years older, by his income percentile (men 25-64): 0-50 8.0%, 50-75 6.2%, 75-90 6.6%, 90-95 6.9%, 95-99 9.6%, 99-100 12.2%.
+Husbands in the top 1% who married recently are older (median 38, vs 34 for the 50th-75th). Holding husbands to 30-45:
+0-50 5.6%, 50-75 3.8%, 75-90 3.3%, 90-95 2.7%, 95-99 3.0%, 99-100 4.0%. Top earners marry later, and late-marrying men marry younger women; a woman in her
+mid-twenties reaches them only with a gap. Wives in recent top-1% marriages: 82% BA+ (90% with husbands 30-45).
 
 ## J. What moves her odds most
 
@@ -173,18 +199,19 @@ Median woman, five years from 25, committed top-10% man: default 12%.
 | Assumption | Low | High | Swing |
 |---|---|---|---|
 | Commitment strength (median) 0.15 → 0.3 | 3% | 12% | 9 pts |
-| Her weight on looks 0.48 → 0.15 | 12% | 14% | 1 pts |
+| Her weight on looks 0.48 → 0.15 | 12% | 13% | 1 pts |
 | Her appeal median → 90th | 12% | 26% | 14 pts |
-| Start age 25 → 32 | 12% | 3% | -10 pts |
-| Proper dates per year 1 → 4 | 7% | 21% | 15 pts |
-| Quality shown on a first date 0.15 → 0.4 | 10% | 16% | 5 pts |
-| Appeal-quality ρ 0 → 0.2 | 11% | 14% | 3 pts |
-| Casual pair-off rate k_c 0 → 0.2 | 9% | 15% | 6 pts |
+| Start age 25 → 32 | 12% | 5% | -7 pts |
+| Proper dates per year 1 → 4 | 7% | 21% | 14 pts |
+| Quality shown on a first date 0.15 → 0.4 | 10% | 15% | 5 pts |
+| Appeal-quality ρ 0 → 0.2 | 10% | 13% | 3 pts |
+| Casual pair-off rate k_c 0 → 0.2 | 9% | 14% | 5 pts |
+| Age gap +2 → +10 | 12% | 9% | -3 pts |
 
 ## Defaults and where they come from
 
 - Appeal-quality correlation 0.1: Feingold (1992), attractiveness vs intelligence r = .04; Langlois et al. (2000), small links to adjustment.
 - Reads of real quality: Connelly & Ones (2010), corrected accuracy averaged over the Big Five: strangers ~.17, coworkers ~.26, friends ~.47, cohabitants ~.48, family ~.57.
 - Lemon effect 0.3: Solomon & Jackson (2014), breakup odds per unit neuroticism 1.36, conscientiousness 0.88, agreeableness 0.91.
-- Commitment strength 0.309: set so a median woman on an app who chooses like the app-wide consensus has the census chance of marrying between 25 and 30 (34%), with both sides needing to commit.
+- Commitment strength 0.301: set so a median woman on an app who chooses like the app-wide consensus has the census chance of marrying between 25 and 30 (34%), with both sides needing to commit.
 - Dating activity: NSFG 2022-23, luap retention, Pew ever-used 58/42. Consensus, exposure and the commitment filter: `docs/dating/sensitivity.md`.

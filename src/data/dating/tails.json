@@ -1,0 +1,370 @@
+{
+ "source": "NLSY97 men (AFQT, height and weight 2011, wage income 2021/2019); normal-score correlations.",
+ "n": 2299,
+ "traits": [
+  "afqt",
+  "height",
+  "income",
+  "fit"
+ ],
+ "corr": [
+  [
+   1.0,
+   0.089,
+   0.376,
+   0.057
+  ],
+  [
+   0.089,
+   1.0,
+   0.062,
+   0.059
+  ],
+  [
+   0.376,
+   0.062,
+   1.0,
+   0.017
+  ],
+  [
+   0.057,
+   0.059,
+   0.017,
+   1.0
+  ]
+ ],
+ "pairs": [
+  {
+   "pair": "afqt+height",
+   "q": 0.2,
+   "empirical": 0.03827751196172249,
+   "count": 88,
+   "independent": 0.04000000000000001,
+   "gaussian": 0.0471345,
+   "t4": 0.0538415,
+   "t8": 0.0504655
+  },
+  {
+   "pair": "afqt+height",
+   "q": 0.1,
+   "empirical": 0.013919095258808177,
+   "count": 32,
+   "independent": 0.010000000000000002,
+   "gaussian": 0.013044,
+   "t4": 0.0193675,
+   "t8": 0.0162395
+  },
+  {
+   "pair": "afqt+height",
+   "q": 0.05,
+   "empirical": 0.0034797738147020443,
+   "count": 8,
+   "independent": 0.0025000000000000005,
+   "gaussian": 0.003579,
+   "t4": 0.007813,
+   "t8": 0.005762
+  },
+  {
+   "pair": "afqt+income",
+   "q": 0.2,
+   "empirical": 0.07742496737712048,
+   "count": 178,
+   "independent": 0.04000000000000001,
+   "gaussian": 0.073945,
+   "t4": 0.0794255,
+   "t8": 0.0767
+  },
+  {
+   "pair": "afqt+income",
+   "q": 0.1,
+   "empirical": 0.0234884732492388,
+   "count": 54,
+   "independent": 0.010000000000000002,
+   "gaussian": 0.0255645,
+   "t4": 0.031673,
+   "t8": 0.0287545
+  },
+  {
+   "pair": "afqt+income",
+   "q": 0.05,
+   "empirical": 0.0078294910830796,
+   "count": 18,
+   "independent": 0.0025000000000000005,
+   "gaussian": 0.008862,
+   "t4": 0.013618,
+   "t8": 0.0113995
+  },
+  {
+   "pair": "afqt+fit",
+   "q": 0.2,
+   "empirical": 0.050456720313179645,
+   "count": 116,
+   "independent": 0.04000000000000001,
+   "gaussian": 0.044703,
+   "t4": 0.0514635,
+   "t8": 0.048087
+  },
+  {
+   "pair": "afqt+fit",
+   "q": 0.1,
+   "empirical": 0.012179208351457155,
+   "count": 28,
+   "independent": 0.010000000000000002,
+   "gaussian": 0.0119205,
+   "t4": 0.0183625,
+   "t8": 0.015172
+  },
+  {
+   "pair": "afqt+fit",
+   "q": 0.05,
+   "empirical": 0.003044802087864289,
+   "count": 7,
+   "independent": 0.0025000000000000005,
+   "gaussian": 0.0032025,
+   "t4": 0.0072155,
+   "t8": 0.005281
+  },
+  {
+   "pair": "height+income",
+   "q": 0.2,
+   "empirical": 0.03218790778599391,
+   "count": 74,
+   "independent": 0.04000000000000001,
+   "gaussian": 0.0448285,
+   "t4": 0.0517525,
+   "t8": 0.048269
+  },
+  {
+   "pair": "height+income",
+   "q": 0.1,
+   "empirical": 0.012179208351457155,
+   "count": 28,
+   "independent": 0.010000000000000002,
+   "gaussian": 0.012126,
+   "t4": 0.0184245,
+   "t8": 0.015379
+  },
+  {
+   "pair": "height+income",
+   "q": 0.05,
+   "empirical": 0.0026098303610265334,
+   "count": 6,
+   "independent": 0.0025000000000000005,
+   "gaussian": 0.003296,
+   "t4": 0.007359,
+   "t8": 0.0053765
+  },
+  {
+   "pair": "height+fit",
+   "q": 0.2,
+   "empirical": 0.04132231404958678,
+   "count": 95,
+   "independent": 0.04000000000000001,
+   "gaussian": 0.0445435,
+   "t4": 0.051412,
+   "t8": 0.047899
+  },
+  {
+   "pair": "height+fit",
+   "q": 0.1,
+   "empirical": 0.013919095258808177,
+   "count": 32,
+   "independent": 0.010000000000000002,
+   "gaussian": 0.0116985,
+   "t4": 0.0181875,
+   "t8": 0.0150225
+  },
+  {
+   "pair": "height+fit",
+   "q": 0.05,
+   "empirical": 0.002174858634188778,
+   "count": 5,
+   "independent": 0.0025000000000000005,
+   "gaussian": 0.003116,
+   "t4": 0.007279,
+   "t8": 0.0051645
+  },
+  {
+   "pair": "income+fit",
+   "q": 0.2,
+   "empirical": 0.03566768160069596,
+   "count": 82,
+   "independent": 0.04000000000000001,
+   "gaussian": 0.041483,
+   "t4": 0.048256,
+   "t8": 0.0449785
+  },
+  {
+   "pair": "income+fit",
+   "q": 0.1,
+   "empirical": 0.008699434536755112,
+   "count": 20,
+   "independent": 0.010000000000000002,
+   "gaussian": 0.010503,
+   "t4": 0.017005,
+   "t8": 0.01386
+  },
+  {
+   "pair": "income+fit",
+   "q": 0.05,
+   "empirical": 0.002174858634188778,
+   "count": 5,
+   "independent": 0.0025000000000000005,
+   "gaussian": 0.002755,
+   "t4": 0.00673,
+   "t8": 0.0046875
+  }
+ ],
+ "triples": [
+  {
+   "traits": "afqt+height+income",
+   "q": 0.25,
+   "empirical": 0.031752936059156155,
+   "count": 73,
+   "independent": 0.015625,
+   "gaussian": 0.0311855,
+   "t4": 0.0360815,
+   "t8": 0.033617
+  },
+  {
+   "traits": "afqt+height+income",
+   "q": 0.2,
+   "empirical": 0.016093953892996955,
+   "count": 37,
+   "independent": 0.008000000000000002,
+   "gaussian": 0.01835,
+   "t4": 0.0236445,
+   "t8": 0.0209935
+  },
+  {
+   "traits": "afqt+height+income",
+   "q": 0.1,
+   "empirical": 0.0039147455415398,
+   "count": 9,
+   "independent": 0.0010000000000000002,
+   "gaussian": 0.0036285,
+   "t4": 0.007471,
+   "t8": 0.005506
+  },
+  {
+   "traits": "afqt+height+fit",
+   "q": 0.25,
+   "empirical": 0.029143105698129623,
+   "count": 67,
+   "independent": 0.015625,
+   "gaussian": 0.0211825,
+   "t4": 0.0259835,
+   "t8": 0.0234685
+  },
+  {
+   "traits": "afqt+height+fit",
+   "q": 0.2,
+   "empirical": 0.014354066985645933,
+   "count": 33,
+   "independent": 0.008000000000000002,
+   "gaussian": 0.0116265,
+   "t4": 0.016414,
+   "t8": 0.013941
+  },
+  {
+   "traits": "afqt+height+fit",
+   "q": 0.1,
+   "empirical": 0.0034797738147020443,
+   "count": 8,
+   "independent": 0.0010000000000000002,
+   "gaussian": 0.00181,
+   "t4": 0.004772,
+   "t8": 0.003238
+  },
+  {
+   "traits": "afqt+income+fit",
+   "q": 0.25,
+   "empirical": 0.03218790778599391,
+   "count": 74,
+   "independent": 0.015625,
+   "gaussian": 0.0285645,
+   "t4": 0.0334955,
+   "t8": 0.0311475
+  },
+  {
+   "traits": "afqt+income+fit",
+   "q": 0.2,
+   "empirical": 0.020008699434536755,
+   "count": 46,
+   "independent": 0.008000000000000002,
+   "gaussian": 0.0166185,
+   "t4": 0.021855,
+   "t8": 0.019174
+  },
+  {
+   "traits": "afqt+income+fit",
+   "q": 0.1,
+   "empirical": 0.003044802087864289,
+   "count": 7,
+   "independent": 0.0010000000000000002,
+   "gaussian": 0.0030085,
+   "t4": 0.0067885,
+   "t8": 0.0048155
+  },
+  {
+   "traits": "height+income+fit",
+   "q": 0.25,
+   "empirical": 0.0234884732492388,
+   "count": 54,
+   "independent": 0.015625,
+   "gaussian": 0.019334,
+   "t4": 0.0237825,
+   "t8": 0.0215615
+  },
+  {
+   "traits": "height+income+fit",
+   "q": 0.2,
+   "empirical": 0.010004349717268378,
+   "count": 23,
+   "independent": 0.008000000000000002,
+   "gaussian": 0.0103135,
+   "t4": 0.0149665,
+   "t8": 0.0126605
+  },
+  {
+   "traits": "height+income+fit",
+   "q": 0.1,
+   "empirical": 0.0013049151805132667,
+   "count": 3,
+   "independent": 0.0010000000000000002,
+   "gaussian": 0.0014745,
+   "t4": 0.0043165,
+   "t8": 0.0028185
+  },
+  {
+   "traits": "afqt+height+income+fit",
+   "q": 0.25,
+   "empirical": 0.01478903871248369,
+   "count": 34,
+   "independent": 0.00390625,
+   "gaussian": 0.009351,
+   "t4": 0.012503,
+   "t8": 0.010864
+  },
+  {
+   "traits": "afqt+height+income+fit",
+   "q": 0.2,
+   "empirical": 0.007394519356241845,
+   "count": 17,
+   "independent": 0.0016000000000000003,
+   "gaussian": 0.004569,
+   "t4": 0.007568,
+   "t8": 0.0060005
+  },
+  {
+   "traits": "afqt+height+income+fit",
+   "q": 0.1,
+   "empirical": 0.0013049151805132667,
+   "count": 3,
+   "independent": 0.00010000000000000002,
+   "gaussian": 0.0005015,
+   "t4": 0.002027,
+   "t8": 0.0011645
+  }
+ ]
+}
