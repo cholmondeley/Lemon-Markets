@@ -42,6 +42,23 @@ The page is a scrolling essay in five acts (hiring only for now). All five acts 
 | `test/model.test.js` | Simulation-vs-theory tests, including the Act I headline numbers. |
 | `docs/methodology.md` | Full math and code walkthrough, written for outside review. |
 
+## The dating page
+
+`dating.html` is the dating edition: seven acts (the move online, the attention market, the app funnel,
+who is left, the clock, the search, what to do) with a page-wide woman / man switch.
+
+| Path | What it is |
+| --- | --- |
+| `src/dating/model.js` | Single-stage models: attention market, commitment filter, McCall reservation value, search odds, copulas. No DOM. |
+| `src/dating/chain.js` | The chained model on one grid of people: who is single, the app funnel, search with first dates, mutual commitment, never-married cohorts. |
+| `src/dating/scenario.js` | The calibrated model assembled from the data; shared by the scripts and the page's worker. |
+| `src/dating/main.js`, `charts.js`, `worker.js`, `dating.css` | The page: figures, scrolling stories, playgrounds, the live-scenario worker. |
+| `scripts/dating/*.py` | Data aggregates (parquet, GSS, NSFG, ACS, NLSY97, digitized charts), run with `uv run`. |
+| `scripts/dating/sensitivity.mjs`, `chain.mjs`, `site-data.mjs` | Calibration and sweeps, the chained results, and the page's precomputed tables. |
+| `docs/dating/methodology.md`, `claims.md`, `sensitivity.md`, `results.md` | Methodology, the claim-by-claim source ledger, and the generated tables. |
+
+Regenerate everything with the commands at the end of `docs/dating/methodology.md`.
+
 ## Parameter names
 
 | On the page | In the model |

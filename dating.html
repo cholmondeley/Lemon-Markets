@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Lemon Market: Dating</title>
+<meta name="description" content="An explorable essay on why dating feels broken: the attention market on the apps, who is left single and why, the clock, the search math, and what actually moves your odds.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Domine:wght@500;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+</head>
+<body data-sex="woman">
+
+<header class="masthead">
+  <a class="brand display" href="#top"><span class="brand-mark" aria-hidden="true"></span>The Lemon Market: Dating</a>
+  <nav class="rail" aria-label="Acts">
+    <a class="rail-seg" data-act="act-1" href="#act-1"><b>I</b><span>Online</span></a>
+    <a class="rail-seg" data-act="act-2" href="#act-2"><b>II</b><span>Attention</span></a>
+    <a class="rail-seg" data-act="act-3" href="#act-3"><b>III</b><span>The funnel</span></a>
+    <a class="rail-seg" data-act="act-4" href="#act-4"><b>IV</b><span>Who's left</span></a>
+    <a class="rail-seg" data-act="act-5" href="#act-5"><b>V</b><span>The clock</span></a>
+    <a class="rail-seg" data-act="act-6" href="#act-6"><b>VI</b><span>The search</span></a>
+    <a class="rail-seg" data-act="act-7" href="#act-7"><b>VII</b><span>What to do</span></a>
+  </nav>
+  <div class="sex-switch" role="group" aria-label="Read as">
+    <button type="button" data-sex="woman" class="active">Woman</button>
+    <button type="button" data-sex="man">Man</button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="hero-field" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <p class="eyebrow">An explorable essay in seven acts</p>
+      <h1 class="display">The <span class="lemon-underline">Lemon</span> Market: Dating</h1>
+      <p class="dek">Why dating feels broken for almost everyone, why the people still single are so often the ones you don't want, and what actually moves your odds.</p>
+      <p class="sex-lead">Read it as</p>
+      <div class="sex-switch" role="group" aria-label="Read as">
+        <button type="button" data-sex="woman" class="active">A woman</button>
+        <button type="button" data-sex="man">A man</button>
+      </div>
+      <br>
+      <a class="scroll-cue" href="#prologue"><span>Scroll to begin</span><i aria-hidden="true"></i></a>
+    </div>
+  </section>
+
+  <section class="prose" id="prologue">
+    <p class="lede float-in">Marriage is falling off a cliff. Of American women born in the 1940s, nearly nine in ten were married by 30. Of women born in the 1990s, about half.</p>
+  </section>
+  <div class="fig float-in">
+    <div class="panel">
+      <h4>Share of US women married by age 25 and 30, by decade of birth</h4>
+      <p class="sub">Each generation marries later and less. The 2000s cohort has only reached 24.</p>
+      <div data-fig="cohorts"></div>
+      <p class="src">Census data by birth cohort (1950 read by hand; 1960-2000 real data), read from the chart at ages 25 and 30.</p>
+    </div>
+  </div>
+  <section class="prose">
+    <p class="float-in">And the people still trying are miserable in opposite ways. Among Americans who used a dating app in the past year, <strong class="t-women">54%</strong> of women say they are at least sometimes overwhelmed by how many messages they get. <strong class="t-men">64%</strong> of men say they feel insecure about how few they get (Pew Research Center, 2023).</p>
+    <p class="float-in">It looks like a paradox: too much attention on one side, too little on the other, and fewer weddings than ever. It isn't. Dating has become a <em>lemon market</em>, the same way used cars and hiring are. The people who are easiest to find are, disproportionately, the ones nobody chose to keep, and the tools that made finding people easy made that worse.</p>
+    <p class="float-in">This essay shows that it's true, why it's true, lets you play with the numbers yourself, and ends with what actually moves your odds. The switch at the top sets whose side you're reading from; most of the numbers are different for <span class="t-women">women</span> and <span class="t-men">men</span>.</p>
+  </section>
+
+  <!-- ================= ACT I ================= -->
+  <section class="act" id="act-1">
+    <header class="act-head float-in">
+      <span class="act-num display" aria-hidden="true">I</span>
+      <div>
+        <p class="eyebrow">Act I &middot; The shift</p>
+        <h2 class="display">Everyone moved online</h2>
+        <p class="dek">In twenty years, apps went from nothing to the way most couples meet. Every other channel shrank.</p>
+      </div>
+    </header>
+    <div class="fig float-in">
+      <div class="panel">
+        <h4>How heterosexual couples met, by the year they met</h4>
+        <p class="sub">Share of couples. Hover to compare years.</p>
+        <div data-fig="channels"></div>
+        <p class="src">Rosenfeld, Thomas &amp; Hausen (2019), <em>PNAS</em>, How Couples Meet and Stay Together 2009 and 2017; values read from the published chart.</p>
+      </div>
+    </div>
+    <section class="prose">
+      <p class="float-in">In 2017, <strong>39%</strong> of new couples met online. Meeting through friends, the top channel for half a century, fell from a third of couples to a fifth. Family, school, church and neighbors all collapsed.</p>
+      <p class="float-in">It's not hard to see why. Apps give you the deepest bench that has ever existed. Single women in their twenties are about <strong><span data-v="bench.singleWomen2029PerThousand" data-f="num">52</span> in every 1,000 American adults</strong>. On a good day out in the world you might cross paths with a handful. On an app you can see hundreds before lunch, every one of them apparently single and in your age range.</p>
+      <p class="float-in">And with hundreds on tap, standards rise to match. Here is what "not being picky" does to the bench, from the author's Dating Calculator, which counts real Americans from census data:</p>
+    </section>
+    <div class="fig float-in">
+      <div class="fig-row">
+        <div class="panel" data-for="woman"><h4 data-fig-title="calc0"></h4><p class="sub">Single men in the New York metro matching each set of standards (bars on a log scale).</p><div data-fig="calc0"></div></div>
+        <div class="panel" data-for="man"><h4 data-fig-title="calc1"></h4><p class="sub">Single women in the San Francisco metro matching each set of standards (bars on a log scale).</p><div data-fig="calc1"></div></div>
+        <div class="panel"><h4>What the bench looks like</h4><p class="sub">Single people in the core age bands, per 1,000 adults.</p><div data-fig="bench"></div></div>
+      </div>
+      <p class="src" style="max-width:1000px;margin:10px auto 0">Dating Calculator (github.com/cholmondeley/Dating-Calculator): ACS persons with NHANES-imputed body measures.</p>
+    </div>
+    <section class="prose">
+      <p class="float-in">That is the first half of the problem: everyone is in the same giant market, looking at the same apparently endless supply, with standards set by the most attractive profiles they've seen. The second half is what that market does to attention.</p>
+    </section>
+  </section>
+
+  <!-- ================= ACT II ================= -->
+  <section class="act" id="act-2">
+    <header class="act-head float-in">
+      <span class="act-num display" aria-hidden="true">II</span>
+      <div>
+        <p class="eyebrow">Act II &middot; The attention market</p>
+        <h2 class="display">A power law in likes</h2>
+        <p class="dek">More men than women, women who like a sliver of what they see, and a feed that shows popular profiles more. Put together, a few men get most of the attention.</p>
+      </div>
+    </header>
+
+    <div class="scrolly" data-scrolly>
+      <figure class="stage">
+        <div class="stage-top"><span class="stage-title" data-steps="0">Who is on the apps</span><span class="stage-title" data-steps="1">How picky each side is</span><span class="stage-title" data-steps="2">Likes received</span><span class="stage-title" data-steps="3">Who gets the likes</span><span class="stage-title" data-steps="4">Pickiness, not agreement</span></div>
+        <div class="layers">
+          <div class="layer" data-steps="0"><div data-fig="ratio"></div></div>
+          <div class="layer" data-steps="1"><h4>Share of the profiles each person likes</h4><p class="sub">Distribution across users, 1-point bins.</p><div class="fig-row"><div><div class="sub" style="margin:0"><b class="t-women">Women</b> (median 4.5%)</div><div data-fig="likeW"></div></div><div><div class="sub" style="margin:0"><b class="t-men">Men</b> (median 26%)</div><div data-fig="likeM"></div></div></div><p class="src">Paul, "What really happens inside a dating app" (blog.luap.info, 2025), digitized.</p></div>
+          <div class="layer" data-steps="2"><h4>Share of the women shown a man's profile who like him</h4><p class="sub">Distribution across men. The median man is liked by about 1 in 20.</p><div data-fig="recvM"></div><p class="src">Same source, digitized. For women the same measure centers on 38%.</p></div>
+          <div class="layer" data-steps="3"><h4>Share of all likes going to the top men and women</h4><p class="sub">Hinge's figures, and the model fitted to them.</p><div data-fig="hinge"></div></div>
+          <div class="layer" data-steps="4"><h4>Top 5% of men's share of likes</h4><p class="sub">If women liked more profiles, or agreed less about who is attractive.</p><div data-fig="counterfactual"></div></div>
+        </div>
+      </figure>
+      <div class="steps">
+        <div class="step"><div class="card">
+          <p>Start with who's on the apps. Among 18-to-29-year-olds using them, <strong>73% are men</strong> (Pew, 2022). That's <strong>2.7 men for every woman</strong>.</p>
+          <p>Over a whole year the ratio is gentler, about 1.5 to 1, because women try the apps and leave faster. But at any moment, the men far outnumber the women.</p>
+        </div></div>
+        <div class="step"><div class="card">
+          <p>Now how picky each side is. The median woman likes <strong class="t-women">4.5%</strong> of the profiles she's shown. The median man likes <strong class="t-men">26%</strong>.</p>
+          <p>Put those together with the ratio and the average woman gets about <strong>a hundred likes a day</strong>. If she has time for five conversations, she can answer the top 5%. Her standards didn't get crazy for no reason; the volume made them.</p>
+        </div></div>
+        <div class="step"><div class="card">
+          <p>This is what it looks like from the men's side. The median man is liked by about <strong>5%</strong> of the women who see him. A long right tail of men is liked by 20%, 30%, more.</p>
+          <p>The tail falls off like a power law: the density drops with roughly the 2.2 power of the like rate.</p>
+          <p class="note">For women the same chart is a broad hump centered on 38%. Men like broadly; the median woman is liked by more than a third of the men who see her.</p>
+        </div></div>
+        <div class="step"><div class="card">
+          <p>On Hinge, the top <strong>5%</strong> of men get <strong>41%</strong> of all likes, the top 10% get 58%, and the bottom half of men share 4%.</p>
+          <p>Our model reproduces this from the like rates above plus one more ingredient: the feed shows popular profiles more. Fitted to Hinge's top-5% share alone, it gets the rest right: 17% for the top 1%, 57% for the top 10%.</p>
+          <p class="note">About half of the inequality is taste; half is the feed. If every profile were shown equally, the top 5% of men would get 18% of likes. Offline, the same shape holds: among men 25-45, the top 5% by lifetime partners account for <span data-v="gssConcentration.men.top_5" data-f="pct">40%</span> of all partners (GSS).</p>
+        </div></div>
+        <div class="step"><div class="card card-quote">
+          <p class="pull display">It isn't that women all want the same man. It's that they like so few.</p>
+          <p>Men actually agree <em>more</em> about which women are attractive than women do about men (0.56 vs 0.48). But liking 4.5% of profiles turns moderate agreement into a steep tail. If men were that picky, the top 5% of women would get about half of all likes too.</p>
+        </div></div>
+      </div>
+    </div>
+
+    <section class="playground" id="play-2" aria-labelledby="play-2-title">
+      <header class="play-head float-in">
+        <p class="eyebrow">Try it yourself</p>
+        <h3 class="display" id="play-2-title">Build an attention market</h3>
+        <p>Change how picky women are, how much they agree about who's attractive, and how hard the feed pushes popular profiles. Watch how much of the attention the top men get.</p>
+      </header>
+      <div class="play-grid">
+        <div class="readouts" id="p2out"></div>
+        <div class="panel chart-panel"><h4>Likes received by men, from most to least liked</h4><p class="sub">Share of all likes held by the top X% of men. The diagonal would be perfect equality.</p><div id="p2chart"></div></div>
+        <div class="panel play-controls">
+          <div class="ctrl-group"><label for="p2like">Women's like rate <span class="readout mono" id="p2likeOut">×1</span></label><input type="range" id="p2like" min="0" max="100" value="40"><p class="help">Scales every woman's like rate. ×1 is today (median 4.5%).</p></div>
+          <div class="ctrl-group"><label for="p2rho">How much women agree <span class="readout mono" id="p2rhoOut">0.48</span></label><input type="range" id="p2rho" min="5" max="90" value="48"><p class="help">0 = everyone has their own taste; 1 = everyone agrees. Fitted: 0.48.</p></div>
+          <div class="ctrl-group"><label for="p2kappa">Feed tilt <span class="readout mono" id="p2kappaOut">0.74</span></label><input type="range" id="p2kappa" min="0" max="150" value="74"><p class="help">How much more often popular profiles are shown. 0 = everyone shown equally; 0.74 fits Hinge.</p></div>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ================= ACT III ================= -->
+  <section class="act" id="act-3">
+    <header class="act-head float-in">
+      <span class="act-num display" aria-hidden="true">III</span>
+      <div>
+        <p class="eyebrow">Act III &middot; The funnel</p>
+        <h2 class="display">Most men get no dates at all</h2>
+        <p class="dek">Likes are not dates. Women decide who gets a first date, most women on the apps aren't dating that year, and those who are give their dates to the same men.</p>
+      </div>
+    </header>
+
+    <div class="scrolly" data-scrolly>
+      <figure class="stage">
+        <div class="stage-top"><span class="stage-title" data-steps="0">The backward funnel</span><span class="stage-title" data-steps="1 2">A year on the apps, for men</span><span class="stage-title" data-steps="3">A best case</span></div>
+        <div class="layers">
+          <div class="layer" data-steps="0"><h4>Straight single men 18-35 (NSFG)</h4><p class="sub">Two waves of the National Survey of Family Growth.</p><div data-fig="nsfg"></div></div>
+          <div class="layer" data-steps="1"><h4>Chance a man on the apps gets no first date all year</h4><p class="sub">By his appeal (what a swipe measures) among all men. Model, calibrated to NSFG.</p><div data-fig="noDate"></div></div>
+          <div class="layer" data-steps="2"><h4>First dates a year, by his appeal</h4><p class="sub">Model. Bars are shares of all first dates; labels are dates per man. Bands are percentiles among all men; the top 10% of all men are only about 5% of single men.</p><div data-fig="datesBand"></div></div>
+          <div class="layer" data-steps="3"><h4>One man's Hinge funnel, three years</h4><p class="sub">A 35-year-old, 5'10" startup founder in New York.</p><div data-fig="lana"></div><p class="src">Lana Li, "The Infinite Pussy Glitch: the data" (lovemelikearobot.substack.com).</p></div>
+        </div>
+      </figure>
+      <div class="steps">
+        <div class="step"><div class="card">
+          <p>Start from the end of the funnel. In 2022-23, <strong><span data-v="nsfg.1.men.single_partners_share.0" data-f="pct">47%</span></strong> of straight single men aged 18-35 had <strong>no sexual partner at all</strong> in the past year, up from <span data-v="nsfg.0.men.single_partners_share.0" data-f="pct">28%</span> in 2017-19.</p>
+          <p>Only <strong><span data-v="nsfg.1.men.app_sex_single" data-f="pct1">6.1%</span></strong> had sex with anyone they met online. Those who did averaged <strong><span data-v="nsfg.1.men.app_sex_mean_partners" data-f="num">3.4</span> partners</strong>, against about one for everyone else.</p>
+        </div></div>
+        <div class="step"><div class="card">
+          <p>Work backwards and the funnel falls out. Each woman who is actively dating has about a dozen first dates a year and gives them to the best-looking of her matches. But only about <strong>1 in 5</strong> women on the apps is actually dating in a given year; the rest browse, swipe and chat.</p>
+          <p>The result: <strong><span data-v="funnel.all.noDate" data-f="pct">60%</span></strong> of men on the apps get <strong>no first date in a year</strong>. For the bottom half of men by appeal it's <span data-v="funnel.bands.0.noDate" data-f="pct">84%</span>.</p>
+          <p class="note">Calibrated so the model reproduces NSFG: women with any app sex average 2.8 partners, men 3.4.</p>
+        </div></div>
+        <div class="step"><div class="card">
+          <p>The dates that do happen go to the top. The top <strong>10%</strong> of men on the apps get <strong><span data-v="funnel.top.top10" data-f="pct">66%</span></strong> of all first dates, and the top 20% get <span data-v="funnel.top.top20" data-f="pct">82%</span>.</p>
+          <p>That's the experience of most men on the apps: not rejection after dates, but no dates to be rejected from.</p>
+        </div></div>
+        <div class="step"><div class="card">
+          <p>For a sense of the best case: a man above average in looks, a founder with a name-brand degree, in New York. Over three years he received <strong>2,031 likes</strong> and matched with 345 women. That became <strong>57 meetup attempts</strong>, about 19 a year.</p>
+          <p>He is in the best market that exists for a man looking for educated women in their twenties. Most men are not.</p>
+        </div></div>
+      </div>
+    </div>
+
+    <section class="playground" id="play-3" aria-labelledby="play-3-title">
+      <header class="play-head float-in">
+        <p class="eyebrow">Try it yourself</p>
+        <h3 class="display" id="play-3-title">Your year on the apps</h3>
+        <p data-for="man">Set your appeal, how you rank among all men on what a swipe measures (looks, height, photos, job line), and see a typical year.</p>
+        <p data-for="woman">Set your appeal among all women and see a typical year: how many likes you send, how many men match with you, how many you have time to date.</p>
+      </header>
+      <div class="play-grid">
+        <div class="readouts" id="p3out"></div>
+        <div class="panel play-controls"><div class="ctrl-group"><label for="p3u">Your appeal percentile <span class="readout mono" id="p3uOut">50th</span></label><input type="range" id="p3u" min="1" max="99" value="50"><p class="help">50th = median. Appeal here is the consensus a swipe measures, not your worth as a partner.</p></div></div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ================= ACT IV ================= -->
+  <section class="act" id="act-4">
+    <header class="act-head float-in">
+      <span class="act-num display" aria-hidden="true">IV</span>
+      <div>
+        <p class="eyebrow">Act IV &middot; The lemon market</p>
+        <h2 class="display">Who's left</h2>
+        <p class="dek">The men everyone swipes on are the ones least likely to still be single for a reason you'd want. Nobody has to be lying for this to happen.</p>
+      </div>
+    </header>
+
+    <div class="scrolly" data-scrolly>
+      <figure class="stage">
+        <div class="stage-top"><span class="stage-title" data-steps="0">The commitment filter</span><span class="stage-title" data-steps="1">Will he commit?</span><span class="stage-title" data-steps="2">Still single after N dates</span><span class="stage-title" data-steps="3">The men who are winning</span></div>
+        <div class="layers">
+          <div class="layer" data-steps="0"><h4>Share of men on an app looking for something casual</h4><p class="sub">By how attractive women rated them, least to most (8 groups).</p><div data-fig="intent"></div><p class="src">Dots: the app founder's data (blog.luap.info). Line: the model, with no difference in intent by looks, only in who pairs off.</p></div>
+          <div class="layer" data-steps="1"><h4>Chance a man commits to a woman he has dated for months</h4><p class="sub">By his appeal (rows) and hers (columns). Model; calibrated to the census.</p><div data-fig="commitGrid"></div></div>
+          <div class="layer" data-steps="2"><h4>Chance a man is still single after N first dates</h4><p class="sub">Model, by his appeal, against a naive 40% chance per woman.</p><div data-fig="stillSingle"></div></div>
+          <div class="layer" data-steps="3"><h4>Married men who have ever cheated, by lifetime partners</h4><p class="sub">GSS 2000-2024, quintiles of lifetime female partners.</p><div data-fig="cheat"></div></div>
+        </div>
+      </figure>
+      <div class="steps">
+        <div class="step"><div class="card">
+          <p>Inside one dating app, the founder found that the more attractive women rated a man, the more likely he was on the app for something casual: about <strong>23%</strong> of the least attractive men, <strong>52%</strong> of the most attractive.</p>
+          <p>You don't need hot men to be different people to get this. Serious men pair off when they meet someone they want; casual men mostly don't. The more matches a man gets, the faster a serious one gets taken off the market, and the more the ones still there are the ones who aren't looking to stay.</p>
+          <p class="note">Our model assumes the same share of casual men at every level of looks and reproduces the founder's gradient from selection alone.</p>
+        </div></div>
+        <div class="step"><div class="card">
+          <p>Even the serious ones rarely commit, because abundance raises the bar. A man who can open the app and find someone new in an hour has every reason to wait for someone better. Chipped nail polish, a mismatch on the gym, the wrong answer about Heidegger: out.</p>
+          <p>A <strong>90th-percentile</strong> man commits to a median woman he has dated for months only about <strong><span data-v="commitGrid.3.commits.1" data-f="pct">11%</span></strong> of the time.</p>
+          <p class="note">Both people have to commit. A serious median man commits to a median woman about 30% of the time, fitted so the model matches the census: 34% of never-married women aged 25 are married by 30.</p>
+        </div></div>
+        <div class="step"><div class="card">
+          <p>So he goes on first date after first date. If each woman had a 40% chance of being the one, a man would be off the market within a handful of dates. In the model, a first date ends in commitment for between <strong><span data-v="perDate.5.p" data-f="pct1">0.3%</span></strong> of the time for the top 1% of men and about <span data-v="perDate.1.p" data-f="pct">4%</span> for the median man.</p>
+          <p>After twenty first dates, most men are still single, and the more desirable the man, the likelier he is.</p>
+        </div></div>
+        <div class="step"><div class="card">
+          <p>And the men with the most options are not, on average, better partners. In the General Social Survey, married men in the top fifth by lifetime partners are about ten times as likely to have cheated as those in the bottom fifth: <strong><span data-v="cheating.quintiles.4.cheated" data-f="pct">41%</span></strong> against <span data-v="cheating.quintiles.0.cheated" data-f="pct">4%</span>.</p>
+          <p class="note">Among college men, those in the top 10% on both income and occupational prestige have cheated 22% of the time vs 16.5% for college men overall (n = 191).</p>
+        </div></div>
+        <div class="step"><div class="card card-quote">
+          <p class="pull display">The pool doesn't lie about any one person. It lies about the average.</p>
+          <p>Men who are worse partners than they look get left sooner and cycle back. Men who are what they look like get taken. What's left, at any moment, is tilted toward exactly the men you'd want to avoid.</p>
+        </div></div>
+      </div>
+    </div>
+
+    <section class="playground" id="play-4" aria-labelledby="play-4-title">
+      <header class="play-head float-in">
+        <p class="eyebrow">Try it yourself</p>
+        <h3 class="display" id="play-4-title">Run the commitment filter</h3>
+        <p>How many men are casual, and how slowly casual men pair off. See who's still single, by appeal.</p>
+      </header>
+      <div class="play-grid">
+        <div class="panel chart-panel"><h4>Share of single men who are casual, by appeal</h4><p class="sub">Grey line: the share among all men.</p><div id="p4chart"></div></div>
+        <div class="panel play-controls">
+          <div class="ctrl-group"><label for="p4b">Casual share of all men <span class="readout mono" id="p4bOut">20%</span></label><input type="range" id="p4b" min="5" max="50" value="20"></div>
+          <div class="ctrl-group"><label for="p4kc">How fast casual men pair off <span class="readout mono" id="p4kcOut">10%</span></label><input type="range" id="p4kc" min="0" max="60" value="10"><p class="help">As a share of the rate serious men do. Fitted: 10%.</p></div>
+          <div class="ctrl-group"><label for="p4x">How fast serious men pair off <span class="readout mono" id="p4xOut">1.6×</span></label><input type="range" id="p4x" min="10" max="500" value="165"><p class="help">For the median man, relative to how fast relationships end. Fitted: 1.65.</p></div>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ================= ACT V ================= -->
+  <section class="act" id="act-5">
+    <header class="act-head float-in">
+      <span class="act-num display" aria-hidden="true">V</span>
+      <div>
+        <p class="eyebrow">Act V &middot; The clock</p>
+        <h2 class="display">The clock runs on both sides</h2>
+        <p class="dek">Women peak early and fast. Men who stay single long enough get selected, too.</p>
+      </div>
+    </header>
+
+    <div class="scrolly" data-scrolly>
+      <figure class="stage">
+        <div class="stage-top"><span class="stage-title" data-steps="0">Interest by age</span><span class="stage-title" data-steps="1">What the body is doing</span><span class="stage-title" data-steps="2">The men who are left</span><span class="stage-title" data-steps="3">Her odds by age</span></div>
+        <div class="layers">
+          <div class="layer" data-steps="0"><h4>Share of the opposite sex interested, by age, relative to the peak</h4><p class="sub">OkCupid, digitized.</p><div data-fig="interest"></div><p class="src">Rudder, OkTrends / <em>Dataclysm</em> (2014).</p></div>
+          <div class="layer" data-steps="1"><h4>Fecundity used and WHR by age</h4><p class="sub">Share of lifetime fecundity used since 20 (Geruso et al. 2023), and share of women at WHR ≤ 0.74.</p><div data-fig="body"></div></div>
+          <div class="layer" data-steps="2"><h4>Never-married men, by age</h4><p class="sub">Model fitted to the census never-married curve: share casual and average appeal percentile.</p><div data-fig="nevermarried"></div></div>
+          <div class="layer" data-steps="3"><h4>Chance a woman finds a man who commits, within five years</h4><p class="sub">By the age she starts looking. Model vs the census.</p><div data-fig="herAge"></div></div>
+        </div>
+      </figure>
+      <div class="steps">
+        <div class="step"><div class="card">
+          <p>Men of every age, from 20 to 50, find women in their early twenties the most attractive (OkCupid). Interest in women peaks at 22. By 30 it's at about <strong>65%</strong> of the peak, by 35 <strong>38%</strong>, by 40 <strong>23%</strong>.</p>
+          <p>This is the Wall, measured. Men's curve peaks later, at 26, and falls more slowly.</p>
+        </div></div>
+        <div class="step"><div class="card">
+          <p>The two things men respond to first line up with fertility. Counting from 20, a woman has used about <strong>69%</strong> of her lifetime fecundity by 30 and 87% by 35 (Geruso et al. 2023).</p>
+          <p>And waist-to-hip ratio, the other strong signal, goes the same way. Only about 5% of women at 20 have a WHR of 0.74 or lower; by 30 it's 2%, by 40 about 1%. Nearly half of women in their twenties are already at 0.85 or above.</p>
+        </div></div>
+        <div class="step"><div class="card">
+          <p>For men the clock runs through selection. Each year, the men women want most get taken first. Among never-married men, the casual share rises from <strong>23%</strong> at 25 to about <strong>60%</strong> at 45, and average appeal falls from the 46th to the 30th percentile.</p>
+          <p>The census agrees: never-married men in their forties earn a median <strong>$<span data-v="age.neverMarried4049.men_never.median_earnings" data-f="k">36</span>k</strong> against $<span data-v="age.neverMarried4049.men_ever.median_earnings" data-f="k">67</span>k for men who married, and fewer have degrees. A man in his forties who has never married usually has a reason, and women know it.</p>
+        </div></div>
+        <div class="step"><div class="card">
+          <p>Put her clock and his selection together. A median woman who starts looking at 22 has about a <strong><span data-v="herByAge.0.any" data-f="pct">47%</span></strong> chance of a man who commits within five years. Starting at 30: <strong><span data-v="herByAge.4.any" data-f="pct">19%</span></strong>. At 36: <span data-v="herByAge.7.any" data-f="pct">14%</span>.</p>
+          <p class="note">The model falls short of the census after 28 (grey line): real women in their thirties date older and divorced men, meet people offline, and choose less on looks. Act VII shows how much that last one helps.</p>
+        </div></div>
+      </div>
+    </div>
+
+    <section class="playground" id="play-5" aria-labelledby="play-5-title">
+      <header class="play-head float-in">
+        <p class="eyebrow">Try it yourself</p>
+        <h3 class="display" id="play-5-title">Your clock</h3>
+        <p data-for="woman">When you start, where you rank, and how much older you're willing to go. Five years of searching, two men properly dated a year.</p>
+        <p data-for="man">From the woman's side, which is the side that decides: when she starts, where she ranks, and how wide an age range she's open to. Switch to "Woman" at the top to read it as her.</p>
+      </header>
+      <div class="play-grid">
+        <div class="readouts" id="p5out"></div>
+        <div class="panel play-controls">
+          <div class="ctrl-group"><label for="p5age">Age she starts <span class="readout mono" id="p5ageOut">25</span></label><input type="range" id="p5age" min="21" max="38" value="25"></div>
+          <div class="ctrl-group"><label for="p5v">Her appeal percentile <span class="readout mono" id="p5vOut">50th</span></label><input type="range" id="p5v" min="5" max="99" value="50"></div>
+          <div class="ctrl-group"><label for="p5gap">How much older the men are <span class="readout mono" id="p5gapOut">+2 years</span></label><input type="range" id="p5gap" min="0" max="15" value="2"></div>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ================= ACT VI ================= -->
+  <section class="act" id="act-6">
+    <header class="act-head float-in">
+      <span class="act-num display" aria-hidden="true">VI</span>
+      <div>
+        <p class="eyebrow">Act VI &middot; The search</p>
+        <h2 class="display">The rarity you are vs the rarity you can find</h2>
+        <p class="dek">Even at the very top, you can only evaluate a handful of people, you can't see who they are up front, and good traits don't come bundled.</p>
+      </div>
+    </header>
+    <section class="prose">
+      <p class="float-in">Let's catapult you to the top. You're a "666" man: six feet, six figures, six-pack, one of the few men who can swipe on anyone and get dates three times a week. Or you're a 1-in-100 woman. Whatever you are, you are rare.</p>
+      <p class="float-in">Now try to find someone as rare as you. "Wife" is a much higher bar than "would." You want someone attractive, but also smart, conscientious, kind, good with kids, from a good family, compatible on how you fight and what you want. Finding out takes months to years per person. Over the decade most people spend on this, you can properly evaluate somewhere between <strong>4 and 20 people</strong>.</p>
+      <p class="float-in">Three things work against you. First, good traits barely travel together. In measured data on American men (NLSY97), height and income correlate at <strong>0.06</strong>, fitness and income at 0.02, IQ and height at 0.09. Only IQ and income move together much (0.38). So "top 10% on three things" is about 1 in 1,000, and each thing you add multiplies the rarity.</p>
+      <p class="float-in">Second, you can't see who someone is up front. Strangers judge personality with an accuracy of about <strong>0.17</strong>; after a first date, maybe 0.25; friends who've known someone for years, about 0.47 (Connelly &amp; Ones, 2010). A profile shows you looks, not character.</p>
+    </section>
+    <div class="fig float-in">
+      <div class="panel">
+        <h4>Chance that 20 people evaluated from the top 1% of what you can read up front include a 1-in-N partner</h4>
+        <p class="sub">By how well the up-front read tracks the qualities you care about. "Perfect" is the author's original arithmetic.</p>
+        <div data-fig="searchOdds"></div>
+        <p class="src">Model: true quality and the up-front read are jointly normal with correlation r (Gaussian copula, checked against NLSY97's measured joint tails).</p>
+      </div>
+    </div>
+    <section class="prose">
+      <p class="float-in">With a perfect read, twenty evaluations from the top 1% find a 1-in-1,000 partner <strong>88%</strong> of the time and a 1-in-10,000 partner 18% of the time. With a realistic read of 0.5, a "top 1%" pool is only 13% truly top 1%, and the odds fall to 37% and 7%.</p>
+      <p class="float-in">Third, the person you want has to want you back, and the rarer they are, the more options they have. Put it all together:</p>
+    </section>
+    <div class="fig float-in">
+      <div class="panel" data-for="woman">
+        <h4>Her odds over five years from 25, by her appeal</h4>
+        <p class="sub">A man who commits, one who's also in the top 10 / 5 / 1% on quality, and one at least as rare as she is.</p>
+        <div data-fig="herAppeal"></div>
+      </div>
+      <div class="panel" data-for="man">
+        <h4>His odds over five years, by his appeal</h4>
+        <p class="sub">A woman who commits, one who's also in the top 10 / 5 / 1% on quality, and one at least as rare as he is.</p>
+        <div data-fig="hisAppeal"></div>
+      </div>
+    </div>
+    <section class="prose">
+      <p class="float-in" data-for="woman">Appeal buys attention much faster than it buys commitment. A 99th-percentile woman gets six times the matches of a 10th-percentile woman, but she spends them on the best-looking men, who have the most options and commit least. She's 1 in 100, and she finds a committed man as rare as she is in <strong><span data-v="herByAppeal.5.equal" data-f="pct">8%</span></strong> of five-year searches.</p>
+      <p class="float-in" data-for="man">For men, appeal decides whether you're in the game at all: the bottom half of men average about one first date in five years. But past the 90th percentile, more appeal buys more dates, not a better partner, because you pick who to get serious with on first-date impressions. The top 1% of men find a committed woman as rare as they are in about <strong><span data-v="hisByAppeal.5.equal" data-f="pct">3%</span></strong> of five-year searches.</p>
+      <p class="float-in">Settling isn't optional. Pick the three things that matter most to you, accept average elsewhere, and decide early.</p>
+    </section>
+    <section class="playground" id="play-6" aria-labelledby="play-6-title">
+      <header class="play-head float-in">
+        <p class="eyebrow">Try it yourself</p>
+        <h3 class="display" id="play-6-title">The search calculator</h3>
+        <p>How many people you can properly evaluate, how well you can read them before you invest, and how rare a partner you're after.</p>
+      </header>
+      <div class="play-grid">
+        <div class="readouts" id="p6out"></div>
+        <div class="panel play-controls">
+          <div class="ctrl-group"><label for="p6n">People you properly evaluate <span class="readout mono" id="p6nOut">20</span></label><input type="range" id="p6n" min="1" max="40" value="20"></div>
+          <div class="ctrl-group"><label for="p6r">How well you read them up front <span class="readout mono" id="p6rOut">0.50</span></label><input type="range" id="p6r" min="5" max="100" value="50"><p class="help">Profile ~0.1-0.2; first date ~0.25; a friend's word ~0.45; 1.00 = perfect.</p></div>
+          <div class="ctrl-group"><label for="p6p">You only go deep with the top <span class="readout mono" id="p6pOut">1%</span></label><input type="range" id="p6p" min="0" max="100" value="33"><p class="help">Of everyone you could meet, by that up-front read.</p></div>
+          <div class="ctrl-group"><label for="p6k">"Top on every trait": traits <span class="readout mono" id="p6kOut">3</span> at top <span class="readout mono" id="p6qOut">10%</span></label><input type="range" id="p6k" min="1" max="6" value="3"><input type="range" id="p6q" min="1" max="50" value="10"></div>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ================= ACT VII ================= -->
+  <section class="act playbook" id="act-7">
+    <div class="playbook-inner">
+      <p class="eyebrow">Act VII &middot; What to do</p>
+      <h2 class="display">What actually moves your odds</h2>
+
+      <div data-for="woman">
+        <p class="sub-p">Everything here is five years of searching for a median woman, starting from the baseline: on the apps from 27, choosing like everyone else. Odds are for a man who commits, and one who is also in the top 10 / 5 / 1% on quality.</p>
+        <div class="panel"><div data-fig="levers"></div></div>
+        <ol class="rules">
+          <li><span class="rn display">1</span><div><b>Start early.</b> Starting at 23 instead of 27 is worth as much as anything else on this list. Your pull and your pool are both at their best.</div><p class="lift"><span class="lift-n mono" data-v="levers.1.any" data-f="pct">43%</span><span class="lift-c">any committed man, vs <strong data-v="levers.0.any" data-f="pct">27%</strong></span></p></li>
+          <li><span class="rn display">2</span><div><b>Get on GLP-1s and into the gym.</b> Waist drives about 70% of a good WHR, and a tirzepatide-sized waist loss plus glute work takes a median woman to the 97th percentile, into the WHR ≤ 0.74 tier.</div><p class="lift"><span class="lift-n mono" data-v="levers.8.any" data-f="pct">46%</span><span class="lift-c">any committed man; top 10%: <strong data-v="levers.8.top10" data-f="pct">17%</strong></span></p></li>
+          <li><span class="rn display">3</span><div><b>Widen the age range upward.</b> Older men have fewer options and commit more readily, and top earners marry later. For brides 18-22, a 10+ year gap makes a top-10%-income husband 4.4 times as likely.</div><p class="lift"><span class="lift-n mono" data-v="levers.3.any" data-f="pct">40%</span><span class="lift-c">with men up to 15 years older</span></p></li>
+          <li><span class="rn display">4</span><div><b>Give more men a real chance, and weigh looks less.</b> The best-looking men are the least likely to commit. Dating three men a year for months instead of two, and choosing less on looks, both help.</div><p class="lift"><span class="lift-n mono" data-v="levers.9.any" data-f="pct">52%</span><span class="lift-c">the app levers combined, from 27</span></p></li>
+          <li><span class="rn display">5</span><div><b>Get introduced.</b> A friend who has known a man for years reads him almost three times as well as his profile does, and the men friends introduce aren't the ones with endless options.</div><p class="lift"><span class="lift-n mono" data-v="levers.5.any" data-f="pct">34%</span><span class="lift-c">friends' introductions instead of the apps</span></p></li>
+        </ol>
+        <p class="sub-p" style="margin-top:22px">Everything together, from 23: <strong data-v="levers.11.any" data-f="pct">77%</strong> for a man who commits, <strong data-v="levers.11.top10" data-f="pct">27%</strong> for a top-10% one, three times the baseline.</p>
+
+        <h3 class="sub-h" id="millionaire">How to land a millionaire husband</h3>
+        <p class="sub-p">Count the women at each WHR tier and the men at each income and wealth level. Single women 22-29 at WHR ≤ 0.74 are about 1 in 25, and there are about as many of them as single men 28-42 earning $160k+ or worth $1.1M+. Under assortative matching on market value, that's who they can expect to reach.</p>
+        <div class="panel"><div data-fig="exchange"></div></div>
+        <div class="panel"><h4 style="margin:0 0 6px">What GLP-1s and the gym do to WHR</h4><p class="sub" style="margin:0 0 8px">One woman changes; her peers don't. Five-year odds from 25.</p><div data-fig="glp"></div><p class="method-note">Waist falls by ~12% (semaglutide 2.4 mg, STEP 1) or ~17% (tirzepatide 15 mg, SURMOUNT-1: −19.9 cm); hips by half as much in cm (assumed); glute work adds an inch (assumed). Appeal moves by 0.6 × the change in her WHR z-score.</p></div>
+        <div class="panel"><h4 style="margin:0 0 6px">The age gap buys reach</h4><p class="sub" style="margin:0 0 8px">Share of husbands in the top 10% of men by income, in marriages from the last five years, by the wife's age at marriage.</p><div data-fig="reach"></div><p class="method-note">ACS 2024. Husband income is measured now, so older husbands have had more time to earn; part of what a gap buys is an established man. Wives in recent top-1% marriages are 82-90% college graduates.</p></div>
+        <div class="panel"><h4 style="margin:0 0 6px">Where millionaires outnumber qualifying women</h4><p class="sub" style="margin:0 0 8px">Single women 22-29 at WHR ≤ 0.74 per single man 28-42 worth $1M+. Below 1, you have the leverage.</p><div data-fig="metrosW"></div></div>
+        <p class="sub-p">The recipe: get to WHR ≤ 0.74, finish a degree, start looking early, be open to a man 10 or more years older, and look where the millionaires outnumber you.</p>
+      </div>
+
+      <div data-for="man">
+        <p class="sub-p">The funnel is brutal for most men, and the levers are mostly about getting into it at all.</p>
+        <ol class="rules">
+          <li><span class="rn display">1</span><div><b>Raise your appeal; it decides whether you get dates.</b> The bottom half of men average one first date in five years; the 75th-90th percentile, about 22. Abs are the cheapest lever there is: a fit man is as rare as one earning four times his income.</div><p class="lift"><span class="lift-n mono">~4×</span><span class="lift-c">income-equivalent rarity of being fit</span></p></li>
+          <li><span class="rn display">2</span><div><b>Commit to women with fewer options.</b> The women who date a man commit at rates that fall with their own options. The bar you face is set by what else she has.</div><p class="lift"><span class="lift-n mono" data-v="commitGrid.3.commits.1" data-f="pct">11%</span><span class="lift-c">a 90th-percentile man committing to a median woman</span></p></li>
+          <li><span class="rn display">3</span><div><b>Decide your three things.</b> Past the 90th percentile, more dates don't find you a better partner; your first-date read does. Pick what matters, accept average elsewhere, and stop searching once you find it.</div><p class="lift"><span class="lift-n mono" data-v="hisByAppeal.5.equal" data-f="pct">3%</span><span class="lift-c">top-1% man finding a committed woman as rare as he is</span></p></li>
+          <li><span class="rn display">4</span><div><b>Get introduced, and go where the ratio favors you.</b> Friends can vouch for character that no profile shows, and some cities have far more qualifying women per well-off man.</div><p class="lift"><span class="lift-n mono">1.3</span><span class="lift-c">qualifying women per millionaire in St. Louis, vs 0.4 in SF</span></p></li>
+        </ol>
+        <h3 class="sub-h" id="top5wife">How to land a top-5% wife</h3>
+        <p class="sub-p">A woman at WHR ≤ 0.74 is about 1 in 25 single women 22-29. There are about as many single men 28-42 earning $160k+ or worth $1.1M+. Being fit gets you most of the way there on its own.</p>
+        <div class="panel"><div data-fig="exchangeM"></div></div>
+        <div class="panel"><h4 style="margin:0 0 6px">What abs are worth</h4><p class="sub" style="margin:0 0 8px">A fit man earning X is as rare as any man earning...</p><div data-fig="abs"></div></div>
+        <div class="panel"><h4 style="margin:0 0 6px">Where qualifying women outnumber millionaires</h4><p class="sub" style="margin:0 0 8px">Single women 22-29 at WHR ≤ 0.74 per single man 28-42 worth $1M+. Above 1, you have the leverage.</p><div data-fig="metrosM"></div></div>
+      </div>
+
+      <h3 class="sub-h">Why marriage keeps falling</h3>
+      <p class="sub-p">Apps multiplied everyone's options at once. When everyone's options rise, everyone's bar rises, and fewer people commit, even though nobody changed. Scale options back to a quarter of today's and a median woman's odds of a committed man within five years nearly double.</p>
+      <div class="panel"><div data-fig="options"></div></div>
+    </div>
+  </section>
+
+  <footer class="colophon">
+    <div class="colophon-inner">
+      <div>
+        <h4>About</h4>
+        <p>A companion to <a href="./index.html">The Lemon Market</a> (hiring). The lemon mechanism, people who are worse than they look cycling back into the pool, is from Connor's essay <a href="https://bosoncutter.substack.com/p/deception-is-amplified-by-default" target="_blank" rel="noopener">&ldquo;Deception is Amplified by Default&rdquo;</a> (Boson Cutter, 2026); the framing is G. Akerlof's &ldquo;The Market for &lsquo;Lemons&rsquo;&rdquo; (1970). The models are simulations calibrated to the data below; every number on the page comes from them or from the data directly. The full math, calibration and limits are in <a href="https://github.com/cholmondeley/Lemon-Markets/blob/main/docs/dating/methodology.md">the methodology notes</a>, and every claim is traced in <a href="https://github.com/cholmondeley/Lemon-Markets/blob/main/docs/dating/claims.md">the source ledger</a>.</p>
+      </div>
+      <div>
+        <h4>Main sources</h4>
+        <p>Pew Research Center (2022, 2023); YouGov (2021); Rosenfeld, Thomas &amp; Hausen (2019); Paul, "What really happens inside a dating app" (2025); Hinge; OkCupid / Rudder, <em>Dataclysm</em> (2014); Lana Li (2025); National Survey of Family Growth 2017-19, 2022-23; General Social Survey 1972-2024; American Community Survey 2024; NLSY97; Geruso et al. (2023); Connelly &amp; Ones (2010); Feingold (1992); Langlois et al. (2000); Solomon &amp; Jackson (2014); Karney &amp; Bradbury (1995); Wilding et al. (2021, STEP 1); Jastreboff et al. (2022, SURMOUNT-1); Lassek &amp; Gaulin (2016); the Dating Calculator.</p>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<script type="module" src="./src/dating/main.js"></script>
+</body>
+</html>
