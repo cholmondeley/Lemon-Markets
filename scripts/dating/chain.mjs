@@ -192,14 +192,15 @@ say(table(['First dates', 'At 40%', 'At 50%', ...perDate.map(({ x, p }) => `${ba
 // ---------- C. Her search, by her appeal ----------
 const vs = [0.1, 0.25, 0.5, 0.75, 0.9, 0.99];
 const herRows = vs.map((v) => {
-  const any = herYears({ v, bar: 0 }), good = herYears({ v }), equal = herYears({ v, bar: Math.max(v, 0.5) }), noC = herYears({ v, commit: false });
-  return [ord(v), num(good.first.matches, 0), ord(good.first.zPct), pct(good.first.commits), pct(any.odds), pct(good.odds), pct(equal.odds), pct(noC.odds)];
+  const any = herYears({ v, bar: 0 }), good = herYears({ v }), t5 = herYears({ v, bar: 0.95 }), t1 = herYears({ v, bar: 0.99 });
+  const equal = herYears({ v, bar: Math.max(v, 0.5) }), noC = herYears({ v, commit: false });
+  return [ord(v), num(good.first.matches, 0), ord(good.first.zPct), pct(good.first.commits), pct(any.odds), pct(good.odds), pct(t5.odds, 1), pct(t1.odds, 1), pct(equal.odds), pct(noC.odds)];
 });
 say('## C. Her search, by her appeal', '',
   'Five years from 25, on an app, two men properly dated a year. Success = a serious man who commits to her; "top 10%" adds a quality',
   'bar; "her equal" asks for a man at least as rare on quality as she is on appeal. The last column drops the commitment step (the',
   'previous version of this model): without it, a 10th-percentile woman looked as well off as a 99th.');
-say(table(['Her appeal', 'Matches (yr 1)', 'Appeal of men she dates', 'Both commit (per man dated for months)', 'Any committed man', 'Committed top-10% man', 'Committed man her equal (at least median)', 'No commitment step'], herRows));
+say(table(['Her appeal', 'Matches (yr 1)', 'Appeal of men she dates', 'Both commit (per man dated for months)', 'Any committed man', 'Committed top-10% man', 'Top 5%', 'Top 1%', 'Committed man her equal (at least median)', 'No commitment step'], herRows));
 say('More appeal helps her get commitment, but far less than it helps her get attention: a 99th-percentile woman is 1 in 100 and',
   'still finds a man of her rarity who commits in a minority of five-year searches.');
 
@@ -239,15 +240,16 @@ const manRows = F.byBand.map((x) => {
   const uHim = men.reduce((t, c) => t + c.w * c.u, 0) / Wm;
   const commitHer = (c) => hers(c, yHim) * his({ u: uHim, serious: true }, c.z);   // both must commit (he is searching, so serious)
   const d10 = C.describe(kept.cells, 0.9, commitHer), d0 = C.describe(kept.cells, 0, commitHer);
+  const d5 = C.describe(kept.cells, 0.95, commitHer), d1 = C.describe(kept.cells, 0.99, commitHer);
   const uMid = (x.lo + Math.min(x.hi, 0.999)) / 2;
   const dEq = C.describe(kept.cells, Math.max(0.5, uMid), commitHer);
   const odds = (d) => 1 - Math.pow(1 - d.good, kept.count);
-  return [band(x), num(count, 1), ord(C.describe(dated).zPct), pct(d0.commits), pct(odds(d0)), pct(odds(d10)), pct(odds(dEq))];
+  return [band(x), num(count, 1), ord(C.describe(dated).zPct), pct(d0.commits), pct(odds(d0)), pct(odds(d10)), pct(odds(d5), 1), pct(odds(d1), 1), pct(odds(dEq))];
 });
 say('## F. His search, by his appeal', '',
   'Five years, the first dates the funnel gives him, the best 10 of them properly dated, success if both commit (her bar rises with her',
   'options, his with his). "His equal" asks for a woman at least as rare on quality as he is on appeal (at least median).');
-say(table(['His appeal', 'First dates in 5 years', 'Appeal of women who date him', 'Both commit (per woman dated for months)', 'Any committed woman', 'Committed top-10% woman', 'Committed woman his equal'], manRows));
+say(table(['His appeal', 'First dates in 5 years', 'Appeal of women who date him', 'Both commit (per woman dated for months)', 'Any committed woman', 'Committed top-10% woman', 'Top 5%', 'Top 1%', 'Committed woman his equal'], manRows));
 
 // ---------- G. Channels ----------
 const chRows = [];
@@ -283,21 +285,51 @@ say(table(['Options vs today', 'A 90th-percentile serious man commits to a media
 
 // ---------- K. Age gaps ----------
 const gapRows = [];
-for (const start of [23, 27, 31]) for (const gap of [2, 5, 10, 15]) {
-  const any = herYears({ start, gap, bar: 0 }), good = herYears({ start, gap });
-  gapRows.push([start, `+${gap}`, pct(menOptionsAt(start + gap)), pct(any.first.pool.serious), ord(any.first.zPct), pct(any.first.commits), pct(any.odds), pct(good.odds)]);
+for (const start of [23, 25, 27, 29, 31, 35]) for (const gap of [2, 5, 10, 15]) {
+  const any = herYears({ start, gap, bar: 0 }), good = herYears({ start, gap }), t5 = herYears({ start, gap, bar: 0.95 }), t1 = herYears({ start, gap, bar: 0.99 });
+  gapRows.push([start, `+${gap}`, pct(menOptionsAt(start + gap)), pct(any.first.pool.serious), pct(any.first.commits), pct(any.odds), pct(good.odds), pct(t5.odds, 1), pct(t1.odds, 1)]);
 }
 const ag = read('../../src/data/dating/agegap.json');
 say('## K. Age gaps', '',
   'Median woman, five years, searching single men `gap` years older (never married plus divorced, in census proportions). Men\'s options',
   'fall with age (OkCupid: the share of women whose age range includes them), so older men\'s bars are lower; men of every age find',
   'women in their early twenties most attractive (Rudder), so her appeal to them does not fall with the gap.');
-say(table(['Her age', 'Gap', 'His options vs a 29-year-old', 'Pool says serious', 'Appeal of men she dates', 'Both commit (per man)', 'Any committed man', 'Committed top-10% man'], gapRows));
+say(table(['Her age', 'Gap', 'His options vs a 29-year-old', 'Pool says serious', 'Both commit (per man)', 'Any committed man', 'Committed top-10% man', 'Top 5%', 'Top 1%'], gapRows));
+say('This is the model, which has no income that grows with a man\'s age; the empirical reach table below is the evidence on status.');
+const reach = ag.reach_recent_5y;
+const reachRows = [...new Set(reach.map((x) => x.wife_age))].map((wa) => {
+  const row = (g) => reach.find((x) => x.wife_age === wa && x.gap === g);
+  const a = row('under 2'), b = row('5-9'), c = row('10+');
+  const f = (x) => `${pct(x.top10, 1)} / ${pct(x.top5, 1)} / ${pct(x.top1, 2)}`;
+  return [wa, f(a), f(b), f(c), c.n, `${(c.top10 / a.top10).toFixed(1)}×`, `${(c.top1 / a.top1).toFixed(1)}×`];
+});
+say('Empirical reach (ACS 2024, marriages in the last five years): share of husbands in the top 10 / 5 / 1% of men 25-64 by income, by',
+  'the wife\'s age at marriage and the gap. Husband income is measured now, so older husbands have had more time to earn (part of what a gap',
+  'buys: an established man). Top-1% cells for young wives rest on a handful of couples; the top-10% column is the reliable one.');
+say(table(['Wife\'s age at marriage', 'Gap under 2', 'Gap 5-9', 'Gap 10+', 'Couples with 10+ gap', 'Lift, top 10%', 'Lift, top 1%'], reachRows));
 const rb = ag.recent_5y.bands, rc = ag.recent_5y_husband_30_45.bands;
 say(`ACS 2024, marriages in the last five years, husband 10+ years older, by his income percentile (men 25-64): ${rb.map((x) => `${x.band} ${pct(x.gap10, 1)}`).join(', ')}.`,
   `Husbands in the top 1% who married recently are older (median ${rb[5].median_h_age}, vs ${rb[1].median_h_age} for the 50th-75th). Holding husbands to 30-45:`,
   `${rc.map((x) => `${x.band} ${pct(x.gap10, 1)}`).join(', ')}. Top earners marry later, and late-marrying men marry younger women; a woman in her`,
   `mid-twenties reaches them only with a gap. Wives in recent top-1% marriages: ${pct(rb[5].wife_ba_plus)} BA+ (${pct(rc[5].wife_ba_plus)} with husbands 30-45).`);
+
+// ---------- L. Her levers, alone and together ----------
+const lever = (label, o) => { const r = [0.9, 0.95, 0.99].map((bar) => herYears({ ...o, bar }).odds); return [label, pct(herYears({ ...o, bar: 0 }).odds), pct(r[0]), pct(r[1], 1), pct(r[2], 1)]; };
+const leverRows = [
+  lever('Baseline: app from 27, swipes like everyone', { start: 27 }),
+  lever('Start at 23 instead', { start: 23 }),
+  lever('Open to men 10 years older', { start: 27, gap: 10 }),
+  lever('Open to men 15 years older', { start: 27, gap: 15 }),
+  lever('Weights looks less (a = 0.15)', { start: 27, a: 0.15 }),
+  lever('Friends\' introductions instead of the app', { start: 27, ch: 'friends' }),
+  lever('Gives more men months of dating (3 a year)', { start: 27, n: 3 }),
+  lever('Combined on the app from 27: 15-year range, less on looks, 3 a year', { start: 27, gap: 15, a: 0.15, n: 3 }),
+  lever('Same, from 23', { start: 23, gap: 15, a: 0.15, n: 3 }),
+];
+say('## L. Her levers, alone and together', '',
+  'Median woman, five-year search. Each row changes one thing from the baseline; the last two combine the app levers (the model runs one',
+  'channel per search, and friends supply only ~6 first dates a year, so mixing channels is left out).');
+say(table(['Strategy', 'Any committed man', 'Committed top-10% man', 'Top 5%', 'Top 1%'], leverRows));
 
 // ---------- J. What moves her odds ----------
 const base = herYears();
@@ -310,7 +342,7 @@ const tornado = [
   ['Quality shown on a first date 0.15 → 0.4', herYears({ read2: { a: 0.3, c: 0.15 } }), herYears({ read2: { a: 0.3, c: 0.4 } })],
   ['Appeal-quality ρ 0 → 0.2', herYears({ rhoQz: 0 }), herYears({ rhoQz: 0.2 })],
   ['Casual pair-off rate k_c 0 → 0.2', herYears({ kc: 0 }), herYears({ kc: 0.2 })],
-  ['Age gap +2 → +10', base, herYears({ gap: 10 })],
+  ['Age gap +2 → +15 (starting at 27)', herYears({ start: 27 }), herYears({ start: 27, gap: 15 })],
 ].map(([k, lo, hi]) => [k, pct(lo.odds), pct(hi.odds), `${((hi.odds - lo.odds) * 100).toFixed(0)} pts`]);
 say('## J. What moves her odds most', '', `Median woman, five years from 25, committed top-10% man: default ${pct(base.odds)}.`);
 say(table(['Assumption', 'Low', 'High', 'Swing'], tornado));

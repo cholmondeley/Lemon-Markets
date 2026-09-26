@@ -65,14 +65,14 @@ Five years from 25, on an app, two men properly dated a year. Success = a seriou
 bar; "her equal" asks for a man at least as rare on quality as she is on appeal. The last column drops the commitment step (the
 previous version of this model): without it, a 10th-percentile woman looked as well off as a 99th.
 
-| Her appeal | Matches (yr 1) | Appeal of men she dates | Both commit (per man dated for months) | Any committed man | Committed top-10% man | Committed man her equal (at least median) | No commitment step |
-|---|---|---|---|---|---|---|---|
-| 10th | 45 | 86th | 2% | 11% | 3% | 9% | 79% |
-| 25th | 75 | 89th | 3% | 21% | 7% | 17% | 78% |
-| 50th | 118 | 91st | 6% | 34% | 12% | 28% | 76% |
-| 75th | 168 | 93rd | 9% | 49% | 19% | 31% | 75% |
-| 90th | 212 | 94th | 14% | 62% | 26% | 26% | 73% |
-| 99th | 273 | 95th | 20% | 76% | 36% | 8% | 72% |
+| Her appeal | Matches (yr 1) | Appeal of men she dates | Both commit (per man dated for months) | Any committed man | Committed top-10% man | Top 5% | Top 1% | Committed man her equal (at least median) | No commitment step |
+|---|---|---|---|---|---|---|---|---|---|
+| 10th | 45 | 86th | 2% | 11% | 3% | 2.0% | 0.6% | 9% | 79% |
+| 25th | 75 | 89th | 3% | 21% | 7% | 4.0% | 1.2% | 17% | 78% |
+| 50th | 118 | 91st | 6% | 34% | 12% | 7.5% | 2.3% | 28% | 76% |
+| 75th | 168 | 93rd | 9% | 49% | 19% | 12.2% | 3.8% | 31% | 75% |
+| 90th | 212 | 94th | 14% | 62% | 26% | 16.8% | 5.5% | 26% | 73% |
+| 99th | 273 | 95th | 20% | 76% | 36% | 23.8% | 8.1% | 8% | 72% |
 
 More appeal helps her get commitment, but far less than it helps her get attention: a 99th-percentile woman is 1 in 100 and
 still finds a man of her rarity who commits in a minority of five-year searches.
@@ -114,14 +114,14 @@ next five years (cross-section).
 Five years, the first dates the funnel gives him, the best 10 of them properly dated, success if both commit (her bar rises with her
 options, his with his). "His equal" asks for a woman at least as rare on quality as he is on appeal (at least median).
 
-| His appeal | First dates in 5 years | Appeal of women who date him | Both commit (per woman dated for months) | Any committed woman | Committed top-10% woman | Committed woman his equal |
-|---|---|---|---|---|---|---|
-| 0-50 | 0.9 | 26th | 3% | 3% | 0% | 1% |
-| 50-75 | 7.0 | 34th | 6% | 36% | 3% | 13% |
-| 75-90 | 22.3 | 40th | 10% | 65% | 9% | 16% |
-| 90-95 | 45.0 | 44th | 13% | 74% | 14% | 11% |
-| 95-99 | 91.5 | 48th | 15% | 81% | 21% | 7% |
-| 99-100 | 254 | 55th | 20% | 90% | 32% | 3% |
+| His appeal | First dates in 5 years | Appeal of women who date him | Both commit (per woman dated for months) | Any committed woman | Committed top-10% woman | Top 5% | Top 1% | Committed woman his equal |
+|---|---|---|---|---|---|---|---|---|
+| 0-50 | 0.9 | 26th | 3% | 3% | 0% | 0.1% | 0.0% | 1% |
+| 50-75 | 7.0 | 34th | 6% | 36% | 3% | 1.4% | 0.3% | 13% |
+| 75-90 | 22.3 | 40th | 10% | 65% | 9% | 4.5% | 0.9% | 16% |
+| 90-95 | 45.0 | 44th | 13% | 74% | 14% | 7.2% | 1.6% | 11% |
+| 95-99 | 91.5 | 48th | 15% | 81% | 21% | 10.8% | 2.5% | 7% |
+| 99-100 | 254 | 55th | 20% | 90% | 32% | 17.9% | 4.3% | 3% |
 
 ## G. Channels
 
@@ -172,25 +172,68 @@ Median woman, five years, searching single men `gap` years older (never married 
 fall with age (OkCupid: the share of women whose age range includes them), so older men's bars are lower; men of every age find
 women in their early twenties most attractive (Rudder), so her appeal to them does not fall with the gap.
 
-| Her age | Gap | His options vs a 29-year-old | Pool says serious | Appeal of men she dates | Both commit (per man) | Any committed man | Committed top-10% man |
-|---|---|---|---|---|---|---|---|
-| 23 | +2 | 108% | 77% | 93rd | 7% | 43% | 16% |
-| 23 | +5 | 107% | 73% | 91st | 5% | 36% | 12% |
-| 23 | +10 | 75% | 66% | 90th | 4% | 33% | 10% |
-| 23 | +15 | 48% | 59% | 90th | 5% | 41% | 12% |
-| 27 | +2 | 100% | 72% | 89th | 4% | 27% | 9% |
-| 27 | +5 | 85% | 68% | 89th | 3% | 25% | 7% |
-| 27 | +10 | 49% | 61% | 89th | 4% | 30% | 8% |
-| 27 | +15 | 32% | 58% | 89th | 5% | 40% | 11% |
-| 31 | +2 | 75% | 66% | 87th | 2% | 18% | 5% |
-| 31 | +5 | 55% | 62% | 87th | 2% | 20% | 5% |
-| 31 | +10 | 33% | 58% | 87th | 3% | 27% | 7% |
-| 31 | +15 | 20% | 57% | 87th | 5% | 36% | 9% |
+| Her age | Gap | His options vs a 29-year-old | Pool says serious | Both commit (per man) | Any committed man | Committed top-10% man | Top 5% | Top 1% |
+|---|---|---|---|---|---|---|---|---|
+| 23 | +2 | 108% | 77% | 7% | 43% | 16% | 10.2% | 3.2% |
+| 23 | +5 | 107% | 73% | 5% | 36% | 12% | 7.8% | 2.4% |
+| 23 | +10 | 75% | 66% | 4% | 33% | 10% | 6.1% | 1.7% |
+| 23 | +15 | 48% | 59% | 5% | 41% | 12% | 7.2% | 2.0% |
+| 25 | +2 | 102% | 74% | 6% | 34% | 12% | 7.5% | 2.3% |
+| 25 | +5 | 103% | 70% | 4% | 30% | 10% | 5.9% | 1.7% |
+| 25 | +10 | 70% | 63% | 4% | 32% | 9% | 5.5% | 1.6% |
+| 25 | +15 | 43% | 59% | 5% | 41% | 12% | 7.0% | 1.9% |
+| 27 | +2 | 100% | 72% | 4% | 27% | 9% | 5.3% | 1.6% |
+| 27 | +5 | 85% | 68% | 3% | 25% | 7% | 4.5% | 1.3% |
+| 27 | +10 | 49% | 61% | 4% | 30% | 8% | 5.0% | 1.4% |
+| 27 | +15 | 32% | 58% | 5% | 40% | 11% | 6.5% | 1.8% |
+| 29 | +2 | 85% | 69% | 3% | 21% | 6% | 3.9% | 1.1% |
+| 29 | +5 | 71% | 64% | 3% | 22% | 6% | 3.7% | 1.0% |
+| 29 | +10 | 43% | 59% | 4% | 29% | 8% | 4.5% | 1.2% |
+| 29 | +15 | 27% | 58% | 5% | 38% | 10% | 6.0% | 1.6% |
+| 31 | +2 | 75% | 66% | 2% | 18% | 5% | 3.0% | 0.8% |
+| 31 | +5 | 55% | 62% | 2% | 20% | 5% | 3.1% | 0.9% |
+| 31 | +10 | 33% | 58% | 3% | 27% | 7% | 4.0% | 1.1% |
+| 31 | +15 | 20% | 57% | 5% | 36% | 9% | 5.4% | 1.4% |
+| 35 | +2 | 49% | 61% | 2% | 15% | 4% | 2.1% | 0.6% |
+| 35 | +5 | 43% | 59% | 2% | 18% | 4% | 2.5% | 0.6% |
+| 35 | +10 | 27% | 57% | 3% | 24% | 6% | 3.3% | 0.9% |
+| 35 | +15 | 16% | 56% | 4% | 27% | 7% | 3.7% | 0.9% |
+
+This is the model, which has no income that grows with a man's age; the empirical reach table below is the evidence on status.
+
+Empirical reach (ACS 2024, marriages in the last five years): share of husbands in the top 10 / 5 / 1% of men 25-64 by income, by
+the wife's age at marriage and the gap. Husband income is measured now, so older husbands have had more time to earn (part of what a gap
+buys: an established man). Top-1% cells for young wives rest on a handful of couples; the top-10% column is the reliable one.
+
+| Wife's age at marriage | Gap under 2 | Gap 5-9 | Gap 10+ | Couples with 10+ gap | Lift, top 10% | Lift, top 1% |
+|---|---|---|---|---|---|---|
+| 18-22 | 1.3% / 0.8% / 0.06% | 2.0% / 1.0% / 0.22% | 5.8% / 2.5% / 0.22% | 337 | 4.4× | 3.6× |
+| 23-26 | 4.6% / 2.0% / 0.37% | 9.4% / 3.3% / 0.45% | 7.9% / 4.0% / 0.88% | 795 | 1.7× | 2.3× |
+| 27-30 | 11.3% / 5.2% / 0.91% | 10.6% / 5.4% / 1.00% | 9.8% / 5.8% / 0.91% | 1030 | 0.9× | 1.0× |
+| 31-35 | 13.6% / 6.2% / 1.19% | 13.4% / 6.5% / 1.56% | 12.6% / 6.3% / 1.49% | 1096 | 0.9× | 1.3× |
+| 36-45 | 10.2% / 4.9% / 0.81% | 13.5% / 6.3% / 1.22% | 14.0% / 8.5% / 2.29% | 1553 | 1.4× | 2.8× |
 
 ACS 2024, marriages in the last five years, husband 10+ years older, by his income percentile (men 25-64): 0-50 8.0%, 50-75 6.2%, 75-90 6.6%, 90-95 6.9%, 95-99 9.6%, 99-100 12.2%.
 Husbands in the top 1% who married recently are older (median 38, vs 34 for the 50th-75th). Holding husbands to 30-45:
 0-50 5.6%, 50-75 3.8%, 75-90 3.3%, 90-95 2.7%, 95-99 3.0%, 99-100 4.0%. Top earners marry later, and late-marrying men marry younger women; a woman in her
 mid-twenties reaches them only with a gap. Wives in recent top-1% marriages: 82% BA+ (90% with husbands 30-45).
+
+## L. Her levers, alone and together
+
+Median woman, five-year search. Each row changes one thing from the baseline; the last two combine the app levers (the model runs one
+channel per search, and friends supply only ~6 first dates a year, so mixing channels is left out).
+
+| Strategy | Any committed man | Committed top-10% man | Top 5% | Top 1% |
+|---|---|---|---|---|
+| Baseline: app from 27, swipes like everyone | 27% | 9% | 5.3% | 1.6% |
+| Start at 23 instead | 43% | 16% | 10.2% | 3.2% |
+| Open to men 10 years older | 30% | 8% | 5.0% | 1.4% |
+| Open to men 15 years older | 40% | 11% | 6.5% | 1.8% |
+| Weights looks less (a = 0.15) | 33% | 10% | 6.2% | 1.8% |
+| Friends' introductions instead of the app | 34% | 10% | 5.5% | 1.4% |
+| Gives more men months of dating (3 a year) | 38% | 12% | 7.4% | 2.1% |
+| Combined on the app from 27: 15-year range, less on looks, 3 a year | 52% | 14% | 8.0% | 2.1% |
+| Same, from 23 | 56% | 16% | 9.5% | 2.5% |
 
 ## J. What moves her odds most
 
@@ -206,7 +249,7 @@ Median woman, five years from 25, committed top-10% man: default 12%.
 | Quality shown on a first date 0.15 → 0.4 | 10% | 15% | 5 pts |
 | Appeal-quality ρ 0 → 0.2 | 10% | 13% | 3 pts |
 | Casual pair-off rate k_c 0 → 0.2 | 9% | 14% | 5 pts |
-| Age gap +2 → +10 | 12% | 9% | -3 pts |
+| Age gap +2 → +15 (starting at 27) | 9% | 11% | 3 pts |
 
 ## Defaults and where they come from
 

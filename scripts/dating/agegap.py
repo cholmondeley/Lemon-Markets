@@ -77,8 +77,31 @@ def main():
                          "wife_ba_plus": float(np.average(g.w_schl >= 21, weights=g.w)),
                          "median_h_age": float(np.median(g.h_age))})
         out[label] = {"overall_gap10": float(np.average(s.gap >= 10, weights=s.w)), "bands": rows}
+    # Reach: among recent marriages, by the wife's age at marriage and the gap, what share of husbands
+    # are in the top 10 / 5 / 1% of men 25-64 by income, and how many couples that rests on.
+    # Husband income is measured now (up to five years after the wedding), so older husbands have had
+    # more time to earn; that is part of what a gap buys.
+    r = c[c.married >= YEAR - 5].copy()
+    r["w_age_married"] = r.w_age - (YEAR - r.married)
+    top = {"top10": cuts[2], "top5": cuts[3], "top1": cuts[4]}
+    ages = [(18, 22), (23, 26), (27, 30), (31, 35), (36, 45)]
+    gaps = [(-99, 1, "under 2"), (2, 4, "2-4"), (5, 9, "5-9"), (10, 99, "10+")]
+    reach = []
+    for lo, hi in ages:
+        for glo, ghi, glabel in gaps:
+            g = r[r.w_age_married.between(lo, hi) & r.gap.between(glo, ghi)]
+            row = {"wife_age": f"{lo}-{hi}", "gap": glabel, "n": int(len(g)), "weighted": float(g.w.sum())}
+            for k, cut in top.items():
+                row[k] = float(np.average(g.h_inc >= cut, weights=g.w)) if len(g) else None
+            row["husband_median_age"] = float(np.median(g.h_age)) if len(g) else None
+            reach.append(row)
+    out["reach_recent_5y"] = reach
     OUT.write_text(json.dumps(out, indent=1))
     print(f"wrote {OUT.relative_to(ROOT)}")
+    print("recent marriages: husband in top 10 / 5 / 1% of men by income, by wife's age at marriage and gap (n couples)")
+    for x in reach:
+        if x["n"]:
+            print(f"  wife {x['wife_age']:>5} gap {x['gap']:>7}: {x['top10']:.1%} / {x['top5']:.1%} / {x['top1']:.2%}   n={x['n']}  husband median age {x['husband_median_age']:.0f}")
     for label in ["recent_5y", "recent_5y_husband_30_45", "all"]:
         print(label, f"overall 10+: {out[label]['overall_gap10']:.1%}")
         for r in out[label]["bands"]:
