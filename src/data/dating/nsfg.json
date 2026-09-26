@@ -1,0 +1,163 @@
+{
+ "source": "National Survey of Family Growth, 2017-2019 and 2022-2023 public-use files; straight respondents, weighted.",
+ "2017-2019_men": {
+  "18_35": {
+   "n": 1375,
+   "n_single": 903,
+   "app_sex_all": 0.0875412961660728,
+   "app_sex_single": 0.13285191253267292,
+   "single_share": 0.5688644838115756,
+   "single_partners_share": {
+    "0": 0.2833331764615695,
+    "1": 0.41309368849339034,
+    "2": 0.13966748063503076,
+    "3-4": 0.1038729424532018,
+    "5+": 0.06003271195680763
+   },
+   "single_mean_partners": 1.470741498538299,
+   "single_top10_share_of_partners": 0.3978346683717659,
+   "single_top20_share_of_partners": 0.5782807793212487,
+   "app_sex_mean_partners": 2.9394667250068163,
+   "no_app_sex_mean_partners": 1.2477239062072338
+  },
+  "18_29": {
+   "n": 879,
+   "n_single": 664,
+   "app_sex_all": 0.10232982230216664,
+   "app_sex_single": 0.1324771967995096,
+   "single_share": 0.6835434931597723,
+   "single_partners_share": {
+    "0": 0.27026289790267727,
+    "1": 0.42228293857700716,
+    "2": 0.13279828149508782,
+    "3-4": 0.11219208247878461,
+    "5+": 0.06246379954644316
+   },
+   "single_mean_partners": 1.4995763507334614,
+   "single_top10_share_of_partners": 0.3833515340546917,
+   "single_top20_share_of_partners": 0.5750858131991875,
+   "app_sex_mean_partners": 2.903965637503218,
+   "no_app_sex_mean_partners": 1.2848919065913216
+  }
+ },
+ "2017-2019_women": {
+  "18_35": {
+   "n": 1508,
+   "n_single": 869,
+   "app_sex_all": 0.07153224534057355,
+   "app_sex_single": 0.1101610334330257,
+   "single_share": 0.48758487111382376,
+   "single_partners_share": {
+    "0": 0.3120318591954978,
+    "1": 0.4133816641168874,
+    "2": 0.1517863039647595,
+    "3-4": 0.07220640354847287,
+    "5+": 0.05059376917438237
+   },
+   "single_mean_partners": 1.2507372305458477,
+   "single_top10_share_of_partners": 0.37208650143705496,
+   "single_top20_share_of_partners": 0.5502215783193674,
+   "app_sex_mean_partners": 3.0161031587488116,
+   "no_app_sex_mean_partners": 1.0316414776966838
+  },
+  "18_29": {
+   "n": 947,
+   "n_single": 640,
+   "app_sex_all": 0.08867060228394343,
+   "app_sex_single": 0.11494534638896602,
+   "single_share": 0.63044806634616,
+   "single_partners_share": {
+    "0": 0.3301246743043141,
+    "1": 0.38797046425992887,
+    "2": 0.16329742904645214,
+    "3-4": 0.06536296954452966,
+    "5+": 0.05324446284477517
+   },
+   "single_mean_partners": 1.2434897198386718,
+   "single_top10_share_of_partners": 0.38046321796637267,
+   "single_top20_share_of_partners": 0.5562647778036883,
+   "app_sex_mean_partners": 3.068923917105666,
+   "no_app_sex_mean_partners": 1.0060073874761495
+  }
+ },
+ "2022-2023_men": {
+  "18_35": {
+   "n": 1947,
+   "n_single": 1288,
+   "app_sex_all": 0.04553234166049895,
+   "app_sex_single": 0.06060691878273069,
+   "single_share": 0.5800358704010118,
+   "single_partners_share": {
+    "0": 0.4692781592658796,
+    "1": 0.33560000997212647,
+    "2": 0.09256792802850544,
+    "3-4": 0.05624611695373266,
+    "5+": 0.046307785779755764
+   },
+   "single_mean_partners": 1.101480558330918,
+   "single_top10_share_of_partners": 0.5202842481121158,
+   "single_top20_share_of_partners": 0.6997479090913176,
+   "app_sex_mean_partners": 3.356375657700472,
+   "no_app_sex_mean_partners": 0.9580763689376237
+  },
+  "18_29": {
+   "n": 1168,
+   "n_single": 922,
+   "app_sex_all": 0.041848882768695764,
+   "app_sex_single": 0.04966832899420343,
+   "single_share": 0.7307110585794652,
+   "single_partners_share": {
+    "0": 0.4921586421510004,
+    "1": 0.3214616557318246,
+    "2": 0.091492256896054,
+    "3-4": 0.04938480589784097,
+    "5+": 0.04550263932327992
+   },
+   "single_mean_partners": 1.0466369741658965,
+   "single_top10_share_of_partners": 0.5278008782748792,
+   "single_top20_share_of_partners": 0.7058757091069418,
+   "app_sex_mean_partners": 3.1727912900282447,
+   "no_app_sex_mean_partners": 0.931565867648824
+  }
+ },
+ "2022-2023_women": {
+  "18_35": {
+   "n": 2090,
+   "n_single": 1108,
+   "app_sex_all": 0.04878821456676451,
+   "app_sex_single": 0.072118649719433,
+   "single_share": 0.5221461263113997,
+   "single_partners_share": {
+    "0": 0.4057982668431035,
+    "1": 0.404640429861976,
+    "2": 0.10903113811000682,
+    "3-4": 0.05283165818755497,
+    "5+": 0.027698506997358756
+   },
+   "single_mean_partners": 0.9639992316209507,
+   "single_top10_share_of_partners": 0.39443620149963365,
+   "single_top20_share_of_partners": 0.5910767143516781,
+   "app_sex_mean_partners": 2.785444913075402,
+   "no_app_sex_mean_partners": 0.8212590800586838
+  },
+  "18_29": {
+   "n": 1176,
+   "n_single": 781,
+   "app_sex_all": 0.05351819098996534,
+   "app_sex_single": 0.06690866620460273,
+   "single_share": 0.6598080589783165,
+   "single_partners_share": {
+    "0": 0.4227586511825064,
+    "1": 0.3880840728019403,
+    "2": 0.11064031742418207,
+    "3-4": 0.05149113988022275,
+    "5+": 0.027025818711148515
+   },
+   "single_mean_partners": 0.9417425991730912,
+   "single_top10_share_of_partners": 0.3985632323201899,
+   "single_top20_share_of_partners": 0.5994220191921499,
+   "app_sex_mean_partners": 2.81743841446456,
+   "no_app_sex_mean_partners": 0.8061964639250814
+  }
+ }
+}

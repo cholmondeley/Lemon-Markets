@@ -153,3 +153,17 @@ test('back rule: with no consensus, a candidate likes the searcher at his own li
   close(back({ u: 0.9 }), rate(0.9), 1e-6);
   assert.ok(rate(0.9) < rate(0.5));
 });
+
+import { appFunnel } from '../src/dating/chain.js';
+
+test('app funnel: dates men receive add up to dates active women give (when men have room)', () => {
+  const men = population({ nz: 31, ne: 11 }).cells, women = population({ nz: 31, ne: 3 }).cells;
+  const opts = { men, women, a: 0.48, c: 0.1, rhoQz: 0.1, rhoM: 0.56, likeM: () => 0.3, likeW: () => 0.05, viewsW: 3000, datesW: 10, datesM: 1e9, ratio: 2, activeW: 0.25, ny: 5 };
+  const f = appFunnel(opts);
+  const menTotal = men.reduce((t, x, i) => t + x.w * f.perMan.dates[i], 0) * opts.ratio;
+  const womenTotal = opts.activeW * f.women.reduce((t, w) => t + w.w * Math.min(opts.datesW, w.matches), 0);
+  close(menTotal, womenTotal, 1e-6 * womenTotal);
+  const none = appFunnel({ ...opts, activeW: 0 });
+  close(none.all.dates, 0, 1e-12);
+  assert.ok(f.topDates.top10 > 0.1);   // dates concentrate on the best-looking men
+});
