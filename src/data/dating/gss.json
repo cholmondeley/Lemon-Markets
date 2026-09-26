@@ -1,0 +1,331 @@
+{
+ "source": "GSS 1972-2024 R3a, survey years 2000+ (weighted, wtssps else wtssall)",
+ "men": {
+  "by_partner_quintile": [
+   {
+    "quintile": 1,
+    "median_partners": 1.0,
+    "min": 0.0,
+    "max": 1.0,
+    "cheated": 0.03944336294776567,
+    "n": 1327
+   },
+   {
+    "quintile": 2,
+    "median_partners": 3.0,
+    "min": 1.0,
+    "max": 4.0,
+    "cheated": 0.15638061115154067,
+    "n": 1327
+   },
+   {
+    "quintile": 3,
+    "median_partners": 5.0,
+    "min": 4.0,
+    "max": 8.0,
+    "cheated": 0.19382668404045866,
+    "n": 1327
+   },
+   {
+    "quintile": 4,
+    "median_partners": 10.0,
+    "min": 8.0,
+    "max": 20.0,
+    "cheated": 0.2733921259858817,
+    "n": 1327
+   },
+   {
+    "quintile": 5,
+    "median_partners": 30.0,
+    "min": 20.0,
+    "max": 750.0,
+    "cheated": 0.4126422904400278,
+    "n": 1327
+   }
+  ],
+  "by_partner_band": [
+   {
+    "lo": 0,
+    "hi": 1,
+    "cheated": 0.03840781707308363,
+    "n": 1370
+   },
+   {
+    "lo": 2,
+    "hi": 4,
+    "cheated": 0.16357659034708555,
+    "n": 1498
+   },
+   {
+    "lo": 5,
+    "hi": 9,
+    "cheated": 0.2064242707535824,
+    "n": 1324
+   },
+   {
+    "lo": 10,
+    "hi": 19,
+    "cheated": 0.27360627024527046,
+    "n": 1096
+   },
+   {
+    "lo": 20,
+    "hi": 39,
+    "cheated": 0.38647770066027404,
+    "n": 779
+   },
+   {
+    "lo": 40,
+    "hi": 10000,
+    "cheated": 0.44988608450755263,
+    "n": 568
+   }
+  ],
+  "by_income_decile": [
+   {
+    "decile": 1,
+    "cheated": 0.2137661017722812,
+    "n": 476
+   },
+   {
+    "decile": 2,
+    "cheated": 0.20570850703005392,
+    "n": 518
+   },
+   {
+    "decile": 3,
+    "cheated": 0.1752937222481811,
+    "n": 458
+   },
+   {
+    "decile": 4,
+    "cheated": 0.1959410471688131,
+    "n": 407
+   },
+   {
+    "decile": 5,
+    "cheated": 0.2318285215336734,
+    "n": 503
+   },
+   {
+    "decile": 6,
+    "cheated": 0.1835060883259393,
+    "n": 535
+   },
+   {
+    "decile": 7,
+    "cheated": 0.19146517966558493,
+    "n": 494
+   },
+   {
+    "decile": 8,
+    "cheated": 0.20628729246567462,
+    "n": 525
+   },
+   {
+    "decile": 9,
+    "cheated": 0.17172373154680196,
+    "n": 514
+   },
+   {
+    "decile": 10,
+    "cheated": 0.21964420743722482,
+    "n": 524
+   }
+  ],
+  "tiers": {
+   "all": {
+    "cheated": 0.20413459444840407,
+    "n": 7345
+   },
+   "college_all": {
+    "cheated": 0.18887838175733848,
+    "n": 2504
+   },
+   "college_high_income_prestige": {
+    "cheated": 0.18589065791567727,
+    "n": 346
+   },
+   "noncollege_all": {
+    "cheated": 0.21102135222044272,
+    "n": 4841
+   },
+   "noncollege_high_income_prestige": {
+    "cheated": 0.29591709496990465,
+    "n": 58
+   }
+  },
+  "partner_concentration_25_45": {
+   "top_1": 0.1590813962685224,
+   "top_5": 0.40048905782975464,
+   "top_10": 0.5407767745581985,
+   "top_20": 0.7036558132229898,
+   "median_partners": 6.0,
+   "n": 3963
+  }
+ },
+ "women": {
+  "by_partner_quintile": [
+   {
+    "quintile": 1,
+    "median_partners": 1.0,
+    "min": 0.0,
+    "max": 1.0,
+    "cheated": 0.03999322204887282,
+    "n": 1825
+   },
+   {
+    "quintile": 2,
+    "median_partners": 1.0,
+    "min": 1.0,
+    "max": 2.0,
+    "cheated": 0.04135007763858707,
+    "n": 1825
+   },
+   {
+    "quintile": 3,
+    "median_partners": 3.0,
+    "min": 2.0,
+    "max": 4.0,
+    "cheated": 0.1168074066225096,
+    "n": 1824
+   },
+   {
+    "quintile": 4,
+    "median_partners": 5.0,
+    "min": 4.0,
+    "max": 6.0,
+    "cheated": 0.17371675394941466,
+    "n": 1825
+   },
+   {
+    "quintile": 5,
+    "median_partners": 10.0,
+    "min": 6.0,
+    "max": 365.0,
+    "cheated": 0.3066069237701648,
+    "n": 1825
+   }
+  ],
+  "by_partner_band": [
+   {
+    "lo": 0,
+    "hi": 1,
+    "cheated": 0.03253482414332864,
+    "n": 3174
+   },
+   {
+    "lo": 2,
+    "hi": 4,
+    "cheated": 0.12345153545958376,
+    "n": 2972
+   },
+   {
+    "lo": 5,
+    "hi": 9,
+    "cheated": 0.19803227616835056,
+    "n": 1678
+   },
+   {
+    "lo": 10,
+    "hi": 19,
+    "cheated": 0.3115105331825471,
+    "n": 829
+   },
+   {
+    "lo": 20,
+    "hi": 39,
+    "cheated": 0.3383069959083271,
+    "n": 347
+   },
+   {
+    "lo": 40,
+    "hi": 10000,
+    "cheated": 0.5141014522795907,
+    "n": 124
+   }
+  ],
+  "by_income_decile": [
+   {
+    "decile": 1,
+    "cheated": 0.16315616670865019,
+    "n": 528
+   },
+   {
+    "decile": 2,
+    "cheated": 0.10221714988738048,
+    "n": 493
+   },
+   {
+    "decile": 3,
+    "cheated": 0.15134947438962942,
+    "n": 604
+   },
+   {
+    "decile": 4,
+    "cheated": 0.1260381284055185,
+    "n": 470
+   },
+   {
+    "decile": 5,
+    "cheated": 0.14509696556672605,
+    "n": 597
+   },
+   {
+    "decile": 6,
+    "cheated": 0.1458597085644627,
+    "n": 527
+   },
+   {
+    "decile": 7,
+    "cheated": 0.1781914896528857,
+    "n": 546
+   },
+   {
+    "decile": 8,
+    "cheated": 0.15151785223996173,
+    "n": 576
+   },
+   {
+    "decile": 9,
+    "cheated": 0.1266047422446189,
+    "n": 499
+   },
+   {
+    "decile": 10,
+    "cheated": 0.16123470492380335,
+    "n": 538
+   }
+  ],
+  "tiers": {
+   "all": {
+    "cheated": 0.12924575742758784,
+    "n": 9778
+   },
+   "college_all": {
+    "cheated": 0.12055742555582918,
+    "n": 2938
+   },
+   "college_high_income_prestige": {
+    "cheated": 0.12899290348161568,
+    "n": 374
+   },
+   "noncollege_all": {
+    "cheated": 0.13263326720358165,
+    "n": 6840
+   },
+   "noncollege_high_income_prestige": {
+    "cheated": 0.09271341695539324,
+    "n": 91
+   }
+  },
+  "partner_concentration_25_45": {
+   "top_1": 0.14472188381166992,
+   "top_5": 0.3268437238073673,
+   "top_10": 0.46151397470440103,
+   "top_20": 0.6267478709785523,
+   "median_partners": 4.0,
+   "n": 4985
+  }
+ }
+}
