@@ -109,7 +109,8 @@ export function lineChart(host, spec) {
     ends.sort((a, b) => a.y - b.y);
     for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 13) ends[i].y = ends[i - 1].y + 13;
     ctx.font = '600 11px "IBM Plex Sans", sans-serif'; ctx.textAlign = 'left';
-    ends.forEach((e) => { ctx.fillStyle = ink; ctx.fillText(e.label, e.x + 8, e.y + 4); ctx.fillStyle = e.col; ctx.fillRect(e.x + 2, e.y - 1, 4, 3); });
+    // A label may break onto a second line with '\n'.
+    ends.forEach((e) => { ctx.fillStyle = ink; e.label.split('\n').forEach((line, k) => ctx.fillText(line, e.x + 8, e.y + 4 + 13 * k)); ctx.fillStyle = e.col; ctx.fillRect(e.x + 2, e.y - 1, 4, 3); });
     // Marks
     (state.spec.marks || []).forEach((m) => {
       ctx.beginPath(); ctx.arc(X(m.x), Y(m.y), 4.5, 0, Math.PI * 2); ctx.fillStyle = color(m.color || '--ink'); ctx.fill();
@@ -139,7 +140,7 @@ export function lineChart(host, spec) {
     state.hoverX = best; draw();
     const rows = state.spec.series.map((s) => {
       const p = s.points.find((q) => q[0] === best);
-      return p && p[1] != null ? `<div><i style="background:${color(s.color)}"></i>${s.label}: <b>${(state.spec.y.tipFmt || state.spec.y.fmt || fmtDefault)(p[1])}</b></div>` : '';
+      return p && p[1] != null ? `<div><i style="background:${color(s.color)}"></i>${s.label.replace('\n', ' ')}: <b>${(state.spec.y.tipFmt || state.spec.y.fmt || fmtDefault)(p[1])}</b></div>` : '';
     }).join('');
     showTip(`<div class="k">${(state.spec.x.tipFmt || state.spec.x.fmt || fmtDefault)(best)}</div>${rows}`, ev.clientX, ev.clientY);
   });

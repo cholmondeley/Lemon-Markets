@@ -220,7 +220,11 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
     const C0 = CHANNELS[ch], his = hisCommit(o), hers = herCommit(o), hisWant = hisInterest(o), y0 = D.zTop(1 - v);
     // "As good as her or better" is rank for rank on potential (his for his age, hers for her age);
     // the top-10/5/1% bars are on standing now.
-    const bars = { any: 0, top10: menBar(0.9), top5: menBar(0.95), top1: menBar(0.99), rare: { z: D.zTop(1 - Math.min(0.999, Math.max(v, 0.001))), key: 'xt' } };
+    // `rareV` fixes that bar at a starting appeal, so a lever that raises her appeal doesn't move her target.
+    const rv = o.rareV ?? v;
+    // "A millionaire": the share of men 22-55 worth $1M+ (8%), taken as the top of the same standing scale.
+    const bars = { any: 0, top10: menBar(0.9), top5: menBar(0.95), top1: menBar(0.99), mil: menBar(1 - (status.millionaire_share ?? 0.08)),
+      rare: { z: D.zTop(1 - Math.min(0.999, Math.max(rv, 0.001))), key: 'xt' } };
     const miss = Object.fromEntries(Object.keys(bars).map((k) => [k, 1]));
     const rows = [];
     let reach = 1, xm = 0, xs = 0, got = 0;

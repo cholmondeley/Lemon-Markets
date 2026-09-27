@@ -152,11 +152,13 @@ women he could not hold at 28. Both must commit.
 median woman of 28: 10th-percentile man 100%, 25th 99%, median 82%, 75th 33%, 90th 4.6%, 95th 0.8%;
 with a top-10% woman: 100%, 100%, 100%, 98%, 81%, 55%. Then the relationship works out 19% of the time.
 
-**Outcome bars.** "As good as her or better" is rank for rank on potential (his value percentile for
+**Outcome bars.** "As good as her or better" is rank for rank on potential (for a lever that raises her
+appeal, like GLP-1s, measured against where she started, `rareV`, so the target doesn't move with her) (his value percentile for
 his age at least her appeal percentile for her age). "A top-10 / 5 / 1% man" is on standing now:
 current mate value, with his status moved to his age's median and spread (`status.py`: men's earnings
 rank among men 22-55 climbs into the 40s and fans out, so top earners are mostly over 35), ranked among
-all men 22-55. That is what she marries into, and what makes an age gap buy top-tier men: a 23-year-old
+all men 22-55. "A millionaire husband" is the top 8.2% on the same scale (the share of men 22-55
+worth $1M+, parquet: 0.5% at 22-26, 5% at 32-36, 17% at 47-55). That is what she marries into, and what makes an age gap buy top-tier men: a 23-year-old
 at the 80th percentile open to men 15 years older goes from 1.0% to 4.1% for a top-10% man. Commitment
 itself runs on potential.
 
@@ -263,11 +265,12 @@ the odds of 1 in 10,000 fall to 7%.
 the apps (women: a day; men: a week) map to a percentile through the funnel (§4, §7), and the worker
 runs `herYears` (from 25) or `hisYears` (from 30, women 22-30, everything else median).
 
-**Likes or messages.** Every calculator takes either likes on the apps or messages a week. Messages map
-to a percentile through Rudder's (2014, *Dataclysm*) OkCupid messages received per week by
-attractiveness percentile, digitized (`okc_messages`; women about 2 / 6 / 11 / 25 a week at the 10th /
-50th / 90th / 99th percentile, men 0.3 / 0.5 / 1.4 / 3.4), lightly smoothed and made non-decreasing so
-it can be read backwards.
+**Likes, not messages.** Rudder's (2014) OkCupid messages per week by attractiveness percentile are
+digitized (`okc_messages`: women about 2 / 6 / 11 / 25 a week at the 10th / 50th / 90th / 99th
+percentile), but they come from a different app era and don't map onto today's apps: luap's one figure
+("match to talk was 35%") gives either ~0.1 conversations a day at the median (35% of matches) or ~31
+messages a day (35% of likes), neither consistent with the lived "30 a day for the top 1-5%". The
+calculators use likes only.
 
 ## 11. Levers: age gaps, GLP-1s, men's levers, exchange rates
 
@@ -294,9 +297,16 @@ it can be read backwards.
   woman on WHR (80th percentile) from 27, GLP-1 plus glutes: any committed man 43% → 48%, top 10% 0.2% →
   0.9%. The waterfall: a top-20% woman going for a top-10% man, one step at a time: not looking till 27
   1.0%; start at 23 1.0% (top-10% men today are mostly older); open to men 15 years older 4.1%; GLP-1
-  plus glutes 7.5%; three men a year 10.1%.
-- **Men's levers** (`hisYears`, a median man of 30, women 22-30, five years): get off the apps (in person,
-  two approaches a month) 16% → 41%. The body ladder uses the Dating Calculator's flags among single men
+  plus glutes 7.5%; dating 2 → 3 men a year 10.1%. Starting at 23 adds nothing on its own because top-10%
+  men today are rare among single men her age (0.2-0.6% at 22-25, 2% at 30, 4% at 38).
+- **Millionaire odds and GLP-1s** (five years from 25, open to +2 / +15 years): a top-5% WHR woman 1.8% /
+  6.5% → 3.6% / 9.3% with GLP-1 plus glutes; top 5-10% 0.5% / 3.6% → 1.9% / 6.6%; top 10-25% 0.1% / 1.7%
+  → 0.6% / 3.6%; median ≈ 0 / 0.1% → 0 / 0.4%.
+- **Men's levers** (`hisYears`, a median man of 30, women 22-30, five years), each on the apps and in
+  person (two approaches a month): baseline 16% / 41%. Status to the 90th percentile: 12% on the apps
+  (status barely shows on a profile, so he's choosier without more dates) but 57% in person, and a
+  75th-percentile woman or better 2.3% → 32% in person. All of it (fit, status and social skills at the
+  75th, about the 88th percentile as a partner) in person: 63%, and a 75th-percentile woman 48%. The body ladder uses the Dating Calculator's flags among single men
   25-35 (body half of looks, face at the median): out of overweight and obese (40%: body at the 60th
   percentile, looks 57th) 23%; fit (the `fit` flag, identical to `abs`: 5.3%, body fat up to 20%; looks
   87th, 6.6 first dates a year) 66%; strict abs (`abs_strict`: 2.2%, body fat up to 17%; looks 92nd)

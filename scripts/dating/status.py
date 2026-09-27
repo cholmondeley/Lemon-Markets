@@ -8,7 +8,8 @@ Writes src/data/dating/status.json. From the Dating Calculator's synthetic popul
   status_by_age   mean normal score of a man's earnings among all men 22-55, by age: how much a man's
                   status rises with age (his earnings rank climbs into his 40s);
   earnings        men's earnings quantiles by age band (a reader's income -> his percentile for his age);
-  height          men's height quantiles (inches).
+  height          men's height quantiles (inches);
+  millionaires    the share of men 22-55 worth $1M+, overall and by age.
 Run: uv run scripts/dating/status.py [path/to/dcalc_app_v2.parquet]
 """
 import json
@@ -35,7 +36,7 @@ def wquant(x, w, qs):
 
 
 def main():
-    df = pq.read_table(SRC, columns=["PWGTP", "sex", "age", "earnings", "height_inches"]).to_pandas()
+    df = pq.read_table(SRC, columns=["PWGTP", "sex", "age", "earnings", "height_inches", "net_worth"]).to_pandas()
     m = df[(df.sex == 1) & df.age.between(22, 55)].copy()
     # Weighted rank of earnings among all men 22-55 -> normal score (ties at $0 share the midpoint).
     o = np.argsort(m.earnings.values, kind="stable")
@@ -63,6 +64,10 @@ def main():
         "status_tail": tail,
         "earnings": bands,
         "height": {"q": QS, "inches": wquant(h.height_inches, h.PWGTP, QS)},
+        # Men worth $1M+: the share of men 22-55 (the scale "a top-X% man" is ranked on), and by age.
+        "millionaire_share": float(np.average(m.net_worth >= 1e6, weights=m.PWGTP)),
+        "millionaire_by_age": {k: float(np.average(g.net_worth >= 1e6, weights=g.PWGTP)) for k, g in
+                               [(f"{lo}-{hi}", m[m.age.between(lo, hi)]) for lo, hi in [(22, 26), (27, 31), (32, 36), (37, 41), (42, 46), (47, 55)]]},
     }
     OUT.write_text(json.dumps(out, indent=1))
     print("status shift by age:", {a: round(out["status_by_age"][a], 2) for a in (22, 25, 28, 30, 35, 40, 45, 50)})
