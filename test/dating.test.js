@@ -206,16 +206,24 @@ test('commitment follows rank: men commit up, rarely down', () => {
 });
 
 test('her odds of a top-10% man: near zero at the median, rising steeply with her appeal', () => {
-  const t = [0.25, 0.5, 0.75, 0.9].map((v) => S.herYears({ v }).odds.top10);
-  assert.ok(t[1] < 0.01, `median woman ${t[1]}`);
-  assert.ok(t[3] > 0.1, `90th-percentile woman ${t[3]}`);
+  const t = [0.5, 0.75, 0.9, 0.99].map((v) => S.herYears({ v }).odds.top10);
+  assert.ok(t[0] < 0.01, `median woman ${t[0]}`);
+  assert.ok(t[2] > 0.03 && t[3] > 0.1, `90th ${t[2]}, 99th ${t[3]}`);
   for (let i = 1; i < t.length; i++) assert.ok(t[i] > t[i - 1]);
 });
 
-test('age gaps buy top-tier men for attractive women past their mid-twenties', () => {
-  const narrow = S.herYears({ start: 31, v: 0.9, gap: 2 }).odds, wide = S.herYears({ start: 31, v: 0.9, gap: 15 }).odds;
-  assert.ok(wide.top10 > 1.5 * narrow.top10, `${narrow.top10} -> ${wide.top10}`);
-  assert.ok(wide.top5 > 2 * narrow.top5, `${narrow.top5} -> ${wide.top5}`);
+test('age gaps buy top-tier men (standing now), young women included', () => {
+  for (const [start, v] of [[23, 0.8], [31, 0.9]]) {
+    const narrow = S.herYears({ start, v, gap: 2 }).odds, wide = S.herYears({ start, v, gap: 15 }).odds;
+    assert.ok(wide.top10 > 2 * narrow.top10, `${start}: ${narrow.top10} -> ${wide.top10}`);
+    assert.ok(wide.top5 > 2 * narrow.top5, `${start}: ${narrow.top5} -> ${wide.top5}`);
+  }
+});
+
+test('men: getting off the apps and getting fit both raise his odds', () => {
+  const base = S.hisYears({ age: 30, lo: 22, hi: 30, uLooks: 0.5 }).odds.any;
+  assert.ok(S.hisYears({ age: 30, lo: 22, hi: 30, uLooks: 0.5, ch: 'inperson' }).odds.any > 1.5 * base);
+  assert.ok(S.hisYears({ age: 30, lo: 22, hi: 30, uLooks: 0.68 }).odds.any > 1.5 * base);
 });
 
 test('the fit: single women 25 who marry by 30, averaged over appeal, match the census', () => {

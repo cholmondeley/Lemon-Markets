@@ -199,7 +199,7 @@ export function histChart(host, spec) {
   return api;
 }
 
-// HTML horizontal bars. rows: [{ label, sub, value, cls, text, hl }], max. Returns { update(rows) }.
+// HTML horizontal bars. rows: [{ label, sub, value, cls, rowCls, text, hl }], max. Returns { update(rows) }.
 export function bars(host, rows, { max = null, cls = '' } = {}) {
   host.classList.add('bars');
   if (cls) host.classList.add(...cls.split(' '));
@@ -209,7 +209,7 @@ export function bars(host, rows, { max = null, cls = '' } = {}) {
     next.forEach((r) => {
       if (r.group) { const g = document.createElement('div'); g.className = 'bar-group-title'; g.textContent = r.group; host.appendChild(g); return; }
       const row = document.createElement('div');
-      row.className = 'bar-row' + (r.hl ? ' hl' : '');
+      row.className = 'bar-row' + (r.hl ? ' hl' : '') + (r.rowCls ? ' ' + r.rowCls : '');
       row.innerHTML = `<span class="bl">${r.label}${r.sub ? `<small>${r.sub}</small>` : ''}</span><span class="bt"><i class="bf ${r.cls || ''}" style="width:${Math.max(0, Math.min(100, (r.value / m) * 100)).toFixed(2)}%"></i></span><span class="bv">${r.text}</span>`;
       if (r.tip) {
         row.addEventListener('pointermove', (ev) => showTip(r.tip, ev.clientX, ev.clientY));
@@ -309,75 +309,6 @@ export function waterfall(host, steps, { max = null, fmt = (v) => pct(v), sub = 
     row.innerHTML = `<span class="bl">${s.label}${sub ? `<small>${sub(s, i)}</small>` : ''}</span><span class="bt"><i class="bf ${first ? 'neutral' : up ? 'accent' : 'down'}" style="left:${((first ? 0 : lo) / m * 100).toFixed(2)}%;width:${(((first ? s.value : hi - lo)) / m * 100).toFixed(2)}%"></i>${!first ? `<i class="wf-tick" style="left:${(s.value / m * 100).toFixed(2)}%"></i>` : ''}</span><span class="bv">${first ? fmt(s.value) : `${fmt(s.value)}<small>${delta}</small>`}</span>`;
     host.appendChild(row);
   });
-}
-
-// Pickiness vs agreement: a 2 x 2 field with today's market and where each change moves it.
-// spec: { points: [{ key, x (like rate), y (agreement), label, value, short, color, below, above }], from: key }.
-// On narrow screens the corner labels shorten and each point shows `short` instead of `value`.
-export function quadrant(host, spec) {
-  host.classList.add('chart');
-  const canvas = document.createElement('canvas');
-  host.appendChild(canvas);
-  canvas.setAttribute('role', 'img');
-  if (spec.aria) canvas.setAttribute('aria-label', spec.aria);
-  const pad = { l: 60, r: 16, t: 16, b: 40 };
-  const lx = (v) => Math.log(v);
-  const xr = [0.02, 0.45];
-  function draw() {
-    const { ctx, w, h } = setup(canvas, spec.height ?? 320);
-    const narrow = w < 520, pl = narrow ? 40 : pad.l;
-    const X = (v) => pl + (lx(v) - lx(xr[0])) / (lx(xr[1]) - lx(xr[0])) * (w - pl - pad.r);
-    const Y = (v) => pad.t + (1 - v) * (h - pad.t - pad.b);
-    ctx.clearRect(0, 0, w, h);
-    const midX = X(0.1), midY = Y(0.5);
-    // Quadrant shading: the steep-power-law corner (picky and agreeing) gets the tint.
-    ctx.fillStyle = css('--surface-2');
-    ctx.fillRect(pl, pad.t, midX - pl, midY - pad.t);
-    ctx.strokeStyle = css('--rule-strong'); ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
-    ctx.beginPath(); ctx.moveTo(midX, pad.t); ctx.lineTo(midX, h - pad.b); ctx.moveTo(pl, midY); ctx.lineTo(w - pad.r, midY); ctx.stroke(); ctx.setLineDash([]);
-    ctx.strokeStyle = css('--rule'); ctx.strokeRect(pl + 0.5, pad.t + 0.5, w - pl - pad.r, h - pad.t - pad.b);
-    ctx.font = '600 11px "IBM Plex Sans", sans-serif'; ctx.fillStyle = css('--ink-faint');
-    const corner = narrow ? ['Picky, agreeing', 'Open, agreeing', 'Picky, own tastes', 'Open, own tastes'] : ['Picky and agreeing: a few get everything', 'Open and agreeing', 'Picky, own tastes', 'Open, own tastes: flat'];
-    ctx.textAlign = 'left'; ctx.fillText(corner[0], pl + 8, pad.t + 16);
-    ctx.textAlign = 'right'; ctx.fillText(corner[1], w - pad.r - 8, pad.t + 16);
-    ctx.textAlign = 'left'; ctx.fillText(corner[2], pl + 8, h - pad.b - 8);
-    ctx.textAlign = 'right'; ctx.fillText(corner[3], w - pad.r - 8, h - pad.b - 8);
-    ctx.font = '11px "IBM Plex Mono", monospace'; ctx.fillStyle = css('--ink-faint'); ctx.textAlign = 'center';
-    [0.02, 0.05, 0.1, 0.2, 0.4].forEach((t) => ctx.fillText(Math.round(t * 100) + '%', X(t), h - pad.b + 15));
-    ctx.textAlign = 'right';
-    (narrow ? [0, 0.5, 1] : [0, 0.25, 0.5, 0.75, 1]).forEach((t) => ctx.fillText(narrow ? t.toFixed(1) : t.toFixed(2), pl - 6, Y(t) + 4));
-    ctx.font = '11px "IBM Plex Sans", sans-serif'; ctx.fillStyle = css('--ink-muted');
-    ctx.textAlign = 'center'; ctx.fillText('Share of profiles liked (log scale)', (pl + w - pad.r) / 2, h - 4);
-    if (!narrow) { ctx.save(); ctx.translate(14, (pad.t + h - pad.b) / 2); ctx.rotate(-Math.PI / 2); ctx.fillText('How much they agree on who', 0, 0); ctx.restore(); }
-    const from = spec.points.find((p) => p.key === spec.from);
-    spec.points.forEach((p) => {
-      if (p === from || !p.arrow) return;
-      ctx.strokeStyle = css('--ink-faint'); ctx.lineWidth = 1.5; ctx.setLineDash([3, 3]);
-      ctx.beginPath(); ctx.moveTo(X(from.x), Y(from.y)); ctx.lineTo(X(p.x), Y(p.y)); ctx.stroke(); ctx.setLineDash([]);
-    });
-    spec.points.forEach((p) => {
-      ctx.beginPath(); ctx.arc(X(p.x), Y(p.y), p === from ? 7 : 5.5, 0, Math.PI * 2); ctx.fillStyle = color(p.color || '--dating'); ctx.fill();
-      ctx.lineWidth = 2; ctx.strokeStyle = css('--surface'); ctx.stroke();
-      ctx.fillStyle = css('--ink'); ctx.font = '600 11px "IBM Plex Sans", sans-serif';
-      if (narrow) {
-        // One short line per point: "Today 41%".
-        const right = X(p.x) > w * 0.6;
-        ctx.textAlign = right ? 'right' : 'left';
-        ctx.fillText(p.short ?? p.label, X(p.x) + (right ? -10 : 10), Y(p.y) + 4 + (p.below ? 18 : p.above ? -16 : 0));
-        return;
-      }
-      const right = X(p.x) > w * 0.7;
-      ctx.textAlign = right ? 'right' : 'left';
-      const dx = right ? -11 : 11, dy = p.below ? 20 : p.above ? -20 : 0;
-      ctx.fillText(p.label, X(p.x) + dx, Y(p.y) - 3 + dy);
-      ctx.font = '11px "IBM Plex Mono", monospace'; ctx.fillStyle = css('--ink-muted');
-      ctx.fillText(p.value, X(p.x) + dx, Y(p.y) + 11 + dy);
-    });
-  }
-  const api = { draw };
-  charts.add(api);
-  draw();
-  return api;
 }
 
 export const pct = (v, d = 0) => (v == null ? '—' : (v * 100).toFixed(d) + '%');

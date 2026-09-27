@@ -139,7 +139,11 @@ body[data-sex="woman"] [data-for="man"], body[data-sex="man"] [data-for="woman"]
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--coh-1940:#4d3a4a;--coh-1950:#644b60;--coh-1960:#7e6079;--coh-1970:#9a7894;--coh-1980:#b693b0;--coh-1990:#d2afcc;--coh-2000:#f0d8ec;}}
 :root[data-theme="dark"]{--coh-1940:#4d3a4a;--coh-1950:#644b60;--coh-1960:#7e6079;--coh-1970:#9a7894;--coh-1980:#b693b0;--coh-1990:#d2afcc;--coh-2000:#f0d8ec;}
 .pair-bars .bar-row .bt{height:12px;}
-.pair-bars .bar-row + .bar-row.second{margin-top:-4px;}
+.pair-bars .bar-row.second{margin-top:-4px;}
+.pair-bars .bar-row.second .bt{height:7px;}
+.pair-bars .bar-row.second .bl small{margin:0;}
+.pair-bars .bar-row.second .bv{font-size:0.74rem;color:var(--ink-muted);}
 .playground .src{font-size:0.72rem;color:var(--ink-faint);line-height:1.5;margin:10px 0 0;}
 .playbook .panel h4{font-family:"Domine",Georgia,serif;font-size:1rem;}
 .playbook .panel .sub{font-size:0.8rem;color:var(--ink-muted);line-height:1.5;}
+#leverWho{max-width:260px;margin-left:8px;} .playbook .panel .ctrl-group{display:flex;align-items:center;}

@@ -47,11 +47,15 @@ out.channels = {
 };
 out.hcmst = hcmst.periods.map((p) => round({ from: p.from, to: p.to, n: p.n, online: p.Online, se: p.online_se, ci: 1.96 * p.online_se, friends: p["Through friends"] }));
 const singleUS = (sex, lo, hi) => inputs.pools.by_age.filter((r) => r.sex === sex && r.age >= lo && r.age <= hi).reduce((s, r) => s + r.pop * r.single, 0);
+// The Dating Calculator's counts (the author's screenshots), with the whole-country and metro steps
+// from the parquet: single men 25-40 with no kids 14.6M nationally, 1.02M in the New York metro (CBSA
+// 35620); single women 22-27 8.0M nationally, 119k in the San Francisco metro (CBSA 41860), 42k of them
+// with a BA and not overweight.
 out.calcExamples = [
-  { who: 'A 25-year-old woman in New York', unit: 'single men', steps: [['Single men 25-40, whole US', 15e6], ['… in the New York metro, no kids', 1e6], ['… aged 25-27', 288000],
+  { who: 'A 25-year-old woman in New York', unit: 'single men', steps: [['Single men 25-40, no kids, whole US', 14.6e6], ['… in the New York metro', 1.02e6], ['… aged 25-27', 288000],
     ['… earning $100k+', 39000], ['… with a graduate degree', 6200], ['… 6\'0" or taller', 1600], ['… a healthy weight, fit', 504], ['… doesn\'t drink or smoke', 19]] },
   { who: 'A 30-year-old man in San Francisco', unit: 'single women', steps: [['Single women 22-27, whole US', Math.round(singleUS('women', 22, 27) / 1e5) * 1e5],
-    ['… in SF, with a BA, not overweight', 42000], ['… WHR ≤ 0.74, waist ≤ 27 in', 1500], ['… earns $100k+', 311], ['… doesn\'t drink', 19]] },
+    ['… in the San Francisco metro', 119000], ['… with a BA, not overweight', 42000], ['… WHR ≤ 0.74, waist ≤ 27 in', 1500], ['… earns $100k+', 311], ['… doesn\'t drink', 19]] },
 ];
 
 // ---------- Act II: the attention market ----------
@@ -64,12 +68,11 @@ out.gssConcentration = { men: gss.men.partner_concentration_25_45, women: gss.wo
   const W = D.activityWeighted(D.histPoints(dg.luap_like_rate_women), meanOf(dg.luap_received_ratio_men)).pts;
   const scaled = (pts, f) => pts.map((p) => ({ x: Math.min(0.99, p.x * f), w: p.w }));
   const top5 = (f, rho) => r4(D.attentionMarket({ rho, openness: scaled(W, f), kappa: cal.exposure.men, M: 1000 }).top5);
-  // Pickiness (how many profiles women like) against agreement (how much they agree on who).
-  out.quadrant = { today: { like: 0.045, rho: cal.consensus.womenOnMen, top5: top5(1, cal.consensus.womenOnMen) },
-    likeMore: { like: 0.18, rho: cal.consensus.womenOnMen, top5: top5(4, cal.consensus.womenOnMen) },
-    agreeLess: { like: 0.045, rho: 0.2, top5: top5(1, 0.2) }, both: { like: 0.18, rho: 0.2, top5: top5(4, 0.2) },
-    agreeMore: { like: 0.045, rho: 0.7, top5: top5(1, 0.7) },
-    men: { like: 0.26, rho: cal.consensus.menOnWomen, top5: 0.31 } };
+  // The top 5%'s share of likes: men today (Hinge's women), women today, and two changes. A 50/50 app:
+  // with 1 man per woman instead of 2.7, a woman with time for the same number of conversations can
+  // like 2.7 times as many profiles (Act II's inbox arithmetic).
+  const r0 = cal.consensus.womenOnMen;
+  out.attention = { men: 0.31, women: top5(1, r0), agreeLess: top5(1, 0.2), even: top5(2.7, r0), both: top5(2.7, 0.2) };
 }
 
 // ---------- Act III: the funnel ----------
@@ -189,22 +192,40 @@ const gb = (lo) => glp1.bands.find((b) => Math.abs(b.band[0] - lo) < 1e-6);
 const medWhr = (k) => (gb(0.25)[k] + gb(0.5)[k]) / 2;
 const vGlp = appealFromWhr(medWhr('pct_glp1')), vGlpG = appealFromWhr(medWhr('pct_glp1_glutes'));
 const baseW = { start: 27, v: 0.5, gap: 2 };
-out.levers = [
-  lever('Baseline: a median woman on the apps from 27', baseW),
-  lever('Start at 23 instead', { ...baseW, start: 23 }),
-  lever('Open to men 10 years older', { ...baseW, gap: 10 }),
-  lever('Open to men 15 years older', { ...baseW, gap: 15 }),
-  lever('GLP-1 (either drug)', { ...baseW, v: vGlp }),
-  lever('GLP-1 plus glute training', { ...baseW, v: vGlpG }),
-  lever('Give three men a year months of dating', { ...baseW, n: 3 }),
-  lever("Friends' introductions instead of the apps", { ...baseW, ch: 'friends' }),
-];
+// A woman's WHR percentile from her appeal (appeal = 0.6 x the WHR z-score, other traits median), and
+// where GLP-1s plus a year of glute work take it (interpolating the NHANES bands by where she starts).
+const whrFromAppeal = (v) => normCdf(D.zTop(1 - v) / 0.6);
+const bandsBy = glp1.bands.map((b) => ({ p: 1 - (b.band[0] + b.band[1]) / 2, g: b.pct_glp1, gg: b.pct_glp1_glutes })).sort((a, b) => a.p - b.p);
+const afterGlp = (p, k) => { if (p <= bandsBy[0].p) return bandsBy[0][k] - (bandsBy[0].p - p); if (p >= bandsBy.at(-1).p) return Math.min(0.999, bandsBy.at(-1)[k]); const j = bandsBy.findIndex((b) => b.p >= p); const a = bandsBy[j - 1], b = bandsBy[j], t = (p - a.p) / (b.p - a.p); return a[k] + (b[k] - a[k]) * t; };
+const glpAppeal = (v) => appealFromWhr(afterGlp(whrFromAppeal(v), 'gg'));
+out.leversBy = {};
+for (const v of [0.5, 0.7, 0.9]) {
+  const b = { ...baseW, v };
+  out.leversBy[`p${Math.round(v * 100)}`] = [
+    lever("Don't start looking till 27", b),
+    lever('Start at 23 instead', { ...b, start: 23 }),
+    lever('Open to men 10 years older', { ...b, gap: 10 }),
+    lever('Open to men 15 years older', { ...b, gap: 15 }),
+    lever('GLP-1 plus a year of glute work', { ...b, v: glpAppeal(v) }),
+    lever('Give three men a year months of dating', { ...b, n: 3 }),
+  ];
+}
+out.levers = out.leversBy.p50;
+// Age gaps for a top-20% woman of 23: where the top-tier men are.
+out.gapYoung = { narrow: round(herYears({ start: 23, v: 0.8, gap: 2 }).odds), wide: round(herYears({ start: 23, v: 0.8, gap: 15 }).odds) };
 out.leverAppeal = { glp: r4(vGlp), glpGlutes: r4(vGlpG) };
 {
-  // Everything together from 23, one step at a time (a waterfall).
-  const steps = [['On the apps from 27', {}], ['Start at 23', { start: 23 }], ['Open to men 10 years older', { gap: 10 }], ['GLP-1 plus glute training', { v: vGlpG }], ['Three men a year', { n: 3 }]];
+  // GLP-1s for a woman already in the top 20% on WHR (80th percentile), from 27.
+  const p0 = 0.8, v0 = appealFromWhr(p0), v1 = appealFromWhr(afterGlp(p0, 'gg'));
+  const o0 = herYears({ ...baseW, v: v0 }).odds, o1 = herYears({ ...baseW, v: v1 }).odds;
+  out.glpTop20 = round({ v0, v1, pAfter: afterGlp(p0, 'gg'), any0: o0.any, any1: o1.any, top10_0: o0.top10, top10_1: o1.top10, rare0: o0.rare, rare1: o1.rare });
+}
+{
+  // Everything together from 23 for a top-20% woman, one step at a time (a waterfall).
+  const v = 0.8, b = { ...baseW, v };
+  const steps = [["Don't start looking till 27", {}], ['Start at 23', { start: 23 }], ['Open to men 10 years older', { gap: 10 }], ['GLP-1 plus glute work', { v: glpAppeal(v) }], ['Three men a year', { n: 3 }]];
   let o = {};
-  out.waterfall = steps.map(([label, d]) => { o = { ...o, ...d }; const r = herYears({ ...baseW, ...o }); return { label, ...round(r.odds) }; });
+  out.waterfall = steps.map(([label, d]) => { o = { ...o, ...d }; const r = herYears({ ...b, ...o }); return { label, ...round(r.odds) }; });
 }
 out.glp = [0.05, 0.1, 0.25, 0.5].map((lo) => {
   const b = gb(lo), p0 = 1 - (b.band[0] + b.band[1]) / 2, v0 = appealFromWhr(p0), v1 = appealFromWhr(b.pct_glp1), v2 = appealFromWhr(b.pct_glp1_glutes);
@@ -224,28 +245,20 @@ out.gapTop = [23, 27, 31].map((start) => ({ start, rows: [2, 10, 15].map((gap) =
 log('men');
 const baseM = { age: 30, lo: 22, hi: 30, uLooks: 0.5, status: 0.5, social: 0.5, height: 0.5 };
 const mlever = (label, o) => { const r = hisYears({ ...baseM, ...o }); return { label, mvPct: r4(r.mvPct), dates: r3(r.first.dates), ...round(r.odds) }; };
+// Body is half of a man's looks (assumption): fit = body at the 75th percentile, abs = the top 5%
+// (the Dating Calculator's fit/abs flag: 5.3% of single men 25-35), face at the median.
+const looksWithBody = (pBody) => normCdf(D.zTop(1 - pBody) / Math.SQRT2);
 out.menLevers = [
   mlever('Baseline: a median man, 30, on the apps', {}),
+  mlever('Get off the apps: approach two women a month', { ch: 'inperson' }),
+  mlever('Get fit (body to the 75th percentile)', { uLooks: looksWithBody(0.75) }),
+  mlever('Get abs (body to the top 5%)', { uLooks: looksWithBody(0.95) }),
   mlever('Status to the 75th percentile (income, career)', { status: 0.75 }),
   mlever('Status to the 90th percentile', { status: 0.9 }),
-  mlever('Looks to the 75th percentile (fit, lean, style)', { uLooks: 0.75 }),
   mlever('Social skills to the 75th percentile', { social: 0.75 }),
-  mlever('All three to the 75th percentile', { status: 0.75, uLooks: 0.75, social: 0.75 }),
-  mlever("Friends' introductions instead of the apps", { ch: 'friends' }),
+  mlever('Fit, plus status and social skills at the 75th', { status: 0.75, uLooks: looksWithBody(0.75), social: 0.75 }),
 ];
 out.assort = { rho: assort.cfa.rho, composite: assort.rho_composite, cascade: assort.observed.cascade, matched: assort.observed.matched, independent: assort.fits[0].matched, n: assort.observed.n };
-
-// ---------- Why marriage keeps falling: what the apps did, in the model ----------
-log('apps counterfactual');
-{
-  const vs = [0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95];
-  const avg = (o) => vs.reduce((s, v) => s + herYears({ start: 25, v, ...o }).odds.any, 0) / vs.length;
-  const today = avg({}), noApps = avg({ ch: 'friends', kappa: 0 }), fewer = avg({ options: 0.25 });
-  const at = (c, age) => inputs.digitized.cohorts[c].find(([a]) => a === age)[1];
-  const never25 = 1 - at('1990', 25);
-  out.whyFalling = { by30_1950: r4(at('1950', 30)), by30_1990: r4(at('1990', 30)), today: r4(today), noApps: r4(noApps), fewerOptions: r4(fewer), never25: r4(never25),
-    appsBlock: r4(never25 * (noApps - today)) };
-}
 
 writeFileSync(new URL('../../src/data/dating/site.json', import.meta.url), JSON.stringify(out));
 log(`wrote src/data/dating/site.json (${(JSON.stringify(out).length / 1024).toFixed(0)} KB)`);

@@ -95,8 +95,30 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
   const womenPop = () => C.population({ nz: G.women[0], ne: G.women[1], rhoQz: BASE.rhoQz, casual: BASE.womenCasual });
   const womenSingle = (o = {}) => C.singlePool(womenPop(o), { demand: demandW, x50, kc: 1, lemon: o.lemon ?? BASE.lemon });
 
-  // "A top-10% man": top 10% of men on mate value (potential, the same at any age).
-  const menBar = (p) => ({ z: D.zTop(1 - p), key: 'xt' });
+  // What she ends up with is a man's standing now, not only his potential: "a top-10% man" ranks men
+  // 22-55 on current mate value. His status (the part of e that is
+  // status) sits at his age's median and spread (earnings rank climbs into the 40s and fans out, so
+  // top earners are mostly over 35); looks and the rest as they are. Commitment still runs on
+  // potential (a promising 25-year-old and the same man at 40 are judged alike).
+  const SIO = POWER.status / W_OTHER;
+  const tail = (M) => status.status_tail[Math.max(22, Math.min(55, M))];
+  const xNow = (z, e, M) => { const { mu, sigma } = tail(M); return (POWER.looks * z + W_OTHER * (e + SIO * (mu + (sigma - 1) * SIO * e))) / NORM; };
+  const menScale = (() => {
+    const pts = [], pop = menPop();
+    let tot = 0;
+    for (let M = 22; M <= 55; M++) {
+      const wm = byAge('men', M).pop;
+      tot += wm;
+      for (const c of pop.cells) pts.push([xNow(c.z, c.e, M), c.w * wm]);
+    }
+    pts.sort((p, q) => p[0] - q[0]);
+    const xs = new Float64Array(pts.length), cs = new Float64Array(pts.length);
+    let cw = 0;
+    pts.forEach(([x, w], i) => { cw += w / tot; xs[i] = x; cs[i] = cw; });
+    const quantile = (p) => { let lo = 0, hi = cs.length - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (cs[m] < p) lo = m + 1; else hi = m; } return xs[lo]; };
+    return { quantile };
+  })();
+  const menBar = (p) => ({ z: menScale.quantile(p), key: 'xn' });
 
   // ---------- who is single at each age ----------
   // Never-married men: frailty model fitted to the census at every age, with higher-value men marrying
@@ -114,11 +136,11 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
     singleC ??= menSingle();
     return C.singleAtAge(menPop(o), cohortM(o)[Math.min(60, M)], singleC, { neverShare: r.single_never, prevShare: r.single_prev });
   };
-  // Single men M years old, each tagged with his mate value (Q = xt) and age.
+  // Single men M years old, each tagged with his mate value (Q = xt), his standing now (xn) and age.
   const poolCache = new Map();
   const poolCells = (M, o = {}) => {
     const key = JSON.stringify([M, o.theta ?? BASE.theta]);
-    if (!poolCache.has(key)) poolCache.set(key, poolAt(M, o).map((c) => ({ ...c, xt: c.xt ?? c.Q, M })));
+    if (!poolCache.has(key)) poolCache.set(key, poolAt(M, o).map((c) => ({ ...c, xt: c.xt ?? c.Q, xn: xNow(c.z, c.e, M), M })));
     return poolCache.get(key);
   };
   // The single men a woman aged `age` would date: `below` years younger to `gap` years older, weighted
@@ -183,16 +205,22 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
     app: { label: 'Apps', a: BASE.read.a, c: BASE.read.c, views: 15000 },
     friends: { label: 'Friends', a: 0.3, c: 0.45, views: 60, like: 0.2, dates: 6 },
     work: { label: 'Work', a: 0.25, c: 0.4, views: 25, like: 0.2, dates: 3 },
+    // Men only: approaching women he likes, in person. Two a month puts a man well inside the top
+    // quarter of single men (the author's post). In person she reads more of him than a profile shows,
+    // and she isn't flooded: her yes rate is her app like rate x 2.7, the app's men-per-woman ratio.
+    inperson: { label: 'In person', a: 0.3, c: 0.45, approaches: 24 },
   };
   // A woman at appeal percentile v for her age, searching for `years` from age `start`, open to men
   // `gap` years older. Each year: men's interest in her is at her age's level; she likes and dates by
   // what the profile shows; she properly dates the best evalPerYear by what a first date shows; it
   // succeeds if both commit. Odds of at least one success, overall and with a man above each bar:
-  // top 10 / 5 / 1% of men by mate value, and "as rare or better" (his rank among men at least her
-  // rank among women her age).
+  // top 10 / 5 / 1% of men 22-55 by standing now, and "as good as her or better" (his rank on
+  // potential at least her rank among women her age).
   function herYears({ start = 25, years = BASE.years, v = 0.5, ch = 'app', gap = 2, ...o } = {}) {
     const C0 = CHANNELS[ch], his = hisCommit(o), hers = herCommit(o), hisWant = hisInterest(o), y0 = D.zTop(1 - v);
-    const bars = { any: 0, top10: menBar(0.9), top5: menBar(0.95), top1: menBar(0.99), rare: menBar(Math.min(0.999, Math.max(v, 0.001))) };
+    // "As good as her or better" is rank for rank on potential (his for his age, hers for her age);
+    // the top-10/5/1% bars are on standing now.
+    const bars = { any: 0, top10: menBar(0.9), top5: menBar(0.95), top1: menBar(0.99), rare: { z: D.zTop(1 - Math.min(0.999, Math.max(v, 0.001))), key: 'xt' } };
     const miss = Object.fromEntries(Object.keys(bars).map((k) => [k, 1]));
     const rows = [];
     let reach = 1, xm = 0, xs = 0, got = 0;
@@ -291,12 +319,19 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
       // women his friends know, with no swipe stage.
       const sRead = BASE.read.a * zApp + BASE.read.c * xType, sdRead = Math.sqrt(Math.max(1e-6, 1 - (BASE.read.a ** 2 + BASE.read.c ** 2 + 2 * BASE.read.a * BASE.read.c * RHO_LOOKS_VALUE)));
       const tM = D.zTop(likeM(uLooks)), sM = Math.sqrt(1 - rhoM * rhoM);
+      const ip = CHANNELS.inperson, sIP = ip.a * zApp + ip.c * xType, sdIP = Math.sqrt(Math.max(1e-6, 1 - (ip.a ** 2 + ip.c ** 2 + 2 * ip.a * ip.c * RHO_LOOKS_VALUE)));
+      let liked = 0, yes = 0;
       const cells = ages.flatMap(([a, w]) => womenSingleCells().map((c) => {
-        const Q = c.z + womenShift(a);
-        const pick = ch === 'app' ? D.normSf((D.zTop(likeW(normCdf(Q))) - sRead) / sdRead) * D.normSf((tM - rhoM * Q) / sM) : 1;
-        return { ...c, xt: c.z, Q, a, w: c.w * w / aTot * pick };
+        const Q = c.z + womenShift(a), wt = c.w * w / aTot, back = D.normSf((tM - rhoM * Q) / sM);
+        let pick = 1;
+        if (ch === 'app') pick = D.normSf((D.zTop(likeW(normCdf(Q))) - sRead) / sdRead) * back;
+        else if (ch === 'inperson') {
+          const y = D.normSf((D.zTop(Math.min(0.9, 2.7 * likeW(normCdf(Q)))) - sIP) / sdIP);
+          liked += wt * back; yes += wt * back * y; pick = back * y;
+        }
+        return { ...c, xt: c.z, Q, a, w: wt * pick };
       }));
-      const dates = ch === 'app' ? Math.max(0.05, datesAt(normCdf(zApp))) : CHANNELS[ch].dates;
+      const dates = ch === 'app' ? Math.max(0.05, datesAt(normCdf(zApp))) : ch === 'inperson' ? ip.approaches * yes / Math.max(liked, 1e-12) : CHANNELS[ch].dates;
       const r = C.evaluate({ cells: C.normalize(cells), count: dates }, {
         n: o.n ?? BASE.evalPerYear, read2: { a: 0, c: 0.7 }, rhoQz: 1, bar: 0, bars,
         pursue: (c) => herWant(xType, c.Q, normCdf(c.Q)),
@@ -314,7 +349,7 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
   return {
     BASE, CHANNELS, rhoW, rhoM, demandM, demandW, likeM, likeW, b, kc, x50, ok, censusM, censusW, cal,
     menPop, menSingle, womenPop, womenSingle, hisCommit, herCommit, cohortM, poolAt, poolCells, herPool, hisPool, menOptionsAt,
-    womenShift, menLooksShift, menAgeDiscount, menBar, datesAt, POWER_NORM: { W_OTHER, NORM },
+    womenShift, menLooksShift, menAgeDiscount, menBar, datesAt, POWER_NORM: { W_OTHER, NORM }, menScale, xNow,
     herYears, hisYears, funnel, fMen, fWomen, p0, appealFromWhr,
     fitted: { tolerance: BASE.tolerance, commitScale: BASE.commitScale, theta: BASE.theta, p0 },
   };

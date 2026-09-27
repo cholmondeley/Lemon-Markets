@@ -83,8 +83,11 @@ a chosen so the received mean matches (a = 0.14 women, 0.30 men).
 **Fit.** ρ is fitted by grid search to the digitized received-ratio histogram, with binomial noise for
 100 views per profile, minimizing the KS distance. Women rating men: ρ = 0.48 (KS 0.052); men rating
 women: ρ = 0.56 (KS 0.025). The concentration on men comes from women's low like rate (4.5%), which
-turns moderate agreement into a steep tail (Act II's quadrant: liking 4× as many profiles takes the
-top 5% of men's share from 41% to 29%; agreeing far less, ρ = 0.2, to 27%; both, 23%).
+turns moderate agreement into a steep tail. Act II's bars: the top 5% of women get 31% of men's likes
+(Hinge); the top 5% of men get 41% of women's. If women agreed far less (ρ = 0.2): 27%. If apps were
+50/50: with one man per woman instead of 2.7, a woman with time for the same conversations can like
+2.7 times as many profiles (§4), and the top 5% get 32%. Both: 24%. The playground's "men per woman"
+slider scales women's like rates by 2.7 / ratio.
 
 **Exposure.** Views ∝ e^{κz}; κ fitted to Hinge's top-5% share alone: 0.74 for men, 0.86 for women.
 Out of sample: men's top 1% 17% (Hinge 16%), top 10% 57% (58%), bottom half 5.9% (4%).
@@ -146,8 +149,16 @@ women he could not hold at 28. Both must commit.
 - m = 0.188 so that never-married women 25, averaged over appeal, marry by 30 at the census rate (34.3%).
 
 **Will he commit?** (Act IV's chart shows his decision alone, without m.) A serious man of 30 with a
-median woman of 28: 10th-percentile man 100%, 25th 99%, median 82%, 75th 33%, 90th 4.6%, 95th 0.8%. A
-25th-percentile man with a 90th-percentile woman: 100%. Then the relationship works out 19% of the time.
+median woman of 28: 10th-percentile man 100%, 25th 99%, median 82%, 75th 33%, 90th 4.6%, 95th 0.8%;
+with a top-10% woman: 100%, 100%, 100%, 98%, 81%, 55%. Then the relationship works out 19% of the time.
+
+**Outcome bars.** "As good as her or better" is rank for rank on potential (his value percentile for
+his age at least her appeal percentile for her age). "A top-10 / 5 / 1% man" is on standing now:
+current mate value, with his status moved to his age's median and spread (`status.py`: men's earnings
+rank among men 22-55 climbs into the 40s and fans out, so top earners are mostly over 35), ranked among
+all men 22-55. That is what she marries into, and what makes an age gap buy top-tier men: a 23-year-old
+at the 80th percentile open to men 15 years older goes from 1.0% to 4.1% for a top-10% man. Commitment
+itself runs on potential.
 
 ### 6a. How tightly couples sort (PSID)
 
@@ -205,11 +216,19 @@ with his looks (fewer as he ages, via the OkCupid men's curve), with the single 
 ages who would pick him: her read of him (0.48·looks + 0.2·value) against her own like rate (pickier
 the more appealing she is), times his liking her back. Then months of dating need her interest; he
 properly dates the best two a year; success if both commit. Bars: her appeal for her age at the 50 / 75 /
-90 / 95th percentile, and at least as rare as him. For a median man of 30 (women 22-30), five years: 16%.
+90 / 95th percentile, and as good as him or better. For a median man of 30 (women 22-30), five years: 16%.
+
+**In person (men).** He approaches two women a month (the post: once a month puts a man in the top
+quarter of single men), choosing women he likes; each says yes to a date if her read of him (0.3 looks,
+0.45 value) clears her own bar, set at her app like rate × 2.7 (she isn't flooded: the 50/50 logic of
+§3). No swipe funnel, no competition with the top 10% for her dozen first dates. A median man: 1.7
+first dates a year (0.75 on the apps), 41% odds in five years (16%).
 
 **Reads.** Connelly & Ones (2010): strangers ~.17, coworkers ~.26, friends ~.47. Profile: 0.48 looks,
 0.2 value; after a first date 0.3 looks, 0.5 value. Channels: apps 15,000 profiles a year, 13 first
-dates; friends 60 introductions, 6 first dates, a better read (0.3, 0.45) and no swipe stage.
+dates; friends 60 introductions, 6 first dates, a better read (0.3, 0.45) and no swipe stage. The
+friends channel is not on the page: introductions are adversely selected (the people friends set up
+are often the ones who couldn't find someone otherwise), and nothing here measures by how much.
 
 ## 9. Age
 
@@ -240,11 +259,9 @@ evaluated 1 − (1 − h)ⁿ. With r = 1 this reproduces the author's table (top
 18% / 2% / 0.8% for 1 in 1k / 10k / 100k / 250k). At r = 0.5 a "top 1%" pool is 13% truly top 1%, and
 the odds of 1 in 10,000 fall to 7%.
 
-**The search calculator.** Your rank y (from your likes on the apps, or corrected self-rating); you go
-deep with people who read as the top p = 1 − y (about as rare as you); target top t; n people; read r.
-Self-ratings: the median person puts themselves near the 70th percentile and self and observer ratings
-of attractiveness correlate about 0.24 (Feingold 1992), so the expected rank as others see it is
-Φ(0.24·(z_self − 0.52)). Likes map to ranks through the funnel (men: likes a week; women: a day).
+**Your odds** (Act VI's playground, replacing the earlier search calculator): the reader's likes on
+the apps (women: a day; men: a week) map to a percentile through the funnel (§4, §7), and the worker
+runs `herYears` (from 25) or `hisYears` (from 30, women 22-30, everything else median).
 
 ## 11. Levers: age gaps, GLP-1s, men's levers, exchange rates
 
@@ -265,15 +282,22 @@ of attractiveness correlate about 0.24 (Feingold 1992), so the expected rank as 
   Chance of reaching WHR ≤ 0.74 (GLP-1 / + glutes): top 5-10% 23% / ~100%; top 10-25% 4% / 21%; top
   25-50% 1% / 3%; median and below ≈ 0. A median woman moves from about the 50th to the 69th WHR
   percentile (appeal 50th → 61st at a body share of 0.6).
-- **Men's levers** (`hisYears`, a median man of 30, women 22-30, five years): looks to the 75th
-  percentile (more first dates: 0.75 → 2.8 a year) any 16% → 49%; status to the 90th percentile: any 12%
-  (he is choosier) but a 75th-percentile woman 0.8% → 4.7%; all three (status, looks, social) to the
-  75th: a 90th-percentile woman 9.3% vs 0.2%; friends instead of apps: any 67%.
+- **Women's levers**, for a median, 70th-percentile and top-10% woman (the page's dropdown): start at
+  23, age gaps of 10 and 15, GLP-1 plus glutes (her WHR percentile from her appeal, WHR z = appeal z /
+  0.6, moved by the NHANES bands), three men a year. The waterfall is a top-20% woman. For a top-20%
+  woman on WHR (80th percentile) from 27, GLP-1 plus glutes: any committed man 43% → 48%, top 10% 0.2% →
+  0.9%.
+- **Men's levers** (`hisYears`, a median man of 30, women 22-30, five years): get off the apps (in person,
+  two approaches a month) 16% → 41%; get fit (body at the 75th percentile, body half of looks, face at
+  the median: looks 68th) 37%; get abs (body top 5%: the Dating Calculator's fit/abs flag, 5.3% of single
+  men 25-35; looks 88th, 6.8 first dates a year) 66%, and a 75th-percentile woman or better 0.8% → 20%;
+  status to the 90th percentile: any 12% (he is choosier) but a 75th-percentile woman 4.7%; fit plus
+  status and social skills at the 75th: a 75th-percentile woman 12%.
 - **Exchange rates** (`exchange.py`): the income or net worth that as many single men 28-42 clear as
   single women 22-29 clear a WHR tier. WHR ≤ 0.74 (4.0%) ↔ $163k+ or $1.1M+. Metros: single women 22-29
   at WHR ≤ 0.74 per single man 28-42 worth $1M+ (bodies imputed from NHANES).
 
-## 12. Why marriage keeps falling
+## 12. Why marriage keeps falling (analysis; cut from the page)
 
 From the digitized cohort curves (women married by 25 / by 30 / share of those single at 25 who marry
 by 30): 1950s 74 / 84 / 39%; 1970s 50 / 70 / 40%; 1980s 37 / 59 / 34%; 1990s 27 / 52 / 34%. The 1980s
@@ -307,18 +331,20 @@ weaker, mixed evidence (Bellou 2015 finds broadband raised marriage rates).
 | First dates per actively dating woman, active share | 13 / yr, 0.2 | NSFG 2022-23, luap |
 | Men per woman over a year | 1.5 | Pew ever-used, NSFG |
 | Months-long dates per year | 2 | Author's 4-20 over a decade |
-| Body share of a woman's appeal | 0.6 | Assumption |
+| Body share of a woman's appeal; of a man's looks | 0.6; 0.5 | Assumptions |
+| In person (men): approaches a year; her yes bar | 24; app like rate × 2.7 | The author's post; §3 |
 | GLP-1 weight loss; waist per weight; hip slope; glutes | trials; 0.84; 0.657; 1 in | STEP 1, SURMOUNT-1, WHR notebook, assumption |
 
 ## 14. Validation
 
-`npm test` runs 47 checks (21 hiring, 26 dating). Dating checks include the single-stage identities (tail
+`npm test` runs 48 checks (21 hiring, 27 dating). Dating checks include the single-stage identities (tail
 accuracy, digitized medians, law of total probability, McCall fixed point, bivariate tail limits,
 the author's odds table), the grid and funnel accounting, the cohort reproducing the census, the
 evaluate step's limits, and the calibrated scenario: men commit up and rarely down (a 25th-percentile man
 to a 90th-percentile woman > 99%; a 90th-percentile man to a median woman < 10%); a median woman's
-top-10% odds under 1% and rising steeply with her appeal; age gaps at least doubling top-5% odds for a
-90th-percentile woman from 31; and the census 25 → 30 fit.
+top-10% odds under 1% and rising steeply with her appeal; age gaps at least doubling top-10% and top-5%
+odds for attractive women at 23 and 31; getting off the apps and getting fit each raising a median
+man's odds by half or more; and the census 25 → 30 fit.
 
 Fitted exactly: the three targets in §13. Out of sample: Hinge top 1/10% and bottom 50%; NSFG men's 3.4
 partners; the founder's intent gradient from selection alone; the census rate at which single women
@@ -331,9 +357,10 @@ channels).
 1. **One mate value per person**, a weighted index; people differ in taste only through noise.
 2. **Bars rise with options by McCall search**; κ is an assumption and moves results (§H of `results.md`).
 3. **Three targets for three free parameters**; the many fixed assumptions (§13) are swept, not fitted.
-4. **"Top 10% man" is on potential**, the same at any age; the ACS reach table is on current income.
-5. **Apps as the default channel**; friends are a second channel; the model under-predicts marriage in
-   the early thirties.
+4. **Two rankings of men**: commitment and "as good as her or better" on potential; "top 10% man" on
+   standing now (status by age from earnings ranks; wealth is not modeled separately).
+5. **Apps as the default channel**; in person for men; the model under-predicts marriage in the early
+   thirties.
 6. **Parquet bodies are imputed** from NHANES, so body measures are not linked to marital status.
 7. **Digitized charts** carry reading error of about a point.
 8. **Scope**: straight dating in the US.
