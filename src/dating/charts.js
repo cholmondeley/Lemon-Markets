@@ -224,7 +224,8 @@ export function bars(host, rows, { max = null, cls = '' } = {}) {
 }
 
 // HTML table. head: string[], rows: (string|{text, cls})[][], hl: row index to highlight.
-export function table(host, head, rows, { hl = -1, caption = '' } = {}) {
+// rowCls: { rowIndex: className } for rows that need their own look (e.g. a reference row).
+export function table(host, head, rows, { hl = -1, caption = '', rowCls = {} } = {}) {
   const wrap = document.createElement('div');
   wrap.className = 'table-wrap';
   const t = document.createElement('table');
@@ -234,7 +235,7 @@ export function table(host, head, rows, { hl = -1, caption = '' } = {}) {
   const tb = document.createElement('tbody');
   rows.forEach((r, i) => {
     const tr = document.createElement('tr');
-    if (i === hl) tr.className = 'hl';
+    tr.className = [i === hl ? 'hl' : '', rowCls[i] ?? ''].join(' ').trim();
     tr.innerHTML = r.map((c, j) => (j === 0 ? `<th scope="row" style="text-align:left;font-weight:500;font-size:0.84rem;color:var(--ink);border-bottom:1px solid var(--rule);padding:6px 8px">${c.text ?? c}</th>` : `<td class="${c.cls ?? ''}">${c.text ?? c}</td>`)).join('');
     tb.appendChild(tr);
   });

@@ -1,14 +1,15 @@
 /* Dating page: extends src/styles.css. Series colors validated with the dataviz palette checker in
    both modes (women rose, men steel blue; CVD separation >= 10). */
 :root{
+  --ref-soft:#e2ebf3;
   --dating:#7a3f73; --dating-soft:#efe1ec;
   --women:#b8336a; --men:#2f6f9f; --neutral:#8b9080;
   --accent:var(--dating); --accent-soft:var(--dating-soft);
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){ --dating:#d08bc4; --dating-soft:#33222f; --women:#dd5f95; --men:#4a95da; --neutral:#767c65; }
+  :root:not([data-theme="light"]){ --ref-soft:#1d2a35; --dating:#d08bc4; --dating-soft:#33222f; --women:#dd5f95; --men:#4a95da; --neutral:#767c65; }
 }
-:root[data-theme="dark"]{ --dating:#d08bc4; --dating-soft:#33222f; --women:#dd5f95; --men:#4a95da; --neutral:#767c65; }
+:root[data-theme="dark"]{ --ref-soft:#1d2a35; --dating:#d08bc4; --dating-soft:#33222f; --women:#dd5f95; --men:#4a95da; --neutral:#767c65; }
 
 .t-women{color:var(--women);} .t-men{color:var(--men);}
 .sw-women{background:var(--women);} .sw-men{background:var(--men);} .sw-neutral{background:var(--neutral);}
@@ -147,3 +148,6 @@ body[data-sex="woman"] [data-for="man"], body[data-sex="man"] [data-for="woman"]
 .playbook .panel h4{font-family:"Domine",Georgia,serif;font-size:1rem;}
 .playbook .panel .sub{font-size:0.8rem;color:var(--ink-muted);line-height:1.5;}
 #leverWho{max-width:260px;margin-left:8px;} .playbook .panel .ctrl-group{display:flex;align-items:center;}
+
+/* A reference row in a table (for scale), set apart from the highlighted row. */
+.dtable tr.ref td,.dtable tr.ref th{background:var(--ref-soft);font-style:italic;}
