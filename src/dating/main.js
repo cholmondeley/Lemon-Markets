@@ -1,15 +1,17 @@
 // The dating page: page-wide woman / man switch, numbers bound into the prose, each act's figures
 // and scrolling stories, and the playgrounds. Default tables come precomputed in site.json
-// (scripts/dating/site-data.mjs); the reader's own scenarios run live, the heavy one in a worker.
+// (scripts/dating/site-data.mjs); the reader's own scenarios run live, the heavy ones in a worker.
 import '../styles.css';
 import './dating.css';
 import SITE from '../data/dating/site.json';
 import digitized from '../data/dating/digitized.json';
 import calibration from '../data/dating/calibration.json';
+import status from '../data/dating/status.json';
 import { initChrome } from '../chrome.js';
 import { createStepper, watchVisible } from '../stepper.js';
+import { normCdf } from '../model.js';
 import * as D from './model.js';
-import { lineChart, histChart, bars, table, pct, ord, money, num, redrawAll } from './charts.js';
+import { lineChart, histChart, bars, table, sankey, waterfall, quadrant, pct, ord, money, num, redrawAll } from './charts.js';
 
 initChrome();
 
@@ -28,7 +30,7 @@ try { const saved = localStorage.getItem('lemon-dating-sex'); if (saved === 'man
 
 // ---------- numbers in the prose ----------
 const get = (path) => path.split('.').reduce((o, k) => (o == null ? o : o[k]), SITE);
-const FMT = { pct: (v) => pct(v), pct1: (v) => pct(v, 1), num: (v) => (v >= 10 ? Math.round(v).toString() : v.toFixed(1)), k: (v) => Math.round(v / 1000) };
+const FMT = { pct: (v) => pct(v), pct1: (v) => pct(v, 1), num: (v) => (v >= 10 ? Math.round(v).toString() : v.toFixed(1)), k: (v) => Math.round(v / 1000), ord: (v) => ord(v * 100), pts: (v) => Math.round(v * 100) };
 document.querySelectorAll('[data-v]').forEach((el) => {
   const v = get(el.dataset.v);
   if (typeof v === 'number') el.textContent = (FMT[el.dataset.f] || FMT.num)(v);
@@ -36,77 +38,84 @@ document.querySelectorAll('[data-v]').forEach((el) => {
 
 const fig = (id) => document.querySelector(`[data-fig="${id}"]`);
 const bandLabel = (b) => (b.lo === 0 ? 'Bottom half' : b.hi === 1 ? `Top ${Math.round((1 - b.lo) * 100)}%` : `${ord(b.lo * 100)}–${ord(b.hi * 100)}`);
+const lerpRows = (rows, key, v, fields) => {
+  let j = rows.findIndex((r) => r[key] >= v);
+  if (j <= 0) j = 1; if (j < 0) j = rows.length - 1;
+  const a = rows[j - 1], b = rows[j], t = Math.max(0, Math.min(1, (v - a[key]) / (b[key] - a[key])));
+  return Object.fromEntries(fields.map((f) => [f, Array.isArray(a[f]) ? a[f].map((x, i) => x + (b[f][i] - x) * t) : a[f] + (b[f] - a[f]) * t]));
+};
+// Invert a monotone table: the x at which rows[i][yKey] reaches y.
+const invert = (rows, xKey, yKey, y) => {
+  if (y <= rows[0][yKey]) return rows[0][xKey];
+  for (let i = 1; i < rows.length; i++) if (rows[i][yKey] >= y) { const a = rows[i - 1], b = rows[i]; return a[xKey] + (b[xKey] - a[xKey]) * (y - a[yKey]) / (b[yKey] - a[yKey]); }
+  return rows[rows.length - 1][xKey];
+};
 
 // ---------- Prologue and Act I ----------
 lineChart(fig('cohorts'), {
-  height: 280, aria: 'Line chart: share of US women married by 25 and by 30, by decade of birth, falling from 82% and 89% for the 1940s to 27% and 52% for the 1990s.',
-  x: { min: 1940, max: 2000, ticks: [1940, 1950, 1960, 1970, 1980, 1990, 2000], fmt: (v) => v + 's' },
-  y: { min: 0, max: 1, ticks: [0, 0.25, 0.5, 0.75, 1], fmt: (v) => pct(v) },
-  series: [
-    { label: 'Married by 30', color: '--dating', width: 3, dots: true, points: SITE.cohorts.rows.map((r) => [r.cohort, r.by30]) },
-    { label: 'Married by 25', color: '--neutral', dots: true, points: SITE.cohorts.rows.map((r) => [r.cohort, r.by25]) },
-  ],
+  height: 380, aria: 'Line chart: share of US women married by age, one line per decade of birth. By 30: about 89% for the 1940s, 52% for the 1990s; the 2000s cohort is at 17% by 24.',
+  x: { min: 15, max: 45, ticks: [15, 20, 25, 30, 35, 40, 45], tipFmt: (v) => `Age ${v}` },
+  y: { min: 0, max: 1, ticks: [0, 0.2, 0.4, 0.6, 0.8, 1], fmt: (v) => pct(v) },
+  series: Object.entries(SITE.cohorts).map(([c, pts]) => ({ label: `Born ${c}s`, color: `--coh-${c}`, width: c >= '1990' ? 3 : 2, points: pts })),
 });
 {
-  const ch = SITE.channels;
+  const ch = SITE.channels, h = SITE.hcmst.at(-1);
   const focus = { Online: '--dating', 'Through friends': '--ink-muted' };
   lineChart(fig('channels'), {
-    height: 320, aria: 'Line chart of how couples met, 1940 to 2017: online rises from zero after 1995 to 39% in 2017; meeting through friends falls from 34% to 20%.',
-    x: { min: 1940, max: 2017, ticks: [1940, 1960, 1980, 2000, 2017] },
-    y: { min: 0, max: 0.4, ticks: [0, 0.1, 0.2, 0.3, 0.4], fmt: (v) => pct(v) },
-    series: Object.entries(ch.series).map(([label, ys]) => ({ label, color: focus[label] || '--rule-strong', width: label === 'Online' ? 3 : focus[label] ? 2 : 1.5,
-      points: ch.years.map((y, i) => [y, ys[i]]) })),
+    height: 340, aria: `Line chart of how couples met, 1940 to 2022: online rises from zero after 1995 to 39% in 2017 and ${pct(h.online)} for couples who met in 2020-22; meeting through friends falls from 34% to 20%.`,
+    x: { min: 1940, max: 2022, ticks: [1940, 1960, 1980, 2000, 2021], fmt: (v) => (v === 2021 ? '2020-22' : v) },
+    y: { min: 0, max: 0.7, ticks: [0, 0.2, 0.4, 0.6], fmt: (v) => pct(v) },
+    series: [
+      ...Object.entries(ch.series).map(([label, ys]) => ({ label, color: focus[label] || '--rule-strong', width: label === 'Online' ? 3 : focus[label] ? 2 : 1.5, points: ch.years.map((y, i) => [y, ys[i]]) })),
+      { label: `2020-22 (n=${h.n})`, color: '--dating', width: 0.01, dots: true, points: [[2021, h.online]] },
+    ],
   });
 }
 SITE.calcExamples.forEach((ex, i) => {
   document.querySelector(`[data-fig-title="calc${i}"]`).textContent = ex.who;
-  bars(fig('calc' + i), ex.steps.map(([label, v], j) => ({ label, value: Math.log10(v), text: num(v), cls: i === 0 ? 'men' : 'women', hl: j === ex.steps.length - 1 })), { max: 5 });
+  bars(fig('calc' + i), ex.steps.map(([label, v], j) => ({ label, value: Math.log10(v), text: v >= 1e6 ? `${(v / 1e6).toFixed(v >= 1e7 ? 0 : 1)}M` : num(v), cls: j === 0 ? 'neutral' : i === 0 ? 'men' : 'women', hl: j === ex.steps.length - 1 })), { max: 7.5 });
 });
-bars(fig('bench'), [
-  { label: 'United States', value: SITE.bench.singleWomen2029PerThousand, text: num(SITE.bench.singleWomen2029PerThousand), cls: 'accent', hl: true },
-  ...SITE.bench.metros.slice(0, 6).map((m) => ({ label: m.name.split('-')[0].split(',')[0], value: m.women, text: num(m.women), cls: 'women' })),
-], { max: 70 });
 
 // ---------- Act II ----------
-{
-  const host = fig('ratio');
-  host.innerHTML = `<div class="tiles">
-    <div class="tile men"><b>73%</b><span>of 18-29-year-olds on the apps are men (Pew 2022): 2.7 men per woman</span></div>
-    <div class="tile"><b>1.5 : 1</b><span>men per woman over a whole year: women try the apps and leave faster</span></div>
-    <div class="tile women"><b>54%</b><span>of women on the apps are at least sometimes overwhelmed by messages</span></div>
-    <div class="tile men"><b>64%</b><span>of men on the apps feel insecure about how few they get</span></div></div>`;
-}
+fig('ratio').innerHTML = `<div class="tiles">
+  <div class="tile men"><b>73%</b><span>of 18-29-year-olds on the apps are men (Pew 2022): 2.7 men per woman</span></div>
+  <div class="tile"><b>1.5 : 1</b><span>men per woman over a whole year: women try the apps and leave faster</span></div>
+  <div class="tile women"><b>54%</b><span>of women on the apps are at least sometimes overwhelmed by messages</span></div>
+  <div class="tile men"><b>64%</b><span>of men on the apps feel insecure about how few they get</span></div></div>`;
 const pctTicks = [[0, '0%'], [25, '25%'], [50, '50%'], [75, '75%'], [100, '100%']];
 const binTip = (who) => (i, share) => `<b>${i}–${i + 1}%</b><div class="k">${pct(share, 1)} of ${who}</div>`;
 histChart(fig('likeW'), { height: 280, bins: SITE.hist.womenLike, color: '--women', maxBin: 60, xTicks: [[0, '0%'], [20, '20%'], [40, '40%'], [60, '60%']], tip: binTip('women'), aria: 'Histogram: most women like under 10% of profiles; median 4.5%.' });
 histChart(fig('likeM'), { height: 280, bins: SITE.hist.menLike, color: '--men', xTicks: pctTicks, tip: binTip('men'), aria: 'Histogram: men like a broad range of profiles; median 26%.' });
 histChart(fig('recvM'), { height: 300, bins: SITE.hist.menReceived, color: '--men', maxBin: 40, xTicks: [[0, '0%'], [10, '10%'], [20, '20%'], [30, '30%'], [40, '40%']], marks: [{ bin: 5, text: 'median ≈ 5%' }], tip: binTip('men'), aria: 'Histogram of the share of women who like each man: peaked at 3-5%, long right tail to 35%.' });
 {
-  const H = SITE.hinge;
-  const model = { men: { top1: 0.17, top5: 0.41, top10: 0.57, bottom50: 0.059 }, women: { top1: 0.11, top5: 0.31, top10: 0.46, bottom50: 0.105 } };
-  const rows = [];
+  const H = SITE.hinge, rows = [];
   [['men', 'Men'], ['women', 'Women']].forEach(([k, lab]) => {
     rows.push({ group: lab });
-    [['top1', 'Top 1%'], ['top5', 'Top 5%'], ['top10', 'Top 10%'], ['bottom50', 'Bottom 50%']].forEach(([key, l]) => rows.push({
-      label: `${l} of ${lab.toLowerCase()}`, value: H[k][key], text: pct(H[k][key]), cls: k, sub: `model ${pct(model[k][key])}`,
-      tip: `<b>${l} of ${lab.toLowerCase()}</b><div>Hinge: ${pct(H[k][key])}</div><div class="k">Model: ${pct(model[k][key])}${key === 'top5' ? ' (fitted)' : ' (out of sample)'}</div>` }));
+    [['top1', 'Top 1%'], ['top5', 'Top 5%'], ['top10', 'Top 10%'], ['bottom50', 'Bottom 50%']].forEach(([key, l]) => rows.push({ label: `${l} of ${lab.toLowerCase()}`, value: H[k][key], text: pct(H[k][key]), cls: k }));
   });
   bars(fig('hinge'), rows, { max: 1 });
+}
+{
+  const q = SITE.quadrant;
+  quadrant(fig('quadrant'), {
+    height: 330, from: 'today', aria: `Top 5% of men's share of likes: ${pct(q.today.top5)} today; ${pct(q.likeMore.top5)} if women liked four times as many profiles; ${pct(q.agreeLess.top5)} if they agreed far less; men, who like broadly, give the top 5% of women ${pct(q.men.top5)}.`,
+    points: [
+      { key: 'today', x: q.today.like, y: q.today.rho, label: 'Women today', value: `top 5% of men get ${pct(q.today.top5)}`, short: `Today ${pct(q.today.top5)}`, color: '--women' },
+      { key: 'likeMore', x: q.likeMore.like, y: q.likeMore.rho, label: 'Like 4× as many', value: pct(q.likeMore.top5), short: `4× likes ${pct(q.likeMore.top5)}`, arrow: true, color: '--dating', below: true },
+      { key: 'agreeLess', x: q.agreeLess.like, y: q.agreeLess.rho, label: 'Agree far less', value: pct(q.agreeLess.top5), short: `Agree less ${pct(q.agreeLess.top5)}`, arrow: true, color: '--dating' },
+      { key: 'both', x: q.both.like, y: q.both.rho, label: 'Both', value: pct(q.both.top5), short: `Both ${pct(q.both.top5)}`, arrow: true, color: '--dating', below: true },
+      { key: 'men', x: q.men.like, y: q.men.rho, label: 'Men today', value: `top 5% of women get ${pct(q.men.top5)}`, short: `Men ${pct(q.men.top5)}`, color: '--men', above: true },
+    ],
+  });
 }
 const meanOf = (h) => D.histMean(D.histPoints(h));
 const W = D.activityWeighted(D.histPoints(digitized.luap_like_rate_women), meanOf(digitized.luap_received_ratio_men)).pts;
 const scaled = (pts, f) => pts.map((p) => ({ x: Math.min(0.99, p.x * f), w: p.w }));
-{
-  const rows = [0.5, 1, 2, 4].map((f) => [f === 1 ? '× 1 (today)' : `× ${f}`,
-    ...[0.2, 0.48, 0.7].map((rho) => pct(D.attentionMarket({ rho, openness: scaled(W, f), kappa: calibration.exposure.men, M: 500 }).top5))]);
-  table(fig('counterfactual'), ["Women's like rates", 'Agreement 0.2', '0.48 (today)', '0.7'], rows, { hl: 1 });
-  fig('counterfactual').insertAdjacentHTML('beforeend', '<p class="src">Model. Liking more flattens the power law far more than agreeing less does.</p>');
-}
 
 // ---------- Act III ----------
 {
   const [a, b] = SITE.nsfg;
-  const rows = [
+  bars(fig('nsfg'), [
     { group: 'No sexual partner in the past year' },
     { label: '2017-19', value: a.men.single_partners_share['0'], text: pct(a.men.single_partners_share['0']), cls: 'neutral' },
     { label: '2022-23', value: b.men.single_partners_share['0'], text: pct(b.men.single_partners_share['0']), cls: 'men', hl: true },
@@ -116,8 +125,7 @@ const scaled = (pts, f) => pts.map((p) => ({ x: Math.min(0.99, p.x * f), w: p.w 
     { group: 'Share of all partners held by the top 10% of men' },
     { label: '2017-19', value: a.men.single_top10_share_of_partners, text: pct(a.men.single_top10_share_of_partners), cls: 'neutral' },
     { label: '2022-23', value: b.men.single_top10_share_of_partners, text: pct(b.men.single_top10_share_of_partners), cls: 'men', hl: true },
-  ];
-  bars(fig('nsfg'), rows, { max: 1 });
+  ], { max: 1 });
 }
 bars(fig('noDate'), [...SITE.funnel.bands.map((b) => ({ label: bandLabel(b), sub: `${pct(b.share)} of single men`, value: b.noDate, text: pct(b.noDate), cls: 'men' })),
   { label: 'All men on the apps', value: SITE.funnel.all.noDate, text: pct(SITE.funnel.all.noDate), cls: 'accent', hl: true }], { max: 1 });
@@ -134,20 +142,18 @@ bars(fig('noDate'), [...SITE.funnel.bands.map((b) => ({ label: bandLabel(b), sub
 
 // ---------- Act IV ----------
 lineChart(fig('intent'), {
-  height: 280, aria: 'Casual share by attractiveness group: founder data rises from 23% to 52%; the model tracks it.',
+  height: 280, aria: 'Casual share by attractiveness group: app data rises from 23% to 52%; selection alone tracks it.',
   x: { min: 1, max: 8, ticks: [1, 2, 3, 4, 5, 6, 7, 8], fmt: (v) => (v === 1 ? 'least' : v === 8 ? 'most' : v), tipFmt: (v) => `Attractiveness group ${v} of 8` },
   y: { min: 0, max: 0.6, ticks: [0, 0.2, 0.4, 0.6], fmt: (v) => pct(v) },
   series: [
-    { label: 'Model', color: '--men', points: SITE.intent.model.map((v, i) => [i + 1, v]) },
-    { label: 'Founder data', color: '--neutral', width: 0.01, dots: true, points: SITE.intent.luap.map((v, i) => [i + 1, v / 100]) },
+    { label: 'Selection alone', color: '--men', points: SITE.intent.model.map((v, i) => [i + 1, v]) },
+    { label: 'App data', color: '--neutral', width: 0.01, dots: true, points: SITE.intent.luap.map((v, i) => [i + 1, v / 100]) },
   ],
 });
-table(fig('commitGrid'), ['His appeal', 'Says serious', 'Her 10th', 'Her 50th', 'Her 90th', 'Her 99th'],
-  SITE.commitGrid.map((r) => [ord(r.u * 100), pct(r.serious), ...r.commits.map((c) => ({ text: pct(c), cls: 'heat' }))]), { hl: 3 });
+bars(fig('commitBars'), SITE.commitBars.map((r) => ({ label: `${ord(r.p * 100)}-percentile man`, value: r.median, text: pct(r.median, r.median < 0.1 ? 1 : 0), cls: 'men', hl: r.p === 0.9,
+  tip: `<b>${ord(r.p * 100)}-percentile man</b><div>commits to a median woman: ${pct(r.median, 1)}</div><div class="k">to a 90th-percentile woman: ${pct(r.top10, 1)}</div>` })), { max: 1 });
 {
-  const pick = [1, 3, 5];
-  const cols = ['--men', '--dating', '--ink-muted'];
-  const Ns = Array.from({ length: 51 }, (_, i) => i);
+  const pick = [1, 3, 5], cols = ['--men', '--dating', '--ink-muted'], Ns = Array.from({ length: 51 }, (_, i) => i);
   lineChart(fig('stillSingle'), {
     height: 300, aria: 'Chance still single after N first dates: with a 40% chance per woman, near zero by 8 dates; in the model, most men are still single after 20.',
     x: { min: 0, max: 50, ticks: [0, 10, 20, 30, 40, 50], tipFmt: (v) => `${v} first dates` },
@@ -158,7 +164,15 @@ table(fig('commitGrid'), ['His appeal', 'Says serious', 'Her 10th', 'Her 50th', 
     ],
   });
 }
-bars(fig('cheat'), SITE.cheating.quintiles.map((q) => ({ label: `Quintile ${q.q}`, sub: `median ${q.median} partner${q.median === 1 ? '' : 's'}`, value: q.cheated, text: pct(q.cheated), cls: 'men', hl: q.q === 5 })), { max: 0.5 });
+{
+  const m = SITE.poolMix;
+  bars(fig('poolMix'), [
+    { label: 'All men', value: m.all, text: pct(m.all), cls: 'neutral' },
+    { label: 'Single men 25-35', value: m.single2535, text: pct(m.single2535), cls: 'men' },
+    { label: 'Men on the apps', value: m.onApps, text: pct(m.onApps), cls: 'men' },
+    { label: 'Never-married men at 40', value: m.never40, text: pct(m.never40), cls: 'men', hl: true },
+  ], { max: 0.6 });
+}
 
 // ---------- Act V ----------
 {
@@ -188,41 +202,37 @@ bars(fig('cheat'), SITE.cheating.quintiles.map((q) => ({ label: `Quintile ${q.q}
   });
 }
 lineChart(fig('nevermarried'), {
-  height: 280, aria: 'Never-married men: casual share rises from 23% at 25 to 60% at 45; average appeal percentile falls from 46th to 30th.',
+  height: 280, aria: 'Never-married men by age: the casual share rises and their average value as partners falls.',
   x: { min: 25, max: 50, ticks: [25, 30, 35, 40, 45, 50], tipFmt: (v) => `Age ${v}` }, y: { min: 0, max: 0.8, ticks: [0, 0.2, 0.4, 0.6, 0.8], fmt: (v) => pct(v) },
   series: [
     { label: 'Casual', color: '--men', width: 2.5, dots: true, points: SITE.age.cohortMen.map((r) => [r.age, r.casual]) },
-    { label: 'Avg appeal pctile', color: '--neutral', dots: true, points: SITE.age.cohortMen.map((r) => [r.age, r.appeal]) },
+    { label: 'Avg value pctile', color: '--neutral', dots: true, points: SITE.age.cohortMen.map((r) => [r.age, r.value]) },
   ],
 });
 lineChart(fig('herAge'), {
-  height: 300, aria: 'Chance of a committed man within five years by starting age: 47% at 22, 19% at 30; the census stays near 34% until 34.',
-  x: { min: 22, max: 38, ticks: [22, 26, 30, 34, 38], tipFmt: (v) => `Starting at ${v}` }, y: { min: 0, max: 0.6, ticks: [0, 0.2, 0.4, 0.6], fmt: (v) => pct(v) },
+  height: 300, aria: 'A median woman\'s five-year odds by starting age: a committed man stays near 30% into her thirties; one at least as rare as she is falls steeply.',
+  x: { min: 22, max: 38, ticks: [22, 26, 30, 34, 38], tipFmt: (v) => `Starting at ${v}` }, y: { min: 0, max: 0.5, ticks: [0, 0.1, 0.2, 0.3, 0.4, 0.5], fmt: (v) => pct(v) },
   series: [
-    { label: 'Model', color: '--women', width: 2.5, dots: true, points: SITE.herByAge.map((r) => [r.start, r.any]) },
-    { label: 'Less on looks', color: '--dating', dash: [5, 3], points: SITE.herByAge.map((r) => [r.start, r.adapt]) },
-    { label: 'Census', color: '--neutral', points: SITE.herByAge.map((r) => [r.start, r.census]) },
+    { label: 'A man who commits', color: '--neutral', width: 2.5, dots: true, points: SITE.herByAge.map((r) => [r.start, r.any]) },
+    { label: 'As rare as her', color: '--women', width: 2.5, dots: true, points: SITE.herByAge.map((r) => [r.start, r.rare]) },
   ],
 });
 
 // ---------- Act VI ----------
 table(fig('searchOdds'), ['Up-front read', '1 in 1,000', '1 in 10,000', '1 in 100,000', '1 in 250,000', 'Best found, median luck'],
   SITE.searchOdds.map((r) => [r.r === 1 ? 'Perfect' : r.r.toFixed(2), ...r.odds.map((o, j) => pct(o, j >= 2 ? 1 : 0)), `1 in ${r.median.toLocaleString('en-US')}`]), { hl: 2 });
-table(fig('herAppeal'), ['Her appeal', 'Matches (yr 1)', 'Committed man', 'Top 10%', 'Top 5%', 'Top 1%', 'As rare as her'],
-  SITE.herByAppeal.map((r) => [ord(r.v * 100), num(r.matches), pct(r.any), pct(r.top10), pct(r.top5, 1), pct(r.top1, 1), pct(r.equal)]), { hl: 2 });
-table(fig('hisAppeal'), ['His appeal', 'First dates in 5 yrs', 'Committed woman', 'Top 10%', 'Top 5%', 'Top 1%', 'As rare as him'],
-  SITE.hisByAppeal.map((r) => [bandLabel(r), num(r.dates5y), pct(r.any), pct(r.top10), pct(r.top5, 1), pct(r.top1, 1), pct(r.equal)]), { hl: 1 });
+const pairRows = (rows, head, a, b) => rows.flatMap((r) => [{ group: head(r) }, { label: a[0], value: r[a[1]], text: pct(r[a[1]], r[a[1]] < 0.1 ? 1 : 0), cls: 'accent' }, { label: b[0], value: r[b[1]], text: pct(r[b[1]], r[b[1]] < 0.1 ? 1 : 0), cls: b[2] }]);
+bars(fig('herAppeal'), pairRows(SITE.herByAppeal, (r) => `${ord(r.v * 100)}-percentile woman`, ['At least as rare as her', 'rare'], ['Top-10% man', 'top10', 'women']), { max: 0.8, cls: 'pair-bars' });
+bars(fig('hisAppeal'), pairRows(SITE.hisByAppeal, (r) => `${ord(r.mv * 100)}-percentile man`, ['At least as rare as him', 'rare'], ['90th-percentile woman or better', 'p90', 'men']), { max: 0.8, cls: 'pair-bars' });
 
 // ---------- Act VII ----------
-table(fig('levers'), ['Strategy', 'Committed man', 'Top 10%', 'Top 5%', 'Top 1%'],
-  SITE.levers.map((l) => [l.label, pct(l.any), pct(l.top10), pct(l.top5, 1), pct(l.top1, 1)]), { hl: 0 });
+table(fig('levers'), ['Strategy', 'Committed man', 'As rare as her', 'Top 10% man', 'Top 5%'],
+  SITE.levers.map((l) => [l.label, pct(l.any), pct(l.rare), pct(l.top10, 1), pct(l.top5, 1)]), { hl: 0 });
+waterfall(fig('waterfall'), SITE.waterfall.map((w) => ({ label: w.label, value: w.any })), { max: 1, sub: (s, i) => `as rare as her: ${pct(SITE.waterfall[i].rare)}` });
 table(fig('exchange'), ['Her WHR', 'Share of single women 22-29', 'Men she can reach: earning', 'or worth'],
   SITE.exchange.tiers.map((t) => [`≤ ${t.whr}`, pct(t.share, t.share < 0.01 ? 2 : 1), money(t.income) + '+', money(t.net_worth) + '+']), { hl: 2 });
-table(fig('exchangeM'), ['To reach women at WHR', 'About 1 in', 'Earn', 'or be worth', 'If you are fit, earn'],
-  SITE.exchange.tiers.map((t) => [`≤ ${t.whr}`, Math.round(1 / t.share).toLocaleString('en-US'), money(t.income) + '+', money(t.net_worth) + '+', t.income_if_fit > 20000 ? money(t.income_if_fit) + '+' : 'anything']), { hl: 2 });
-table(fig('glp'), ['Starting WHR pctile', 'Intervention', 'WHR', 'New WHR pctile', 'Appeal', 'Committed man', 'Top 10%'],
-  SITE.glp.map((g) => [ord(g.start * 100), g.drug === 'semaglutide' ? 'Semaglutide-sized' : g.glute ? 'Tirzepatide + glutes' : 'Tirzepatide-sized', `${g.whr.toFixed(2)} → ${g.newWhr.toFixed(2)}`,
-    ord(g.newPct * 100), `${ord(g.appeal0 * 100)} → ${ord(g.appeal1 * 100)}`, `${pct(g.any0)} → ${pct(g.any1)}`, `${pct(g.top10_0)} → ${pct(g.top10_1)}`]), { hl: 5 });
+table(fig('glp'), ['Where she starts on WHR', 'WHR', 'Reaches ≤ 0.74: GLP-1 / + glutes', 'WHR percentile after', 'Top-10% man, 5 yrs'],
+  SITE.glp.map((g) => [`Top ${Math.round(g.lo * 100)}-${Math.round(g.hi * 100)}%`, g.whr.toFixed(2), `${pct(g.q1)} / ${pct(g.q2)}`, `${ord(g.pct0 * 100)} → ${ord(g.pct2 * 100)}`, `${pct(g.top10_0)} → ${pct(g.top10_2)}`]), { hl: 1 });
 {
   const ages = [...new Set(SITE.reach.map((x) => x.wife_age))];
   table(fig('reach'), ["Wife's age at marriage", 'Gap under 2 years', 'Gap 10+ years', 'Lift', 'Couples with a 10+ gap'], ages.map((wa) => {
@@ -232,13 +242,18 @@ table(fig('glp'), ['Starting WHR pctile', 'Intervention', 'WHR', 'New WHR pctile
 }
 {
   const m = SITE.exchange.metros.filter((x) => x.women_per_millionaire != null);
-  const row = (x, cls) => ({ label: x.name.split('-')[0].split(',')[0], value: x.women_per_millionaire, text: x.women_per_millionaire.toFixed(1), cls });
-  bars(fig('metrosW'), m.slice(0, 8).map((x) => row(x, 'women')), { max: 1.5 });
-  bars(fig('metrosM'), [...m].reverse().slice(0, 8).map((x) => row(x, 'men')), { max: 1.5 });
+  bars(fig('metrosW'), m.slice(0, 8).map((x) => ({ label: x.name.split('-')[0].split(',')[0], value: x.women_per_millionaire, text: x.women_per_millionaire.toFixed(1), cls: 'women' })), { max: 1.5 });
 }
-bars(fig('abs'), SITE.exchange.absWorth.map((a) => ({ label: `Fit, earning ${money(a.income)}`, value: a.equivalent_income, text: money(a.equivalent_income), cls: 'men' })), { max: 900000 });
-bars(fig('options'), SITE.options.map((o) => ({ label: o.options === 1 ? "Today's options" : `${o.options}× today's options`, value: o.any, text: `${pct(o.any)} · top 10%: ${pct(o.top10)}`, cls: 'women', hl: o.options === 1,
-  sub: `a 90th-percentile man commits to a median woman ${pct(o.commit90)} of the time` })), { max: 1 });
+table(fig('menLevers'), ['Strategy', 'His value pctile', 'First dates a year', 'Committed woman', '75th-pctile woman', '90th-pctile woman'],
+  SITE.menLevers.map((l) => [l.label, ord(l.mvPct * 100), num(l.dates), pct(l.any), pct(l.p75, 1), pct(l.p90, 1)]), { hl: 0 });
+{
+  const w = SITE.whyFalling, at = (c, age) => SITE.cohorts[c].find(([a]) => a === age)?.[1];
+  waterfall(fig('whyFalling'), [
+    { label: 'Born in the 1950s', value: w.by30_1950 },
+    { label: 'Before the apps: born 1950s → 1980s', value: at('1980', 30) },
+    { label: 'The app era: born 1980s → 1990s', value: w.by30_1990 },
+  ], { max: 1, sub: (s, i) => ['married by 30', 'the 1980s cohort turned 30 around 2010', 'dated from 25 to 30 on the apps'][i] });
+}
 
 // ---------- scrolling stories ----------
 const stories = [...document.querySelectorAll('[data-scrolly]')].map((root) => {
@@ -253,6 +268,18 @@ requestAnimationFrame(loop);
 // ---------- playgrounds ----------
 const readouts = (host, items) => { host.innerHTML = items.map(([label, value, small]) => `<div class="ro"><span>${label}</span><b>${value}</b>${small ? `<small>${small}</small>` : ''}</div>`).join(''); };
 const $ = (id) => document.getElementById(id);
+const clampP = (p) => Math.max(0.01, Math.min(0.99, p));
+
+// Concrete signals -> percentiles. Men: likes a week (the funnel's likes a year / 52). Women: likes a day.
+const menLikes = SITE.funnelByU.map((r) => ({ p: r.p / 100, w: r.likes / 52 }));
+const menPctFromLikes = (perWeek) => clampP(invert(menLikes, 'p', 'w', perWeek));
+const womenLikes = SITE.womenByU.map((r) => ({ v: r.v, d: r.likesPerDay }));
+const womenPctFromLikes = (perDay) => clampP(invert(womenLikes, 'v', 'd', perDay));
+const menLikesAt = (v) => 0.05 * Math.pow(5000, v / 100);        // slider 0-100 -> 0.05-250 a week
+const womenLikesAt = (v) => 5 * Math.pow(60, v / 100);            // slider 0-100 -> 5-300 a day
+// A woman's appeal for her age from her app appeal (which already carries her age): OkCupid shift.
+const womenShift = (a) => D.zTop(1 - 0.5 * Math.max(1e-4, D.curveAt(digitized.okcupid_age, 'women', Math.min(a, 48))));
+const forHerAge = (pApp, age) => clampP(normCdf(D.zTop(1 - pApp) - womenShift(age)));
 
 // Act II: attention market
 {
@@ -278,29 +305,45 @@ const $ = (id) => document.getElementById(id);
   run();
 }
 
-// Act III: your year on the apps
+// Act III: your year on the apps, as a Sankey split at the target percentile.
 {
+  const plot = sankey($('p3sankey'), { stages: [], height: 250 });
+  // Share of a bin (index k of n equal-width percentile bins) at or above t.
+  const above = (k, n, t) => Math.max(0, Math.min(1, ((k + 1) / n - t) * n));
+  const split = (arr, t) => { let hi = 0, lo = 0; arr.forEach((v, k) => { const a = above(k, arr.length, t); hi += v * a; lo += v * (1 - a); }); return { hi, lo }; };
   const run = () => {
-    const p = +$('p3u').value;
-    $('p3uOut').textContent = ord(p);
-    if (getSex() === 'man') {
+    const p = +$('p3u').value, t = +$('p3t').value / 100;
+    $('p3uOut').textContent = ord(p); $('p3tOut').textContent = ord(t * 100);
+    const man = getSex() === 'man';
+    $('p3key').innerHTML = `<span><i style="background:var(--dating)"></i>${man ? 'Women' : 'Men'} at the ${ord(t * 100)} percentile or better</span><span><i style="background:var(--neutral)"></i>Below</span>`;
+    if (man) {
       const r = SITE.funnelByU[p - 1];
-      readouts($('p3out'), [['Likes received a year', num(r.likes)], ['Matches a year', num(r.matches)], ['First dates a year', r.dates.toFixed(1)], ['Chance of no date all year', pct(r.noDate), `any sex from apps: ${pct(r.anySex)}`]]);
+      const L = split(r.L, t), M = split(r.M, t), Dd = split(r.D, t);
+      // Median percentile of the women who like him.
+      const tot = r.L.reduce((s, v) => s + v, 0);
+      let c = 0, med = 0;
+      for (let k = 0; k < r.L.length; k++) { c += r.L[k]; if (c >= tot / 2) { med = SITE.funnelBins[k]; break; } }
+      plot.update({ stages: [{ label: 'Liked you', ...L }, { label: 'Matches', ...M }, { label: 'First dates', ...Dd }], fmt: (v) => (v >= 10 ? Math.round(v).toLocaleString('en-US') : v.toFixed(1)) });
+      readouts($('p3out'), [['Likes a week', num(r.likes / 52), `the median woman who likes you is ${ord(med * 100)} percentile`],
+        [`Matches a year with a ${ord(t * 100)}+ woman`, num(M.hi), `of ${num(r.matches)} matches in all`],
+        [`First dates a year with one`, Dd.hi.toFixed(1), `of ${r.dates.toFixed(1)} in all`], ['Chance of no date all year', pct(r.noDate), `any sex from the apps: ${pct(r.anySex)}`]]);
     } else {
-      const ws = SITE.womenByU, v = p / 100;
-      let j = ws.findIndex((w) => w.v >= v); if (j <= 0) j = 1; if (j < 0) j = ws.length - 1;
-      const a = ws[j - 1], b = ws[j], t = Math.max(0, Math.min(1, (v - a.v) / (b.v - a.v)));
-      const lerp = (k) => a[k] + (b[k] - a[k]) * t;
-      readouts($('p3out'), [['Likes you send a year', num(lerp('likes'))], ['Matches a year', num(lerp('matches'))], ['First dates you have time for', num(Math.min(13, lerp('matches')))],
-        ['Share of matches you can date', pct(Math.min(1, 13 / lerp('matches'))), 'so you date only the best-looking']]);
+      const w = lerpRows(SITE.womenByU, 'v', p / 100, ['likesPerDay', 'likesSent', 'matches', 'dates', 'L', 'M', 'D']);
+      const L = split(w.L.map((x) => x * 365), t), M = split(w.M.map((x) => x * 365), t);
+      const dates = w.dates, Dd = split(w.D.map((x) => x * dates), t);
+      plot.update({ stages: [{ label: 'Liked you', ...L }, { label: 'You liked back', ...M }, { label: 'First dates', ...Dd }], fmt: (v) => (v >= 10 ? Math.round(v).toLocaleString('en-US') : v.toFixed(1)) });
+      readouts($('p3out'), [['Likes a day', num(w.likesPerDay), `${num(w.likesPerDay * 365)} a year`],
+        [`From ${ord(t * 100)}+ men`, pct(L.hi / (L.hi + L.lo)), `${num(L.hi / 365)} a day`],
+        [`Matches a year with them`, num(M.hi), `you like about ${pct(w.likesSent / 15000, 1)} of profiles`],
+        [`First dates with them`, `${Dd.hi.toFixed(1)} of ${Math.round(dates)}`, 'a year, if you are actively dating']]);
     }
   };
-  $('p3u').addEventListener('input', run);
+  ['p3u', 'p3t'].forEach((id) => $(id).addEventListener('input', run));
   sexSubs.push(run);
   run();
 }
 
-// Act IV: the commitment filter
+// Act IV: the commitment filter (casual men pair off at the fitted 10% of the serious rate)
 {
   const menEq = D.attentionMarket({ rho: calibration.consensus.womenOnMen, openness: W, M: 600 });
   const chart = lineChart($('p4chart'), {
@@ -309,56 +352,114 @@ const $ = (id) => document.getElementById(id);
     y: { min: 0, max: 1, ticks: [0, 0.25, 0.5, 0.75, 1], fmt: (v) => pct(v) }, series: [],
   });
   const run = () => {
-    const b = +$('p4b').value / 100, kc = +$('p4kc').value / 100, x50 = +$('p4x').value / 100;
-    $('p4bOut').textContent = pct(b); $('p4kcOut').textContent = pct(kc); $('p4xOut').textContent = x50.toFixed(2) + '×';
-    const g = D.commitmentByPercentile(menEq, { x50, b, kc, groups: 20 });
+    const b = +$('p4b').value / 100, x50 = +$('p4x').value / 100;
+    $('p4bOut').textContent = pct(b); $('p4xOut').textContent = x50.toFixed(2) + '×';
+    const g = D.commitmentByPercentile(menEq, { x50, b, kc: calibration.commitment.kc, groups: 20 });
     chart.update({ series: [
       { label: 'Single men', color: '--men', width: 2.5, points: g.map((d) => [Math.round(d.uMid * 100), d.casualOnApp]) },
       { label: 'All men', color: '--neutral', dash: [4, 4], points: [[0, b], [100, b]] },
     ] });
   };
-  ['p4b', 'p4kc', 'p4x'].forEach((id) => $(id).addEventListener('input', run));
+  ['p4b', 'p4x'].forEach((id) => $(id).addEventListener('input', run));
   run();
 }
 
-// Act V: her clock (worker)
+// Act V: your clock (her) and your odds (him), in the worker.
 {
   const worker = new Worker(new URL('./worker.js', import.meta.url), { type: 'module' });
-  let seq = 0, pending = null, busy = false;
+  let seq = 0, pending = false, busy = false, ready = false;
   const out = $('p5out');
+  const herParams = () => {
+    const age = +$('p5age').value;
+    let v;
+    if ($('p5mode').value === 'likes') { const d = womenLikesAt(+$('p5likes').value); $('p5likesOut').textContent = num(d); v = forHerAge(womenPctFromLikes(d), age); }
+    else v = +$('p5v').value / 100;
+    $('p5ageOut').textContent = age; $('p5vOut').textContent = ord(+$('p5v').value); $('p5gapOut').textContent = '+' + $('p5gap').value + ' years';
+    $('p5rank').textContent = `About the ${ord(v * 100)} percentile for your age.`;
+    return { start: age, v, gap: +$('p5gap').value };
+  };
+  const hisParams = () => {
+    const perWeek = menLikesAt(+$('p5mlikes').value), uLooks = menPctFromLikes(perWeek);
+    const age = +$('p5mage').value, inc = +$('p5inc').value === 0 ? 0 : 10000 * Math.pow(100, +$('p5inc').value / 100);
+    const band = Object.values(status.earnings).find((b) => age >= b.lo && age <= b.hi) ?? Object.values(status.earnings).at(-1);
+    let st = 0.5;
+    const qs = band.q, es = band.earnings;
+    if (inc <= es[0]) st = qs[0] / 2; else if (inc >= es.at(-1)) st = 0.995;
+    else for (let i = 1; i < es.length; i++) if (inc <= es[i]) { st = qs[i - 1] + (qs[i] - qs[i - 1]) * (inc - es[i - 1]) / Math.max(1, es[i] - es[i - 1]); break; }
+    const hq = status.height;
+    const ht = +$('p5height').value;
+    let hp = 0.5;
+    if (ht <= hq.inches[0]) hp = 0.03; else if (ht >= hq.inches.at(-1)) hp = 0.995;
+    else for (let i = 1; i < hq.inches.length; i++) if (ht <= hq.inches[i]) { hp = hq.q[i - 1] + (hq.q[i] - hq.q[i - 1]) * (ht - hq.inches[i - 1]) / (hq.inches[i] - hq.inches[i - 1]); break; }
+    let lo = +$('p5lo').value, hi = +$('p5hi').value;
+    if (lo > hi) [lo, hi] = [hi, lo];
+    $('p5mlikesOut').textContent = perWeek < 1 ? perWeek.toFixed(1) : num(perWeek); $('p5mlooks').textContent = `About the ${ord(uLooks * 100)} percentile on looks, among men on the apps.`;
+    $('p5incOut').textContent = inc === 0 ? '$0' : money(inc); $('p5mstatus').textContent = `About the ${ord(clampP(st) * 100)} percentile for your age.`;
+    $('p5heightOut').textContent = `${Math.floor(ht / 12)}'${ht % 12}"`; $('p5mageOut').textContent = age; $('p5rangeOut').textContent = `${lo}-${hi}`;
+    return { age, uLooks, status: clampP(st), height: clampP(hp), lo, hi };
+  };
   const send = () => {
+    if (!ready) return;
     if (busy) { pending = true; return; }
     busy = true; pending = false; out.classList.add('busy');
-    const params = { start: +$('p5age').value, v: +$('p5v').value / 100, gap: +$('p5gap').value };
-    worker.postMessage({ id: ++seq, type: 'her', params });
+    const man = getSex() === 'man';
+    worker.postMessage({ id: ++seq, type: man ? 'his' : 'her', params: man ? hisParams() : herParams() });
   };
   worker.onmessage = ({ data }) => {
-    if (data.ready) { send(); return; }
+    if (data.ready) { ready = true; send(); return; }
     busy = false; out.classList.remove('busy');
     const r = data.result;
-    readouts(out, [['A man who commits, within 5 years', pct(r.any)], ['…who is also top 10% on quality', pct(r.top10)], ['…top 5%', pct(r.top5, 1)], ['…top 1%', pct(r.top1, 1),
-      `matches in year one: ${num(r.matches)}; the men she dates commit ${pct(r.commits)} of the time`]]);
+    if (r.mvPct != null) {
+      readouts(out, [['Your value as a partner', ord(r.mvPct * 100), `${r.dates.toFixed(1)} first dates a year on the apps`], ['A woman who commits, within 5 years', pct(r.any)],
+        ['…at the 75th percentile or better for her age', pct(r.p75, 1)], ['…90th or better', pct(r.p90, 1), `95th: ${pct(r.p95, 1)}`]]);
+    } else {
+      readouts(out, [['A man who commits, within 5 years', pct(r.any)], ['…at least as rare as you', pct(r.rare)], ['…in the top 10% of men', pct(r.top10, 1)], ['…top 5%', pct(r.top5, 1), `top 1%: ${pct(r.top1, 1)}`]]);
+    }
     if (pending) send();
   };
-  const label = () => { $('p5ageOut').textContent = $('p5age').value; $('p5vOut').textContent = ord(+$('p5v').value); $('p5gapOut').textContent = '+' + $('p5gap').value + ' years'; };
-  ['p5age', 'p5v', 'p5gap'].forEach((id) => $(id).addEventListener('input', () => { label(); send(); }));
-  label();
-  readouts(out, [['A man who commits, within 5 years', '…', 'warming up the model (a few seconds the first time)'], ['…who is also top 10% on quality', '…'], ['…top 5%', '…'], ['…top 1%', '…']]);
+  $('p5mode').addEventListener('change', () => { const likes = $('p5mode').value === 'likes'; $('p5likesWrap').hidden = !likes; $('p5vWrap').hidden = likes; send(); });
+  ['p5age', 'p5likes', 'p5v', 'p5gap', 'p5mlikes', 'p5inc', 'p5height', 'p5mage', 'p5lo', 'p5hi'].forEach((id) => $(id).addEventListener('input', send));
+  sexSubs.push(send);
+  herParams(); hisParams();
+  readouts(out, [['Warming up the model', '…', 'a few seconds the first time'], ['', '…'], ['', '…'], ['', '…']]);
 }
 
-// Act VI: the search calculator
+// Act VI: the search calculator. You can go deep with people about as rare as you are (the top
+// 1 - your percentile, by what you can read up front); the odds that some of them are your target.
 {
+  // Self-ratings run high and agree weakly with others' ratings: the median person puts themself
+  // near the 70th percentile, and self and observer ratings of attractiveness correlate about 0.24
+  // (Feingold 1992). Expected rank as others see it: z = 0.24 (z_self - 0.52).
+  const fromSelf = (topShare) => clampP(normCdf(0.24 * (D.zTop(topShare) - 0.52)));
+  let lastSex = null;
   const run = () => {
-    const n = +$('p6n').value, r = Math.min(0.999, +$('p6r').value / 100), p = Math.pow(10, -3 + (3 * +$('p6p').value) / 100 - 1e-9);
-    const k = +$('p6k').value, q = +$('p6q').value / 100;
-    $('p6nOut').textContent = n; $('p6rOut').textContent = r >= 0.999 ? 'perfect' : r.toFixed(2); $('p6pOut').textContent = pct(p, p < 0.01 ? 1 : 0);
-    $('p6kOut').textContent = k; $('p6qOut').textContent = pct(q);
-    const odds = (N) => D.findOdds({ n, p, N, r });
-    const med = D.bestRarity({ n, p, r });
-    const rare = D.traitRarity({ k, q, rho: 0 }), rare2 = D.traitRarity({ k, q, rho: 0.2 });
-    readouts($('p6out'), [['Find a 1 in 1,000', pct(odds(1e3))], ['Find a 1 in 10,000', pct(odds(1e4), 1)], ['Best you find, median luck', `1 in ${Math.round(med).toLocaleString('en-US')}`],
-      [`Top ${pct(q)} on ${k} trait${k > 1 ? 's' : ''}`, `1 in ${Math.round(1 / rare).toLocaleString('en-US')}`, `if traits correlate at 0.2: 1 in ${Math.round(1 / rare2).toLocaleString('en-US')}`]]);
+    const man = getSex() === 'man';
+    // The likes slider means a week for men and a day for women: reset it to the median on a switch.
+    if (lastSex !== null && lastSex !== getSex()) $('p6likes').value = man ? 51 : 70;
+    lastSex = getSex();
+    let y;
+    if ($('p6mode').value === 'likes') {
+      const v = +$('p6likes').value, likes = man ? menLikesAt(v) : womenLikesAt(v);
+      $('p6likesOut').textContent = likes < 1 ? likes.toFixed(1) : num(likes);
+      y = man ? menPctFromLikes(likes) : womenPctFromLikes(likes);
+      $('p6rank').textContent = `About the ${ord(y * 100)} percentile${man ? ' on looks' : ''}.`;
+    } else {
+      const s = 1 - +$('p6self').value / 100;
+      $('p6selfOut').textContent = pct(s, s < 0.1 ? 0 : 0);
+      y = fromSelf(Math.max(0.005, s));
+      $('p6rank').textContent = `Others would likely put you near the ${ord(y * 100)} percentile: self-ratings run high, and agree with other people's only weakly (r = 0.24).`;
+    }
+    const t = Math.pow(10, -0.3 - 3.7 * (+$('p6t').value / 100)), N = 1 / t;
+    const r = Math.min(0.999, +$('p6r').value / 100), n = +$('p6n').value, p = Math.max(1e-4, 1 - y);
+    $('p6tOut').textContent = pct(t, t < 0.01 ? (t < 0.001 ? 2 : 1) : 0); $('p6tHelp').textContent = `1 in ${Math.round(N).toLocaleString('en-US')}.`;
+    $('p6rOut').textContent = r >= 0.999 ? 'perfect' : r.toFixed(2); $('p6nOut').textContent = n;
+    const odds = D.findOdds({ n, p, N, r }), med = D.bestRarity({ n, p, r });
+    readouts($('p6out'), [['Your rank', ord(y * 100), `you can go deep with people who read as the top ${pct(p, p < 0.1 ? 1 : 0)}`],
+      [`Chance you find the top ${pct(t, t < 0.01 ? (t < 0.001 ? 2 : 1) : 0)}`, pct(odds, odds < 0.1 ? 1 : 0)],
+      ['Best you find, median luck', `1 in ${Math.round(med).toLocaleString('en-US')}`], ['Rarity you are', `1 in ${Math.round(1 / p).toLocaleString('en-US')}`]]);
   };
-  ['p6n', 'p6r', 'p6p', 'p6k', 'p6q'].forEach((id) => $(id).addEventListener('input', run));
+  $('p6mode').addEventListener('change', () => { const likes = $('p6mode').value === 'likes'; $('p6likesWrap').hidden = !likes; $('p6selfWrap').hidden = likes; run(); });
+  ['p6likes', 'p6self', 'p6t', 'p6r', 'p6n'].forEach((id) => $(id).addEventListener('input', run));
+  sexSubs.push(run);
   run();
 }

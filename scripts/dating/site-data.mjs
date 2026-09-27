@@ -1,43 +1,43 @@
-// Precomputes the dating page's default tables from the calibrated model (fine grid) and the data
-// aggregates, into src/data/dating/site.json. The page draws these directly and runs only the
-// reader's own scenarios live. Run after sensitivity.mjs and chain.mjs (it reads fitted.json):
+// Precomputes the dating page's default tables from the calibrated model and the data aggregates,
+// into src/data/dating/site.json. The page draws these directly and runs only the reader's own
+// scenarios live. Run after the data scripts and fit.mjs (it reads fitted.json):
 //   node scripts/dating/site-data.mjs
+// The attention layer (funnel) runs on the fine grid; the mate-value searches on the coarse grid the
+// page's worker uses, so the page's tables and its playgrounds agree exactly.
 import { readFileSync, writeFileSync } from 'node:fs';
 import * as D from '../../src/dating/model.js';
 import * as C from '../../src/dating/chain.js';
-import { createScenario } from '../../src/dating/scenario.js';
+import { normCdf } from '../../src/model.js';
+import { createScenario, RHO_LOOKS_VALUE } from '../../src/dating/scenario.js';
 
 const read = (p) => JSON.parse(readFileSync(new URL(p, import.meta.url)));
 const inputs = {
   digitized: read('../../src/data/dating/digitized.json'), pools: read('../../src/data/dating/pools.json'),
   calibration: read('../../src/data/dating/calibration.json'), nsfg: read('../../src/data/dating/nsfg.json'),
-  exchange: read('../../src/data/dating/exchange.json'),
+  status: read('../../src/data/dating/status.json'),
 };
 const gss = read('../../src/data/dating/gss.json'), ag = read('../../src/data/dating/agegap.json'), tails = read('../../src/data/dating/tails.json');
+const exchange = read('../../src/data/dating/exchange.json'), glp1 = read('../../src/data/dating/glp1.json'), hcmst = read('../../src/data/dating/hcmst.json');
+const assort = read('../../src/data/dating/assort.json');
 const fitted = read('../../src/data/dating/fitted.json');
-const S = createScenario(inputs, { grid: 'fine', fitted });
-const { BASE, herYears, glp, appealFromWhr } = S;
+const SF = createScenario(inputs, { grid: 'fine', fitted });     // attention layer
+const S = createScenario(inputs, { grid: 'coarse', fitted });    // mate-value searches
+const { BASE, herYears, hisYears, appealFromWhr } = S;
 const r3 = (x) => Math.round(x * 1000) / 1000, r4 = (x) => Math.round(x * 1e4) / 1e4;
+const round = (o) => Object.fromEntries(Object.entries(o).map(([k, x]) => [k, typeof x === 'number' ? r4(x) : x]));
 const t0 = Date.now();
 const log = (m) => console.log(`${((Date.now() - t0) / 1000).toFixed(0)}s ${m}`);
 const out = { fitted, base: { ...BASE } };
 
-// ---------- Prologue: marriage by cohort (read from the cohort chart at ages 25 and 30) ----------
-out.cohorts = {
-  source: 'Women in the U.S. by decade of birth, percent married (1950 manual, 1960-2000 real data); read from the chart at ages 25 and 30.',
-  rows: [
-    { cohort: 1940, by25: 0.82, by30: 0.89 }, { cohort: 1950, by25: 0.74, by30: 0.84 }, { cohort: 1960, by25: 0.59, by30: 0.78 },
-    { cohort: 1970, by25: 0.50, by30: 0.70 }, { cohort: 1980, by25: 0.37, by30: 0.58 }, { cohort: 1990, by25: 0.27, by30: 0.52 },
-    { cohort: 2000, by25: 0.17, by30: null },
-  ],
-};
+// ---------- Prologue: marriage by age, one line per decade of birth (the author's chart, digitized) ----------
+out.cohorts = inputs.digitized.cohorts;
 
-// ---------- Act I: how couples met (Rosenfeld, Thomas & Hausen 2019; read from the published chart) ----------
+// ---------- Act I: how couples met ----------
 out.channels = {
   source: 'Rosenfeld, Thomas & Hausen (2019), PNAS, HCMST 2009 and 2017; values read from the published chart.',
   years: [1940, 1950, 1960, 1970, 1980, 1990, 1995, 2000, 2005, 2010, 2013, 2017],
   series: {
-    Online: [0, 0, 0, 0, 0, 0.005, 0.02, 0.09, 0.18, 0.21, 0.27, 0.39],
+    Online: [0, 0, 0, 0, 0, 0, 0.02, 0.09, 0.18, 0.21, 0.27, 0.39],
     'Through friends': [0.28, 0.31, 0.33, 0.34, 0.34, 0.34, 0.33, 0.32, 0.30, 0.27, 0.24, 0.20],
     'Bar or restaurant': [0.11, 0.14, 0.16, 0.18, 0.19, 0.19, 0.19, 0.18, 0.19, 0.21, 0.24, 0.27],
     Coworkers: [0.06, 0.09, 0.12, 0.16, 0.19, 0.20, 0.20, 0.18, 0.16, 0.14, 0.12, 0.11],
@@ -45,47 +45,82 @@ out.channels = {
     School: [0.27, 0.24, 0.21, 0.17, 0.14, 0.12, 0.10, 0.10, 0.09, 0.08, 0.07, 0.05],
   },
 };
-const nat = inputs.pools.metros[0];
-out.bench = { singleWomen2029PerThousand: nat.single_women_20_29 / nat.adults * 1000, singleMen2535PerThousand: nat.single_men_25_35 / nat.adults * 1000,
-  metros: inputs.pools.metros.slice(1, 11).map((m) => ({ name: m.name, women: m.single_women_20_29 / m.adults * 1000 })) };
+out.hcmst = hcmst.periods.map((p) => round({ from: p.from, to: p.to, n: p.n, online: p.Online, se: p.online_se, ci: 1.96 * p.online_se, friends: p["Through friends"] }));
+const singleUS = (sex, lo, hi) => inputs.pools.by_age.filter((r) => r.sex === sex && r.age >= lo && r.age <= hi).reduce((s, r) => s + r.pop * r.single, 0);
 out.calcExamples = [
-  { who: 'A 25-year-old woman in New York', steps: [['6ft+, $100k+, BA, ages 25-40', 32000], ['… within 2 years of her age', 8100], ['… and a millionaire', 330], ['… and a healthy weight', 158]] },
-  { who: 'A 30-year-old man in San Francisco', steps: [['Women 22-27, BA, not overweight', 42000], ['… WHR ≤ 0.74, waist ≤ 27 in', 1500], ['… earns $100k+', 311], ['… doesn\'t drink', 19]] },
+  { who: 'A 25-year-old woman in New York', unit: 'single men', steps: [['Single men 25-40, whole US', 15e6], ['… in the New York metro, no kids', 1e6], ['… aged 25-27', 288000],
+    ['… earning $100k+', 39000], ['… with a graduate degree', 6200], ['… 6\'0" or taller', 1600], ['… a healthy weight, fit', 504], ['… doesn\'t drink or smoke', 19]] },
+  { who: 'A 30-year-old man in San Francisco', unit: 'single women', steps: [['Single women 22-27, whole US', Math.round(singleUS('women', 22, 27) / 1e5) * 1e5],
+    ['… in SF, with a BA, not overweight', 42000], ['… WHR ≤ 0.74, waist ≤ 27 in', 1500], ['… earns $100k+', 311], ['… doesn\'t drink', 19]] },
 ];
 
 // ---------- Act II: the attention market ----------
-const dg = inputs.digitized;
+const dg = inputs.digitized, cal = inputs.calibration;
 out.hist = { menReceived: dg.luap_received_ratio_men, womenReceived: dg.luap_received_ratio_women, menLike: dg.luap_like_rate_men, womenLike: dg.luap_like_rate_women };
 out.hinge = { men: { top1: 0.16, top5: 0.41, top10: 0.58, bottom50: 0.04 }, women: { top1: 0.11, top5: 0.31, top10: 0.46, bottom50: 0.08 } };
 out.gssConcentration = { men: gss.men.partner_concentration_25_45, women: gss.women.partner_concentration_25_45 };
+{
+  const meanOf = (h) => D.histMean(D.histPoints(h));
+  const W = D.activityWeighted(D.histPoints(dg.luap_like_rate_women), meanOf(dg.luap_received_ratio_men)).pts;
+  const scaled = (pts, f) => pts.map((p) => ({ x: Math.min(0.99, p.x * f), w: p.w }));
+  const top5 = (f, rho) => r4(D.attentionMarket({ rho, openness: scaled(W, f), kappa: cal.exposure.men, M: 1000 }).top5);
+  // Pickiness (how many profiles women like) against agreement (how much they agree on who).
+  out.quadrant = { today: { like: 0.045, rho: cal.consensus.womenOnMen, top5: top5(1, cal.consensus.womenOnMen) },
+    likeMore: { like: 0.18, rho: cal.consensus.womenOnMen, top5: top5(4, cal.consensus.womenOnMen) },
+    agreeLess: { like: 0.045, rho: 0.2, top5: top5(1, 0.2) }, both: { like: 0.18, rho: 0.2, top5: top5(4, 0.2) },
+    agreeMore: { like: 0.045, rho: 0.7, top5: top5(1, 0.7) },
+    men: { like: 0.26, rho: cal.consensus.menOnWomen, top5: 0.31 } };
+}
 
 // ---------- Act III: the funnel ----------
 log('funnel');
-const F = S.funnel();
+const F = SF.funnel();
 const band = (b) => ({ lo: b.lo, hi: b.hi, share: r4(b.share), likes: r3(b.likes), matches: r3(b.matches), dates: r3(b.dates), noDate: r4(b.noDate), anySex: r4(b.anySex), partnersIfAny: r3(b.partnersIfAny) });
 out.funnel = { bands: F.byBand.map(band), all: band({ lo: 0, hi: 1, ...F.all }), top: F.topDates };
-// Per appeal percentile (1..99), for the reader's "your year on the apps".
 {
-  const cells = S.fMen.cells, pOf = (x) => Math.min(0.95, S.p0 * Math.exp(BASE.gammaSex * x.z));
-  const byU = new Map();
+  // Per man, by his looks percentile (1..99): a year's likes, matches and first dates, and each split
+  // by the looks percentile of the women (15 bins), for "your year on the apps".
+  const cells = SF.fMen.cells, pOf = (x) => Math.min(0.95, SF.p0 * Math.exp(BASE.gammaSex * x.z));
+  const nb = F.bins.v.length, byU = new Map();
   cells.forEach((x, i) => {
-    const k = x.u; if (!byU.has(k)) byU.set(k, { w: 0, likes: 0, matches: 0, dates: 0, noDate: 0, anySex: 0 });
-    const g = byU.get(k), d = F.dates[i];
+    if (!byU.has(x.u)) byU.set(x.u, { w: 0, likes: 0, matches: 0, dates: 0, noDate: 0, anySex: 0, L: new Float64Array(nb), M: new Float64Array(nb), Dd: new Float64Array(nb) });
+    const g = byU.get(x.u), d = F.dates[i];
     g.w += x.w; g.likes += x.w * F.perMan.likes[i]; g.matches += x.w * F.perMan.matches[i]; g.dates += x.w * d;
     g.noDate += x.w * Math.exp(-d); g.anySex += x.w * (1 - Math.exp(-d * pOf(x)));
+    for (let k = 0; k < nb; k++) { g.L[k] += x.w * F.bins.likes[k][i]; g.M[k] += x.w * F.bins.matches[k][i]; g.Dd[k] += x.w * F.bins.dates[k][i] * (d / Math.max(F.perMan.dates[i], 1e-12)); }
   });
   const us = [...byU.keys()].sort((a, b) => a - b);
-  const at = (u, key) => {
+  const at = (u, f) => {
     let j = us.findIndex((x) => x >= u); if (j <= 0) j = 1;
     const a = byU.get(us[j - 1]), b = byU.get(us[j]), t = (u - us[j - 1]) / (us[j] - us[j - 1]);
-    return (1 - t) * a[key] / a.w + t * b[key] / b.w;
+    return (1 - t) * f(a) / a.w + t * f(b) / b.w;
   };
+  out.funnelBins = F.bins.v.map(r4);
   out.funnelByU = [];
   for (let p = 1; p <= 99; p++) {
     const u = p / 100;
-    out.funnelByU.push({ p, likes: r3(at(u, 'likes')), matches: r3(at(u, 'matches')), dates: r3(at(u, 'dates')), noDate: r4(at(u, 'noDate')), anySex: r4(at(u, 'anySex')) });
+    out.funnelByU.push({ p, likes: r3(at(u, (g) => g.likes)), matches: r3(at(u, (g) => g.matches)), dates: r3(at(u, (g) => g.dates)), noDate: r4(at(u, (g) => g.noDate)), anySex: r4(at(u, (g) => g.anySex)),
+      L: Array.from({ length: nb }, (_, k) => r3(at(u, (g) => g.L[k]))), M: Array.from({ length: nb }, (_, k) => r3(at(u, (g) => g.M[k]))), D: Array.from({ length: nb }, (_, k) => r4(at(u, (g) => g.Dd[k]))) });
   }
-  out.womenByU = F.women.map((w) => ({ v: r3(w.v), likes: r3(w.likes), matches: r3(w.matches), dates: r3(Math.min(BASE.datesW, w.matches)) }));
+  // Per woman, by her looks bin: likes a day from men (Act II's inbox: 2.7 men per woman on at once,
+  // 100 swipes a day each), and how those likes, her matches and her first dates split by the men's
+  // looks percentile (20 bands of 5 points).
+  const menW = cells.map((x) => x.w), NB = 20;
+  const bandOf = (u) => Math.min(NB - 1, Math.floor(u * NB));
+  out.womenByU = F.women.map((wo, k) => {
+    const L = new Float64Array(NB), Mm = new Float64Array(NB), Dd = new Float64Array(NB);
+    let seen = 0;
+    cells.forEach((x, i) => {
+      const b = bandOf(x.u), back = F.bins.back[k][i], like = F.bins.like[k][i];
+      seen += menW[i];
+      L[b] += menW[i] * back; Mm[b] += menW[i] * back * like; Dd[b] += menW[i] * F.bins.dates[k][i];
+    });
+    const perDay = 2.7 * 100;
+    const dTot = Dd.reduce((s, v) => s + v, 0);
+    return { v: r3(wo.v), likesSent: r3(wo.likes), matches: r3(wo.matches), dates: r3(Math.min(BASE.datesW, wo.matches)),
+      likesPerDay: r3(perDay * L.reduce((s, v) => s + v, 0) / seen), L: Array.from(L, (v) => r3(perDay * v / seen)), M: Array.from(Mm, (v) => r4(perDay * v / seen)),
+      D: Array.from(Dd, (v) => r4(v / Math.max(dTot, 1e-12))) };
+  });
 }
 const ns = inputs.nsfg;
 out.nsfg = ['2017-2019', '2022-2023'].map((wave) => ({ wave, men: ns[`${wave}_men`]['18_35'], women: ns[`${wave}_women`]['18_35'] }));
@@ -99,91 +134,118 @@ out.intent = {
   luap: [23, 22, 30, 33, 35, 41, 46, 52],
   model: D.commitmentByPercentile(menEq, { x50: S.x50, b: S.b, kc: S.kc, groups: 8 }).map((g) => r4(g.casualOnApp)),
 };
-const ys = [0.1, 0.5, 0.9, 0.99].map((v) => D.zTop(1 - v));
-out.commitGrid = [0.25, 0.5, 0.75, 0.9, 0.95, 0.99].map((u) => {
-  const bandX = F.byBand.find((x) => u >= x.lo && u < x.hi) ?? F.byBand.at(-1);
-  const serious = C.describe(C.normalize(S.fMen.cells.filter((x) => x.u >= bandX.lo && x.u < bandX.hi))).serious;
-  const blend = (y) => serious * his({ u, serious: true }, y) + (1 - serious) * his({ u, serious: false }, y);
-  return { u, serious: r4(serious), commits: ys.map((y) => r4(blend(y))) };
-});
+// A serious man, 30, who has dated a woman of 28 for months: would he commit to her? His decision
+// alone, by his mate value (whether the relationship then works out is commitScale, shown separately).
+const manAt = (p, M = 30) => { const x = D.zTop(1 - p); return { Q: x, u: normCdf(RHO_LOOKS_VALUE * x), serious: true, M }; };
+const decide = (p, v) => his(manAt(p), D.zTop(1 - v) + S.womenShift(28)) / BASE.commitScale;
+out.commitBars = [0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99].map((p) => ({ p, median: r4(decide(p, 0.5)), top10: r4(decide(p, 0.9)), bottom: r4(decide(p, 0.25)) }));
+// Per first date, by his looks band: the chance it becomes a relationship both commit to. His mate
+// value given his looks: x = rho z + sqrt(1 - rho^2) e, averaged over e.
 out.perDate = F.byBand.map((x) => {
   const sel = (c) => c.u >= x.lo && c.u < x.hi;
-  const men = S.fMen.cells.filter(sel), dated = F.datedWomen(sel);
+  const men = SF.fMen.cells.filter(sel), dated = F.datedWomen(sel);
   const W0 = men.reduce((t, c) => t + c.w, 0);
+  const es = [-2, -1, 0, 1, 2].map((e) => ({ e, w: Math.exp(-e * e / 2) })), We = es.reduce((s, q) => s + q.w, 0);
   let hc = 0;
-  for (const m of men) for (const w of dated) hc += (m.w / W0) * w.w * his(m, w.z) * hers(w, m.z);
-  return { lo: x.lo, hi: x.hi, p: r4(Math.min(1, BASE.evalPerYear / Math.max(x.dates, 1e-9)) * hc) };
+  for (const m of men) for (const { e, w: we } of es) {
+    const xm = RHO_LOOKS_VALUE * m.z + Math.sqrt(1 - RHO_LOOKS_VALUE ** 2) * e;
+    for (const w of dated) { const y = w.z + S.womenShift(28); hc += (m.w / W0) * (we / We) * w.w * his({ Q: xm, u: m.u, serious: m.serious, M: 30 }, y) * hers(xm, y, normCdf(y)) * (w.serious ? 1 : S.kc); }
+  }
+  return { lo: x.lo, hi: x.hi, dates: r3(x.dates), p: r4(Math.min(1, BASE.evalPerYear / Math.max(x.dates, 1e-9)) * hc) };
 });
-out.cheating = { quintiles: gss.men.by_partner_quintile.map((q) => ({ q: q.quintile, median: q.median_partners, cheated: r4(q.cheated), n: q.n })), tiers: gss.men.notebook_tiers };
+{
+  // Who is single: the casual share among all men, men on the apps, single men 25-35, never-married men at 40.
+  const cas = (cells) => { const W = cells.reduce((s, c) => s + c.w, 0); return cells.reduce((s, c) => s + (c.serious ? 0 : c.w), 0) / W; };
+  const single2535 = [];
+  for (let M = 25; M <= 35; M++) single2535.push(...S.poolCells(M));
+  out.poolMix = { all: S.b, onApps: r4(cas(SF.fMen.cells)), single2535: r4(cas(single2535)), never40: r4(cas(S.cohortM()[40].cells)) };
+}
 
 // ---------- Act V: the clock ----------
 log('age');
 out.age = {
   okcupid: dg.okcupid_age, geruso: dg.geruso,
   whr: inputs.pools.by_age.filter((r) => r.sex === 'women' && r.age >= 18 && r.age <= 50).map((r) => ({ age: r.age, le074: r4(r.whr_le_074), ge085: r4(r.whr_ge_085), p50: r3(r.whr_p50) })),
-  censusW: S.censusW, censusM: S.censusM,
-  cohortMen: [25, 30, 35, 40, 45, 50].map((age) => { const d = C.describe(S.cohortM()[age].cells); return { age, casual: r4(1 - d.serious), appeal: r4(d.zPct), quality: r4(d.qPct) }; }),
+  cohortMen: [25, 30, 35, 40, 45, 50].map((age) => { const d = C.describe(S.cohortM()[age].cells); return { age, casual: r4(1 - d.serious), value: r4(d.qPct) }; }),
   neverMarried4049: inputs.pools.never_married_40_49,
 };
-out.herByAge = [22, 24, 26, 28, 30, 32, 34, 36, 38].map((start) => {
-  const any = herYears({ start, bar: 0 }), good = herYears({ start }), adapt = herYears({ start, bar: 0, a: 0.15 });
-  const cen = S.censusW[start + 5] != null ? 1 - S.censusW[start + 5] / S.censusW[start] : null;
-  return { start, any: r4(any.odds), top10: r4(good.odds), adapt: r4(adapt.odds), census: cen == null ? null : r4(cen), interest: r4(D.curveAt(S.ok, 'women', start)) };
-});
+out.herByAge = [22, 24, 26, 28, 30, 32, 34, 36, 38].map((start) => { const r = herYears({ start }); return { start, any: r4(r.odds.any), rare: r4(r.odds.rare), top10: r4(r.odds.top10) }; });
 
 // ---------- Act VI: search ----------
 log('search');
 out.searchOdds = [1, 0.7, 0.5, 0.35].map((r) => ({ r, odds: [1e3, 1e4, 1e5, 2.5e5].map((N) => r4(D.findOdds({ n: 20, p: 0.01, N, r }))), median: Math.round(D.bestRarity({ n: 20, p: 0.01, r })) }));
+out.searchText = { perfect1e4: r4(D.findOdds({ n: 20, p: 0.01, N: 1e4, r: 1 })), half1e4: r4(D.findOdds({ n: 20, p: 0.01, N: 1e4, r: 0.5 })),
+  halfTop1Share: r4(D.bvnUpper(D.zTop(0.01), D.zTop(0.01), 0.5) / 0.01) };
 out.tails = { traits: tails.traits, corr: tails.corr, n: tails.n };
-out.herByAppeal = [0.1, 0.25, 0.5, 0.75, 0.9, 0.99].map((v) => {
-  const row = { v, any: herYears({ v, bar: 0 }).odds, top10: herYears({ v }).odds, top5: herYears({ v, bar: 0.95 }).odds, top1: herYears({ v, bar: 0.99 }).odds,
-    equal: herYears({ v, bar: Math.max(v, 0.5) }).odds, noCommit: herYears({ v, commit: false }).odds };
-  const f = herYears({ v });
-  row.matches = f.first.matches; row.datesAppeal = f.first.zPct; row.commits = f.first.commits;
-  return Object.fromEntries(Object.entries(row).map(([k, x]) => [k, typeof x === 'number' ? r4(x) : x]));
-});
-out.hisByAppeal = F.byBand.map((x) => {
-  const sel = (c) => c.u >= x.lo && c.u < x.hi;
-  const dated = F.datedWomen(sel), count = x.dates * BASE.years, n = BASE.evalPerYear * BASE.years;
-  const men = S.fMen.cells.filter(sel), Wm = men.reduce((t, c) => t + c.w, 0);
-  const yHim = men.reduce((t, c) => t + c.w * c.z, 0) / Wm, uHim = men.reduce((t, c) => t + c.w * c.u, 0) / Wm;
-  const kept = C.keepTop(dated, count, n, { ...BASE.read2, rhoQz: BASE.rhoQz });
-  const commit = (c) => hers(c, yHim) * his({ u: uHim, serious: true }, c.z);
-  const odds = (bar) => { const d = C.describe(kept.cells, bar, commit); return r4(1 - Math.pow(1 - d.good, kept.count)); };
-  const uMid = (x.lo + Math.min(x.hi, 0.999)) / 2;
-  return { lo: x.lo, hi: x.hi, dates5y: r3(count), datesAppeal: r4(C.describe(dated).zPct), any: odds(0), top10: odds(0.9), top5: odds(0.95), top1: odds(0.99), equal: odds(Math.max(0.5, uMid)) };
-});
+out.herByAppeal = [0.1, 0.25, 0.5, 0.75, 0.9, 0.99].map((v) => { const r = herYears({ v }); return round({ v, ...r.odds, matches: r.first.matches }); });
+out.hisByAppeal = [0.1, 0.25, 0.5, 0.75, 0.9, 0.99].map((mv) => { const r = hisYears({ age: 30, mv, lo: 22, hi: 30 }); return round({ mv, ...r.odds, dates: r.first.dates, uLooks: r.uLooks }); });
 
 // ---------- Act VII: playbook ----------
 log('levers');
-const lever = (label, o) => ({ label, any: r4(herYears({ ...o, bar: 0 }).odds), top10: r4(herYears({ ...o, bar: 0.9 }).odds), top5: r4(herYears({ ...o, bar: 0.95 }).odds), top1: r4(herYears({ ...o, bar: 0.99 }).odds) });
-const tirz = appealFromWhr(glp('tirzepatide', 1).new_pct), sema = appealFromWhr(glp('semaglutide', 0).new_pct);
+const lever = (label, o) => { const r = herYears(o); return { label, ...round(r.odds) }; };
+// GLP-1s for a median-WHR woman: her appeal from the average new WHR percentile of the 25-50% and
+// 50-75% starting bands (she sits between them).
+const gb = (lo) => glp1.bands.find((b) => Math.abs(b.band[0] - lo) < 1e-6);
+const medWhr = (k) => (gb(0.25)[k] + gb(0.5)[k]) / 2;
+const vGlp = appealFromWhr(medWhr('pct_glp1')), vGlpG = appealFromWhr(medWhr('pct_glp1_glutes'));
+const baseW = { start: 27, v: 0.5, gap: 2 };
 out.levers = [
-  lever('Baseline: on the apps from 27, choosing like everyone else', { start: 27 }),
-  lever('Start at 23 instead', { start: 23 }),
-  lever('Open to men 10 years older', { start: 27, gap: 10 }),
-  lever('Open to men 15 years older', { start: 27, gap: 15 }),
-  lever('Weigh looks less', { start: 27, a: 0.15 }),
-  lever('Friends\' introductions instead of the apps', { start: 27, ch: 'friends' }),
-  lever('Give three men a year months of dating', { start: 27, n: 3 }),
-  lever('GLP-1 (semaglutide-sized waist loss)', { start: 27, v: sema }),
-  lever('GLP-1 (tirzepatide-sized) plus glute training', { start: 27, v: tirz }),
-  lever('App levers combined, from 27', { start: 27, gap: 15, a: 0.15, n: 3 }),
-  lever('App levers combined, from 23', { start: 23, gap: 15, a: 0.15, n: 3 }),
-  lever('All of it from 23, plus tirzepatide and glutes', { start: 23, gap: 15, a: 0.15, n: 3, v: tirz }),
+  lever('Baseline: a median woman on the apps from 27', baseW),
+  lever('Start at 23 instead', { ...baseW, start: 23 }),
+  lever('Open to men 10 years older', { ...baseW, gap: 10 }),
+  lever('Open to men 15 years older', { ...baseW, gap: 15 }),
+  lever('GLP-1 (either drug)', { ...baseW, v: vGlp }),
+  lever('GLP-1 plus glute training', { ...baseW, v: vGlpG }),
+  lever('Give three men a year months of dating', { ...baseW, n: 3 }),
+  lever("Friends' introductions instead of the apps", { ...baseW, ch: 'friends' }),
 ];
-out.glp = [0.25, 0.5, 0.75].flatMap((start) => [['semaglutide', 0], ['tirzepatide', 0], ['tirzepatide', 1]].map(([drug, glute]) => {
-  const g = glp(drug, glute, start), v0 = appealFromWhr(start), v1 = appealFromWhr(g.new_pct);
-  return { start, drug, glute, whr: r3(g.whr), newWhr: r3(g.new_whr), newPct: r4(g.new_pct), appeal0: r4(v0), appeal1: r4(v1),
-    any0: r4(herYears({ v: v0, bar: 0 }).odds), any1: r4(herYears({ v: v1, bar: 0 }).odds), top10_0: r4(herYears({ v: v0 }).odds), top10_1: r4(herYears({ v: v1 }).odds) };
-}));
-out.exchange = { tiers: inputs.exchange.tiers, absWorth: inputs.exchange.abs_worth, metros: inputs.exchange.metros, women: inputs.exchange.women, men: inputs.exchange.men };
+out.leverAppeal = { glp: r4(vGlp), glpGlutes: r4(vGlpG) };
+{
+  // Everything together from 23, one step at a time (a waterfall).
+  const steps = [['On the apps from 27', {}], ['Start at 23', { start: 23 }], ['Open to men 10 years older', { gap: 10 }], ['GLP-1 plus glute training', { v: vGlpG }], ['Three men a year', { n: 3 }]];
+  let o = {};
+  out.waterfall = steps.map(([label, d]) => { o = { ...o, ...d }; const r = herYears({ ...baseW, ...o }); return { label, ...round(r.odds) }; });
+}
+out.glp = [0.05, 0.1, 0.25, 0.5].map((lo) => {
+  const b = gb(lo), p0 = 1 - (b.band[0] + b.band[1]) / 2, v0 = appealFromWhr(p0), v1 = appealFromWhr(b.pct_glp1), v2 = appealFromWhr(b.pct_glp1_glutes);
+  const at = (v) => herYears({ start: 25, v }).odds;
+  const o0 = at(v0), o1 = at(v1), o2 = at(v2);
+  return round({ lo: b.band[0], hi: b.band[1], whr: b.whr_median, q0: b.qualify_now, q1: b.qualify_glp1, q2: b.qualify_glp1_glutes, pct0: p0, pct1: b.pct_glp1, pct2: b.pct_glp1_glutes,
+    v0, v1, v2, rare0: o0.rare, rare1: o1.rare, rare2: o2.rare, top10_0: o0.top10, top10_1: o1.top10, top10_2: o2.top10 });
+});
+out.glpAll = r4(glp1.qualify_all);
+out.exchange = { tiers: exchange.tiers, metros: exchange.metros };
 out.reach = ag.reach_recent_5y;
 out.gapByIncome = { recent: ag.recent_5y.bands, recent3045: ag.recent_5y_husband_30_45.bands, all: ag.all.bands };
-log('options');
-out.options = [0.25, 0.5, 1, 2].map((options) => ({ options, any: r4(herYears({ bar: 0, options }).odds), top10: r4(herYears({ options }).odds),
-  commit90: r4(C.commitRule(S.demandM, { median: BASE.commitMedian, beta: S.rhoM, kc: S.kc, options })({ u: 0.9, serious: true }, 0)) }));
-out.gapModel = [23, 27, 31].map((start) => ({ start, rows: [2, 5, 10, 15].map((gap) => ({ gap, any: r4(herYears({ start, gap, bar: 0 }).odds), top10: r4(herYears({ start, gap }).odds) })) }));
+out.gapModel = [23, 27, 31].map((start) => ({ start, rows: [2, 5, 10, 15].map((gap) => ({ gap, ...round(herYears({ start, gap }).odds) })) }));
+// The same for a 90th-percentile woman: where the gap buys top-tier men.
+out.gapTop = [23, 27, 31].map((start) => ({ start, rows: [2, 10, 15].map((gap) => ({ gap, ...round(herYears({ start, gap, v: 0.9 }).odds) })) }));
+// Men: a 30-year-old at the median on everything, looking at women 22-30; move one thing at a time.
+log('men');
+const baseM = { age: 30, lo: 22, hi: 30, uLooks: 0.5, status: 0.5, social: 0.5, height: 0.5 };
+const mlever = (label, o) => { const r = hisYears({ ...baseM, ...o }); return { label, mvPct: r4(r.mvPct), dates: r3(r.first.dates), ...round(r.odds) }; };
+out.menLevers = [
+  mlever('Baseline: a median man, 30, on the apps', {}),
+  mlever('Status to the 75th percentile (income, career)', { status: 0.75 }),
+  mlever('Status to the 90th percentile', { status: 0.9 }),
+  mlever('Looks to the 75th percentile (fit, lean, style)', { uLooks: 0.75 }),
+  mlever('Social skills to the 75th percentile', { social: 0.75 }),
+  mlever('All three to the 75th percentile', { status: 0.75, uLooks: 0.75, social: 0.75 }),
+  mlever("Friends' introductions instead of the apps", { ch: 'friends' }),
+];
+out.assort = { rho: assort.cfa.rho, composite: assort.rho_composite, cascade: assort.observed.cascade, matched: assort.observed.matched, independent: assort.fits[0].matched, n: assort.observed.n };
+
+// ---------- Why marriage keeps falling: what the apps did, in the model ----------
+log('apps counterfactual');
+{
+  const vs = [0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95];
+  const avg = (o) => vs.reduce((s, v) => s + herYears({ start: 25, v, ...o }).odds.any, 0) / vs.length;
+  const today = avg({}), noApps = avg({ ch: 'friends', kappa: 0 }), fewer = avg({ options: 0.25 });
+  const at = (c, age) => inputs.digitized.cohorts[c].find(([a]) => a === age)[1];
+  const never25 = 1 - at('1990', 25);
+  out.whyFalling = { by30_1950: r4(at('1950', 30)), by30_1990: r4(at('1990', 30)), today: r4(today), noApps: r4(noApps), fewerOptions: r4(fewer), never25: r4(never25),
+    appsBlock: r4(never25 * (noApps - today)) };
+}
 
 writeFileSync(new URL('../../src/data/dating/site.json', import.meta.url), JSON.stringify(out));
 log(`wrote src/data/dating/site.json (${(JSON.stringify(out).length / 1024).toFixed(0)} KB)`);

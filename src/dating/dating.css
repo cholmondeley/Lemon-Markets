@@ -118,3 +118,28 @@ body[data-sex="woman"] [data-for="man"], body[data-sex="man"] [data-for="woman"]
   .stage .tiles{grid-template-columns:1fr 1fr;gap:8px;}
   .tile b{font-size:1.4rem;}
 }
+
+/* Waterfall (horizontal bars with floating steps) */
+.waterfall .bar-row .bf{inset:0 auto 0 auto;border-radius:4px;}
+.waterfall .bar-row .bf.down{background:var(--red);}
+.waterfall .wf-tick{position:absolute;top:-2px;bottom:-2px;width:2px;margin-left:-1px;background:var(--ink);border-radius:1px;}
+.waterfall .bar-row .bv small{display:block;font-size:0.7rem;color:var(--ink-faint);font-weight:500;}
+
+/* Sankey funnel */
+.sankey svg{display:block;width:100%;height:auto;overflow:visible;}
+.sankey-key{display:flex;flex-wrap:wrap;gap:14px;font-size:0.76rem;color:var(--ink-muted);margin:0 0 6px;}
+.sankey-key i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+
+/* Second woman / man switch after the intro */
+.prose .sex-switch.inline{display:flex;width:max-content;margin:6px auto 0;transform:scale(1.1);}
+.ctrl-group select{font:inherit;font-size:0.82rem;padding:5px 8px;border-radius:8px;border:1px solid var(--rule-strong);background:var(--surface);color:var(--ink);}
+
+/* Birth-cohort lines: one sequential ramp in the page hue, older lighter (brighter in dark mode for newer). */
+:root{--coh-1940:#dcc8d9;--coh-1950:#cbaac7;--coh-1960:#b68db1;--coh-1970:#9e6f99;--coh-1980:#865580;--coh-1990:#6c3b67;--coh-2000:#3a1b37;}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--coh-1940:#4d3a4a;--coh-1950:#644b60;--coh-1960:#7e6079;--coh-1970:#9a7894;--coh-1980:#b693b0;--coh-1990:#d2afcc;--coh-2000:#f0d8ec;}}
+:root[data-theme="dark"]{--coh-1940:#4d3a4a;--coh-1950:#644b60;--coh-1960:#7e6079;--coh-1970:#9a7894;--coh-1980:#b693b0;--coh-1990:#d2afcc;--coh-2000:#f0d8ec;}
+.pair-bars .bar-row .bt{height:12px;}
+.pair-bars .bar-row + .bar-row.second{margin-top:-4px;}
+.playground .src{font-size:0.72rem;color:var(--ink-faint);line-height:1.5;margin:10px 0 0;}
+.playbook .panel h4{font-family:"Domine",Georgia,serif;font-size:1rem;}
+.playbook .panel .sub{font-size:0.8rem;color:var(--ink-muted);line-height:1.5;}

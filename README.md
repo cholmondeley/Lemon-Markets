@@ -18,14 +18,18 @@ npm test         # checks the simulation against the closed-form theory
 
 Requires Node 18+.
 
+Two essays, two URLs: `hiring/index.html` (`/Lemon-Markets/hiring/`) and `dating/index.html`
+(`/Lemon-Markets/dating/`). The root `index.html` redirects old links, `#section` included, to the
+hiring essay. In dev, open http://localhost:5173/hiring/ or http://localhost:5173/dating/.
+
 ## Layout
 
-The page is a scrolling essay in five acts (hiring only for now). All five acts are built, plus a closing playbook.
+The hiring page is a scrolling essay in five acts, plus a closing playbook.
 
 | Path | What it is |
 | --- | --- |
 | `src/model.js` | The model: agent generation, one simulation step, pool statistics, closed-form theory. No DOM. |
-| `src/story.js` | Act I scrolling story: one seeded population drawn as a mirrored dot histogram, driven by `data-*` attributes on each `.step` in `index.html`. |
+| `src/story.js` | Act I scrolling story: one seeded population drawn as a mirrored dot histogram, driven by `data-*` attributes on each `.step` in `hiring/index.html`. |
 | `src/playground.js` | Act I "Try it yourself" panel: the live simulator. |
 | `src/act2.js` | Act II: one candidate's range of worth before and after an interview, and the interview playground. |
 | `src/act3.js` | Act III: the sourcing ladder (quintile bars by channel), scroll story and playground. |
@@ -44,17 +48,17 @@ The page is a scrolling essay in five acts (hiring only for now). All five acts 
 
 ## The dating page
 
-`dating.html` is the dating edition: seven acts (the move online, the attention market, the app funnel,
+`dating/index.html` is the dating edition: seven acts (the move online, the attention market, the app funnel,
 who is left, the clock, the search, what to do) with a page-wide woman / man switch.
 
 | Path | What it is |
 | --- | --- |
 | `src/dating/model.js` | Single-stage models: attention market, commitment filter, McCall reservation value, search odds, copulas. No DOM. |
 | `src/dating/chain.js` | The chained model on one grid of people: who is single, the app funnel, search with first dates, mutual commitment, never-married cohorts. |
-| `src/dating/scenario.js` | The calibrated model assembled from the data; shared by the scripts and the page's worker. |
+| `src/dating/scenario.js` | The calibrated model assembled from the data (attention layer plus mate value: who commits to whom); shared by the scripts and the page's worker. |
 | `src/dating/main.js`, `charts.js`, `worker.js`, `dating.css` | The page: figures, scrolling stories, playgrounds, the live-scenario worker. |
-| `scripts/dating/*.py` | Data aggregates (parquet, GSS, NSFG, ACS, NLSY97, digitized charts), run with `uv run`. |
-| `scripts/dating/sensitivity.mjs`, `chain.mjs`, `site-data.mjs` | Calibration and sweeps, the chained results, and the page's precomputed tables. |
+| `scripts/dating/*.py` | Data aggregates (parquet, PSID, HCMST, NHANES, GSS, NSFG, ACS, NLSY97, digitized charts), run with `uv run`. |
+| `scripts/dating/sensitivity.mjs`, `fit.mjs`, `chain.mjs`, `site-data.mjs` | Attention-market calibration, the mate-value fit (PSID sorting, census, ACS), the results and sweeps, and the page's precomputed tables. |
 | `docs/dating/methodology.md`, `claims.md`, `sensitivity.md`, `results.md` | Methodology, the claim-by-claim source ledger, and the generated tables. |
 
 Regenerate everything with the commands at the end of `docs/dating/methodology.md`.

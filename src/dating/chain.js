@@ -69,18 +69,23 @@ export function singlePool(pop, { demand, x50, kc, lemon = 0 }) {
 
 // commit(cell): chance this person would commit to the searcher (1 if not modeled). `good` is the
 // share who are serious, above the quality bar and would commit.
+// bar: a percentile (Q ~ N(0, 1)) or { z } (a threshold on Q directly, for mixtures). Also returns
+// the first two moments of each person's type `xt` (if set) among those who would commit, so callers
+// can measure how tightly couples sort.
 export function describe(cells, bar = 0.9, commit = null) {
-  const zb = bar <= 0 ? -Infinity : zTop(1 - bar);   // bar 0: no quality requirement
-  let serious = 0, qPct = 0, zPct = 0, good = 0, commits = 0;
+  const zb = typeof bar === 'object' ? bar.z : bar <= 0 ? -Infinity : zTop(1 - bar);   // bar 0: no quality requirement
+  const key = typeof bar === 'object' && bar.key ? bar.key : 'Q';                        // { z, key }: threshold on another field
+  let serious = 0, qPct = 0, zPct = 0, good = 0, commits = 0, xm = 0, xs = 0;
   for (const c of cells) {
     const k = commit ? commit(c) : (c.serious ? 1 : 0);
     serious += c.w * (c.serious ? 1 : 0);
     commits += c.w * k;
     qPct += c.w * normCdf(c.Q);
     zPct += c.w * c.u;
-    if (c.Q >= zb) good += c.w * (commit ? k : (c.serious ? 1 : 0));
+    if (c.xt != null) { xm += c.w * k * c.xt; xs += c.w * k * c.xt * c.xt; }
+    if (c[key] >= zb) good += c.w * (commit ? k : (c.serious ? 1 : 0));
   }
-  return { serious, commits, qPct, zPct, good };
+  return { serious, commits, qPct, zPct, good, xMean: commits > 0 ? xm / commits : 0, xSq: commits > 0 ? xs / commits : 0 };
 }
 
 // ---------- how picky each person is ----------
@@ -164,7 +169,7 @@ export function keepTop(cells, N, K, { a, c, rhoQz }) {
 //             the best n of the people dated.
 // Success = at least one of those evaluated is serious and above `bar` on quality.
 // Without `dates`, the n best-reading matches are evaluated directly (no first-date stage).
-export function search(pool, { a, c, rhoQz, exposure = 0, likeRate, back, views, dates = null, read2 = null, n = 10, bar = 0.9, commit = null }) {
+export function search(pool, { a, c, rhoQz, exposure = 0, likeRate, back, views, dates = null, read2 = null, n = 10, bar = 0.9, commit = null, bars = null, pursue = null }) {
   const sd = readSd(a, c, rhoQz);
   const shown = normalize(pool.map((x) => ({ ...x, w: x.w * Math.exp(exposure * x.z) })));
   const mu = shown.map((x) => a * x.z + c * x.Q);
@@ -185,13 +190,29 @@ export function search(pool, { a, c, rhoQz, exposure = 0, likeRate, back, views,
     t1 = (lo + hi) / 2;
   }
   const first = { cells: normalize(shown.map((x, i) => ({ ...x, w: x.w * normSf((t1 - mu[i]) / sd) * bk[i] }))), count: Math.min(matches, K) };
-  // After a first date the read is a fresh, better one (read2); keeping the best n of those dated.
-  const final = dates != null && read2 ? keepTop(first.cells, first.count, n, { ...read2, rhoQz }) : { cells: first.cells, count: Math.min(n, first.count) };
-  const d = describe(final.cells, bar, commit);
+  const ev = evaluate(first, { n, read2: dates != null ? read2 : null, rhoQz, pursue, bar, bars, commit });
   return {
-    matches, dated: dates != null ? first.count : null, evaluated: final.count, keepShare: first.count / Math.max(matches, 1e-12),
-    ...d, datedPool: dates != null ? describe(first.cells, bar, commit) : null, odds: 1 - Math.pow(1 - d.good, final.count), pool: describe(pool, bar, commit),
+    matches, dated: dates != null ? first.count : null, keepShare: first.count / Math.max(matches, 1e-12),
+    ...ev, datedPool: dates != null ? describe(first.cells, bar, commit) : null, pool: describe(pool, bar, commit),
   };
+}
+
+// From first dates to months of dating to commitment. `first` = { cells, count } (who she, or he, had
+// first dates with, and how many). pursue(cell): the chance the other person wants to keep seeing
+// you after a first date (months of dating take two). Of those who continue, the searcher properly
+// dates the best n by a fresh, better read (read2). Success = both commit.
+export function evaluate(first, { n, read2 = null, rhoQz = 0, pursue = null, bar = 0.9, bars = null, commit = null }) {
+  let pool = first;
+  if (pursue) {
+    const cells = first.cells.map((x) => ({ ...x, w: x.w * pursue(x) }));
+    const keep = cells.reduce((s, x) => s + x.w, 0);
+    pool = { cells: normalize(cells), count: first.count * keep };
+  }
+  const final = read2 ? keepTop(pool.cells, pool.count, n, { ...read2, rhoQz }) : { cells: pool.cells, count: Math.min(n, pool.count) };
+  const d = describe(final.cells, bar, commit);
+  // Several bars at once (same search): { name: bar } -> odds of at least one success above each.
+  const multi = bars ? Object.fromEntries(Object.entries(bars).map(([k, b]) => [k, 1 - Math.pow(1 - describe(final.cells, b, commit).good, final.count)])) : null;
+  return { evaluated: final.count, continued: pool.count, ...d, odds: 1 - Math.pow(1 - d.good, final.count), multi, final };
 }
 
 // ---------- cohort: who is never married at each age ----------
@@ -254,6 +275,10 @@ export function appFunnel({ men, women, a, c, rhoQz, rhoM, likeM, likeW, exposur
     if (w > 0) yq.push({ v: vv / w, y: zy / w, w, cells: normalize(members) });
   }
   const dy = yq.map(() => new Float64Array(cells.length));   // dates each man gets from each looks bin
+  const ly = yq.map(() => new Float64Array(cells.length));   // likes each man gets from each looks bin
+  const my = yq.map(() => new Float64Array(cells.length));   // matches (both liked) with each looks bin
+  const backBy = yq.map(() => new Float64Array(cells.length)); // chance each man likes a woman in each bin
+  const likeBy = yq.map(() => new Float64Array(cells.length)); // chance a woman in each bin likes each man
   const solve = (f, target) => { let lo = -10, hi = 10; for (let it = 0; it < 60; it++) { const m = (lo + hi) / 2; if (f(m) > target) lo = m; else hi = m; } return (lo + hi) / 2; };
   const perMan = { likes: new Float64Array(cells.length), matches: new Float64Array(cells.length), dates: new Float64Array(cells.length) };
   const womenOut = [];
@@ -272,6 +297,10 @@ export function appFunnel({ men, women, a, c, rhoQz, rhoM, likeM, likeW, exposur
       perMan.matches[i] += k * (s[i] / sBar) * l0 * back[i];
       perMan.dates[i] += activeW * k * (s[i] / sBar) * l1 * back[i];
       dy[kq][i] = activeW * k * (s[i] / sBar) * l1 * back[i];
+      ly[kq][i] = k * (s[i] / sBar) * l0;
+      my[kq][i] = k * (s[i] / sBar) * l0 * back[i];
+      backBy[kq][i] = back[i];
+      likeBy[kq][i] = l0;
     }
   }
   const pOf = typeof pSex === 'function' ? pSex : () => pSex;
@@ -302,7 +331,8 @@ export function appFunnel({ men, women, a, c, rhoQz, rhoM, likeM, likeW, exposur
     const tot = wk.reduce((t, v) => t + v, 0);
     return normalize(yq.flatMap((b, kq) => b.cells.map((x) => ({ ...x, w: x.w * wk[kq] / tot }))));
   };
-  return { all: summarize(() => true), byBand, womenSexRate, datedWomen, summarize, women: womenOut, topDates: { top5: topShare(0.05), top10: topShare(0.1), top20: topShare(0.2) }, perMan, dates };
+  return { all: summarize(() => true), byBand, womenSexRate, datedWomen, summarize, women: womenOut, topDates: { top5: topShare(0.05), top10: topShare(0.1), top20: topShare(0.2) }, perMan, dates,
+    bins: { v: yq.map((b) => b.v), w: yq.map((b) => b.w), likes: ly, matches: my, dates: dy, back: backBy, like: likeBy, shown: shown.map((p) => p) } };
 }
 
 // ---------- single people at a given age: never married plus back on the market ----------

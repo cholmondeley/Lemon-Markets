@@ -243,6 +243,143 @@ export function table(host, head, rows, { hl = -1, caption = '' } = {}) {
   host.appendChild(wrap);
 }
 
+// Funnel as a Sankey: columns of stages, each split into the people at or above your target (accent)
+// and the rest (neutral), joined by bands. Heights on a square-root scale so a funnel that narrows
+// from thousands to a handful stays legible; every node is labeled with its count.
+// spec: { stages: [{ label, hi, lo }], hiLabel, loLabel, height, fmt }. Returns { update(spec) }.
+export function sankey(host, spec) {
+  host.classList.add('chart', 'sankey');
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('role', 'img');
+  host.appendChild(svg);
+  let state = spec;
+  function draw() {
+    const { stages, height = 260, fmt = (v) => num(v), hiLabel = 'Your target or better', loLabel = 'Below it' } = state;
+    const w = host.clientWidth || 600, h = height, padT = 44, padB = 26, colW = Math.max(10, Math.min(18, w / 40));
+    svg.setAttribute('viewBox', `0 0 ${w} ${h}`); svg.setAttribute('width', w); svg.setAttribute('height', h);
+    svg.setAttribute('aria-label', `Funnel: ${stages.map((s) => `${s.label} ${fmt(s.hi + s.lo)}`).join(', ')}.`);
+    const top = Math.max(...stages.map((s) => s.hi + s.lo), 1e-9), avail = h - padT - padB;
+    const H = (v) => (v <= 0 ? 0 : Math.max(2, Math.sqrt(v / top) * (avail - 3)));
+    const n = stages.length, gapX = (w - colW - 8) / Math.max(1, n - 1);
+    const hiC = color('--dating'), loC = color('--neutral'), ink = color('--ink'), muted = color('--ink-muted');
+    // Each column's height is the square root of its total; the two parts split it in proportion.
+    const cols = stages.map((s, i) => {
+      const all = s.hi + s.lo, T = H(all), hh = all > 0 ? T * s.hi / all : 0, hl = all > 0 ? T * s.lo / all : 0;
+      const x = 4 + i * gapX, tot = hh + hl + (hh && hl ? 3 : 0), y0 = padT + (avail - tot) / 2;
+      return { x, s, hi: { y: y0, h: hh }, lo: { y: y0 + hh + (hh && hl ? 3 : 0), h: hl } };
+    });
+    let html = '';
+    for (let i = 0; i < n - 1; i++) {
+      const a = cols[i], b = cols[i + 1], x0 = a.x + colW, x1 = b.x, xm = (x0 + x1) / 2;
+      [['hi', hiC], ['lo', loC]].forEach(([k, c]) => {
+        if (!a[k].h || !b[k].h) return;
+        const p = `M${x0},${a[k].y} C${xm},${a[k].y} ${xm},${b[k].y} ${x1},${b[k].y} L${x1},${b[k].y + b[k].h} C${xm},${b[k].y + b[k].h} ${xm},${a[k].y + a[k].h} ${x0},${a[k].y + a[k].h} Z`;
+        html += `<path d="${p}" fill="${c}" fill-opacity="0.22"/>`;
+      });
+    }
+    cols.forEach((c, i) => {
+      const anchor = i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle', tx = i === 0 ? c.x : i === n - 1 ? c.x + colW : c.x + colW / 2;
+      if (c.hi.h) html += `<rect x="${c.x}" y="${c.hi.y}" width="${colW}" height="${c.hi.h}" rx="3" fill="${hiC}"><title>${c.s.label}, ${hiLabel.toLowerCase()}: ${fmt(c.s.hi)}</title></rect>`;
+      if (c.lo.h) html += `<rect x="${c.x}" y="${c.lo.y}" width="${colW}" height="${c.lo.h}" rx="3" fill="${loC}"><title>${c.s.label}, ${loLabel.toLowerCase()}: ${fmt(c.s.lo)}</title></rect>`;
+      html += `<text x="${tx}" y="14" text-anchor="${anchor}" font-size="11" font-weight="600" fill="${ink}" font-family="IBM Plex Sans, sans-serif">${c.s.label}</text>`;
+      html += `<text x="${tx}" y="27" text-anchor="${anchor}" font-size="11" fill="${muted}" font-family="IBM Plex Mono, monospace">${fmt(c.s.hi + c.s.lo)}</text>`;
+      html += `<text x="${tx}" y="${h - 8}" text-anchor="${anchor}" font-size="11" fill="${hiC}" font-weight="600" font-family="IBM Plex Mono, monospace">${fmt(c.s.hi)}</text>`;
+    });
+    svg.innerHTML = html;
+  }
+  const api = { draw, update(next) { state = { ...state, ...next }; draw(); } };
+  charts.add(api);
+  draw();
+  return api;
+}
+
+// Waterfall, horizontal: a starting bar, then each step as a segment from the previous total to the
+// new one, then the total. steps: [{ label, value, text }] (value = running total). HTML.
+export function waterfall(host, steps, { max = null, fmt = (v) => pct(v), sub = null } = {}) {
+  host.classList.add('bars', 'waterfall');
+  const m = max ?? Math.max(...steps.map((s) => s.value)) * 1.05;
+  host.innerHTML = '';
+  steps.forEach((s, i) => {
+    const prev = i === 0 ? 0 : steps[i - 1].value, lo = Math.min(prev, s.value), hi = Math.max(prev, s.value);
+    const up = s.value >= prev, first = i === 0, last = i === steps.length - 1 && steps.length > 2;
+    const row = document.createElement('div');
+    row.className = 'bar-row' + (first || last ? ' hl' : '');
+    const delta = first ? '' : `${up ? '+' : '−'}${fmt(Math.abs(s.value - prev)).replace('-', '')}`;
+    row.innerHTML = `<span class="bl">${s.label}${sub ? `<small>${sub(s, i)}</small>` : ''}</span><span class="bt"><i class="bf ${first ? 'neutral' : up ? 'accent' : 'down'}" style="left:${((first ? 0 : lo) / m * 100).toFixed(2)}%;width:${(((first ? s.value : hi - lo)) / m * 100).toFixed(2)}%"></i>${!first ? `<i class="wf-tick" style="left:${(s.value / m * 100).toFixed(2)}%"></i>` : ''}</span><span class="bv">${first ? fmt(s.value) : `${fmt(s.value)}<small>${delta}</small>`}</span>`;
+    host.appendChild(row);
+  });
+}
+
+// Pickiness vs agreement: a 2 x 2 field with today's market and where each change moves it.
+// spec: { points: [{ key, x (like rate), y (agreement), label, value, short, color, below, above }], from: key }.
+// On narrow screens the corner labels shorten and each point shows `short` instead of `value`.
+export function quadrant(host, spec) {
+  host.classList.add('chart');
+  const canvas = document.createElement('canvas');
+  host.appendChild(canvas);
+  canvas.setAttribute('role', 'img');
+  if (spec.aria) canvas.setAttribute('aria-label', spec.aria);
+  const pad = { l: 60, r: 16, t: 16, b: 40 };
+  const lx = (v) => Math.log(v);
+  const xr = [0.02, 0.45];
+  function draw() {
+    const { ctx, w, h } = setup(canvas, spec.height ?? 320);
+    const narrow = w < 520, pl = narrow ? 40 : pad.l;
+    const X = (v) => pl + (lx(v) - lx(xr[0])) / (lx(xr[1]) - lx(xr[0])) * (w - pl - pad.r);
+    const Y = (v) => pad.t + (1 - v) * (h - pad.t - pad.b);
+    ctx.clearRect(0, 0, w, h);
+    const midX = X(0.1), midY = Y(0.5);
+    // Quadrant shading: the steep-power-law corner (picky and agreeing) gets the tint.
+    ctx.fillStyle = css('--surface-2');
+    ctx.fillRect(pl, pad.t, midX - pl, midY - pad.t);
+    ctx.strokeStyle = css('--rule-strong'); ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(midX, pad.t); ctx.lineTo(midX, h - pad.b); ctx.moveTo(pl, midY); ctx.lineTo(w - pad.r, midY); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle = css('--rule'); ctx.strokeRect(pl + 0.5, pad.t + 0.5, w - pl - pad.r, h - pad.t - pad.b);
+    ctx.font = '600 11px "IBM Plex Sans", sans-serif'; ctx.fillStyle = css('--ink-faint');
+    const corner = narrow ? ['Picky, agreeing', 'Open, agreeing', 'Picky, own tastes', 'Open, own tastes'] : ['Picky and agreeing: a few get everything', 'Open and agreeing', 'Picky, own tastes', 'Open, own tastes: flat'];
+    ctx.textAlign = 'left'; ctx.fillText(corner[0], pl + 8, pad.t + 16);
+    ctx.textAlign = 'right'; ctx.fillText(corner[1], w - pad.r - 8, pad.t + 16);
+    ctx.textAlign = 'left'; ctx.fillText(corner[2], pl + 8, h - pad.b - 8);
+    ctx.textAlign = 'right'; ctx.fillText(corner[3], w - pad.r - 8, h - pad.b - 8);
+    ctx.font = '11px "IBM Plex Mono", monospace'; ctx.fillStyle = css('--ink-faint'); ctx.textAlign = 'center';
+    [0.02, 0.05, 0.1, 0.2, 0.4].forEach((t) => ctx.fillText(Math.round(t * 100) + '%', X(t), h - pad.b + 15));
+    ctx.textAlign = 'right';
+    (narrow ? [0, 0.5, 1] : [0, 0.25, 0.5, 0.75, 1]).forEach((t) => ctx.fillText(narrow ? t.toFixed(1) : t.toFixed(2), pl - 6, Y(t) + 4));
+    ctx.font = '11px "IBM Plex Sans", sans-serif'; ctx.fillStyle = css('--ink-muted');
+    ctx.textAlign = 'center'; ctx.fillText('Share of profiles liked (log scale)', (pl + w - pad.r) / 2, h - 4);
+    if (!narrow) { ctx.save(); ctx.translate(14, (pad.t + h - pad.b) / 2); ctx.rotate(-Math.PI / 2); ctx.fillText('How much they agree on who', 0, 0); ctx.restore(); }
+    const from = spec.points.find((p) => p.key === spec.from);
+    spec.points.forEach((p) => {
+      if (p === from || !p.arrow) return;
+      ctx.strokeStyle = css('--ink-faint'); ctx.lineWidth = 1.5; ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(X(from.x), Y(from.y)); ctx.lineTo(X(p.x), Y(p.y)); ctx.stroke(); ctx.setLineDash([]);
+    });
+    spec.points.forEach((p) => {
+      ctx.beginPath(); ctx.arc(X(p.x), Y(p.y), p === from ? 7 : 5.5, 0, Math.PI * 2); ctx.fillStyle = color(p.color || '--dating'); ctx.fill();
+      ctx.lineWidth = 2; ctx.strokeStyle = css('--surface'); ctx.stroke();
+      ctx.fillStyle = css('--ink'); ctx.font = '600 11px "IBM Plex Sans", sans-serif';
+      if (narrow) {
+        // One short line per point: "Today 41%".
+        const right = X(p.x) > w * 0.6;
+        ctx.textAlign = right ? 'right' : 'left';
+        ctx.fillText(p.short ?? p.label, X(p.x) + (right ? -10 : 10), Y(p.y) + 4 + (p.below ? 18 : p.above ? -16 : 0));
+        return;
+      }
+      const right = X(p.x) > w * 0.7;
+      ctx.textAlign = right ? 'right' : 'left';
+      const dx = right ? -11 : 11, dy = p.below ? 20 : p.above ? -20 : 0;
+      ctx.fillText(p.label, X(p.x) + dx, Y(p.y) - 3 + dy);
+      ctx.font = '11px "IBM Plex Mono", monospace'; ctx.fillStyle = css('--ink-muted');
+      ctx.fillText(p.value, X(p.x) + dx, Y(p.y) + 11 + dy);
+    });
+  }
+  const api = { draw };
+  charts.add(api);
+  draw();
+  return api;
+}
+
 export const pct = (v, d = 0) => (v == null ? '—' : (v * 100).toFixed(d) + '%');
 export const ord = (n) => { n = Math.round(n); const s = n % 100 >= 11 && n % 100 <= 13 ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] ?? 'th'); return n + s; };
 export const money = (x) => (x >= 1e6 ? '$' + (x / 1e6).toFixed(x >= 1e7 ? 0 : 1) + 'M' : '$' + Math.round(x / 1000) + 'k');

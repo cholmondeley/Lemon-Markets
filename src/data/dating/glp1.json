@@ -1,0 +1,234 @@
+{
+ "source": "NHANES 2017-Mar 2020 and 2021-23, women 20-29 (not pregnant), measured; simulated GLP-1 and glute responses.",
+ "assumptions": {
+  "cut": 0.74,
+  "hip_slope": 0.657,
+  "waist_per_weight": 0.84,
+  "trial_bmi": 38.0,
+  "drugs": {
+   "semaglutide": [
+    0.149,
+    0.11
+   ],
+   "tirzepatide": [
+    0.209,
+    0.1
+   ]
+  },
+  "glute_cm": 2.54
+ },
+ "n": 923,
+ "qualify_all": 0.03321329739354561,
+ "bands": [
+  {
+   "band": [
+    0,
+    0.05
+   ],
+   "n": 38,
+   "whr_median": 0.7284103114930183,
+   "qualify_now": 0.7154167768826165,
+   "qualify_semaglutide": 0.8776127967038195,
+   "pct_semaglutide": 0.980617414894644,
+   "qualify_semaglutide_glutes": 0.9999999999999999,
+   "pct_semaglutide_glutes": 0.9902732404331553,
+   "qualify_tirzepatide": 0.9249859321830569,
+   "pct_tirzepatide": 0.9820017661660553,
+   "qualify_tirzepatide_glutes": 0.9999999999999999,
+   "pct_tirzepatide_glutes": 0.9910748504050777,
+   "qualify_glp1": 0.9012993644434381,
+   "pct_glp1": 0.9813095905303497,
+   "pct_q_glp1": [
+    0.9660498696540133,
+    0.9700177744475585,
+    0.978584944915578,
+    0.9959523358750122,
+    0.9974388406007083
+   ],
+   "qualify_glp1_glutes": 0.9999999999999999,
+   "pct_glp1_glutes": 0.9906740454191165,
+   "pct_q_glp1_glutes": [
+    0.978211272823304,
+    0.9792042974426783,
+    0.9960760231264771,
+    0.9976312909022624,
+    0.9986954035416746
+   ]
+  },
+  {
+   "band": [
+    0.05,
+    0.1
+   ],
+   "n": 42,
+   "whr_median": 0.750249300814366,
+   "qualify_now": 0.0,
+   "qualify_semaglutide": 0.1808009604773978,
+   "pct_semaglutide": 0.9450727067253418,
+   "qualify_semaglutide_glutes": 0.9985987323559383,
+   "pct_semaglutide_glutes": 0.9758897095382993,
+   "qualify_tirzepatide": 0.2858528090216289,
+   "pct_tirzepatide": 0.9503140488398878,
+   "qualify_tirzepatide_glutes": 0.9994328202393084,
+   "pct_tirzepatide_glutes": 0.9771474855290967,
+   "qualify_glp1": 0.23332688474951335,
+   "pct_glp1": 0.9476933777826149,
+   "pct_q_glp1": [
+    0.9120251313620592,
+    0.9275241096651107,
+    0.9455300599781982,
+    0.9639454183198098,
+    0.9700398852798028
+   ],
+   "qualify_glp1_glutes": 0.9990157762976233,
+   "pct_glp1_glutes": 0.9765185975336981,
+   "pct_q_glp1_glutes": [
+    0.9701095831110494,
+    0.9725249973913015,
+    0.976878197372084,
+    0.9778000665740837,
+    0.9790558511558771
+   ]
+  },
+  {
+   "band": [
+    0.1,
+    0.25
+   ],
+   "n": 127,
+   "whr_median": 0.7806451612903226,
+   "qualify_now": 0.0,
+   "qualify_semaglutide": 0.025887618988914823,
+   "pct_semaglutide": 0.8531359858125308,
+   "qualify_semaglutide_glutes": 0.17985804305550618,
+   "pct_semaglutide_glutes": 0.9226701369832211,
+   "qualify_tirzepatide": 0.051244364011390785,
+   "pct_tirzepatide": 0.8627879267975297,
+   "qualify_tirzepatide_glutes": 0.24799246229472516,
+   "pct_tirzepatide_glutes": 0.9294379632886901,
+   "qualify_glp1": 0.03856599150015281,
+   "pct_glp1": 0.8579619563050301,
+   "pct_q_glp1": [
+    0.7840737764464231,
+    0.8101705021146497,
+    0.854709934727498,
+    0.8906402230634207,
+    0.9148883841473
+   ],
+   "qualify_glp1_glutes": 0.21392525267511564,
+   "pct_glp1_glutes": 0.9260540501359555,
+   "pct_q_glp1_glutes": [
+    0.8766543065259204,
+    0.8894844482731936,
+    0.9148779918864891,
+    0.964231134757118,
+    0.9706514732000043
+   ]
+  },
+  {
+   "band": [
+    0.25,
+    0.5
+   ],
+   "n": 207,
+   "whr_median": 0.8152424942263279,
+   "qualify_now": 0.0,
+   "qualify_semaglutide": 0.007172461091815205,
+   "pct_semaglutide": 0.6748811990606516,
+   "qualify_semaglutide_glutes": 0.01936471836948668,
+   "pct_semaglutide_glutes": 0.7794876278131966,
+   "qualify_tirzepatide": 0.014454169610245286,
+   "pct_tirzepatide": 0.6927449203573705,
+   "qualify_tirzepatide_glutes": 0.036641965978102625,
+   "pct_tirzepatide_glutes": 0.795476481050115,
+   "qualify_glp1": 0.010813315351030247,
+   "pct_glp1": 0.683813059709011,
+   "pct_q_glp1": [
+    0.5641568963498846,
+    0.6085268320793494,
+    0.6849772678257402,
+    0.7405221245556719,
+    0.8136065699720231
+   ],
+   "qualify_glp1_glutes": 0.028003342173794653,
+   "pct_glp1_glutes": 0.7874820544316555,
+   "pct_q_glp1_glutes": [
+    0.677667793918905,
+    0.7323717967667088,
+    0.7988904447507871,
+    0.8386949672541805,
+    0.8863303940045199
+   ]
+  },
+  {
+   "band": [
+    0.5,
+    0.75
+   ],
+   "n": 242,
+   "whr_median": 0.8695177890358975,
+   "qualify_now": 0.0,
+   "qualify_semaglutide": 0.0013478272710070235,
+   "pct_semaglutide": 0.46720682258452656,
+   "qualify_semaglutide_glutes": 0.005001976220082284,
+   "pct_semaglutide_glutes": 0.5668493665907235,
+   "qualify_tirzepatide": 0.0036552953804091614,
+   "pct_tirzepatide": 0.5029559888934069,
+   "qualify_tirzepatide_glutes": 0.01173953964493157,
+   "pct_tirzepatide_glutes": 0.6048604484737675,
+   "qualify_glp1": 0.0025015613257080922,
+   "pct_glp1": 0.48508140573896674,
+   "pct_q_glp1": [
+    0.3416403958034947,
+    0.3891923666202912,
+    0.4609699895353493,
+    0.5489064422770081,
+    0.6634878755290182
+   ],
+   "qualify_glp1_glutes": 0.008370757932506925,
+   "pct_glp1_glutes": 0.5858549075322455,
+   "pct_q_glp1_glutes": [
+    0.42118646048217917,
+    0.4985999977534871,
+    0.5692465914626037,
+    0.6493595508862274,
+    0.7694995492148337
+   ]
+  },
+  {
+   "band": [
+    0.75,
+    1.0
+   ],
+   "n": 266,
+   "whr_median": 0.9420561846383819,
+   "qualify_now": 0.0,
+   "qualify_semaglutide": 0.0,
+   "pct_semaglutide": 0.21839230989435549,
+   "qualify_semaglutide_glutes": 1.5440624615691503e-05,
+   "pct_semaglutide_glutes": 0.2870624270006997,
+   "qualify_tirzepatide": 0.0,
+   "pct_tirzepatide": 0.2587080127227571,
+   "qualify_tirzepatide_glutes": 4.345648260449021e-05,
+   "pct_tirzepatide_glutes": 0.33441992173203805,
+   "qualify_glp1": 0.0,
+   "pct_glp1": 0.2385501613085563,
+   "pct_q_glp1": [
+    0.06638662075990284,
+    0.1295056945977754,
+    0.2162911663877205,
+    0.31407625187185717,
+    0.4057685520011122
+   ],
+   "qualify_glp1_glutes": 2.9448553610090855e-05,
+   "pct_glp1_glutes": 0.31074117436636894,
+   "pct_q_glp1_glutes": [
+    0.0924639018025216,
+    0.19364309868764373,
+    0.29438405756671626,
+    0.3924388036923806,
+    0.5119306833638387
+   ]
+  }
+ ]
+}

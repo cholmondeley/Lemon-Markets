@@ -180,3 +180,46 @@ test('t-copula: t tails match known quantiles and fall back to the Gaussian', ()
   assert.ok(traitRarityT({ k: 3, q: 0.01, rho: 0, nu: 4 }) > 1e-6);
   close(hitRateT(1000, 0.01, 0.5, Infinity), hitRate(1000, 0.01, 0.5), 1e-12);
 });
+
+// ---------- the mate-value layer (the calibrated scenario, coarse grid) ----------
+import { evaluate } from '../src/dating/chain.js';
+import { createScenario } from '../src/dating/scenario.js';
+
+test('evaluate: everyone wanting to continue changes nothing; half wanting halves who continues', () => {
+  const cells = normalize([{ Q: 0, u: 0.5, z: 0, serious: true, w: 1 }, { Q: 1, u: 0.8, z: 1, serious: true, w: 1 }]);
+  const a = evaluate({ cells, count: 4 }, { n: 10, bar: 0 }), b = evaluate({ cells, count: 4 }, { n: 10, bar: 0, pursue: () => 1 });
+  close(a.evaluated, b.evaluated, 1e-12); close(a.odds, b.odds, 1e-12);
+  close(evaluate({ cells, count: 4 }, { n: 10, bar: 0, pursue: () => 0.5 }).continued, 2, 1e-12);
+});
+
+const readJ = (p) => JSON.parse(readFileSync(new URL(`../src/data/dating/${p}`, import.meta.url)));
+const S = createScenario({ digitized: data, pools: readJ('pools.json'), calibration: readJ('calibration.json'), nsfg: readJ('nsfg.json'), status: readJ('status.json') },
+  { grid: 'coarse', fitted: readJ('fitted.json') });
+
+test('commitment follows rank: men commit up, rarely down', () => {
+  const his = S.hisCommit(), m = S.BASE.commitScale, Z = { 0.25: -0.6745, 0.5: 0, 0.9: 1.2816 };
+  const man = (p) => ({ Q: Z[p], u: 0.5, serious: true, M: 30 });
+  const y = (p) => Z[p] + S.womenShift(28);
+  assert.ok(his(man(0.25), y(0.9)) / m > 0.99, 'a 25th-percentile man commits to a 90th-percentile woman');
+  assert.ok(his(man(0.9), y(0.5)) / m < 0.1, 'a 90th-percentile man rarely commits to a median woman');
+  assert.ok(his(man(0.5), y(0.5)) / m > 0.6, 'a median man usually commits to a median woman');
+});
+
+test('her odds of a top-10% man: near zero at the median, rising steeply with her appeal', () => {
+  const t = [0.25, 0.5, 0.75, 0.9].map((v) => S.herYears({ v }).odds.top10);
+  assert.ok(t[1] < 0.01, `median woman ${t[1]}`);
+  assert.ok(t[3] > 0.1, `90th-percentile woman ${t[3]}`);
+  for (let i = 1; i < t.length; i++) assert.ok(t[i] > t[i - 1]);
+});
+
+test('age gaps buy top-tier men for attractive women past their mid-twenties', () => {
+  const narrow = S.herYears({ start: 31, v: 0.9, gap: 2 }).odds, wide = S.herYears({ start: 31, v: 0.9, gap: 15 }).odds;
+  assert.ok(wide.top10 > 1.5 * narrow.top10, `${narrow.top10} -> ${wide.top10}`);
+  assert.ok(wide.top5 > 2 * narrow.top5, `${narrow.top5} -> ${wide.top5}`);
+});
+
+test('the fit: single women 25 who marry by 30, averaged over appeal, match the census', () => {
+  const vs = [0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95];
+  const avg = vs.reduce((s, v) => s + S.herYears({ start: 25, v, gap: 2 }).odds.any, 0) / vs.length;
+  close(avg, 1 - S.censusW[30] / S.censusW[25], 0.01);
+});

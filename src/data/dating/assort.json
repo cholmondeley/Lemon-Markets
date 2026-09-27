@@ -1,0 +1,505 @@
+{
+ "source": "PSID 1968-2021 (psid_slim.parquet): couple-years 2000+, husband (head) vs his wife's father's peak (top three family-income years). Author's Castes notebook, near-match cascade, rebuilt without prestige.",
+ "observed": {
+  "n": 17417,
+  "wealth_near": 0.33645289085376356,
+  "income_near": 0.6438537061491646,
+  "edu_rescue": 0.7641384853878395,
+  "wealth_exact": 0.16667623586151462,
+  "income_exact": 0.3550554056381696,
+  "cascade": {
+   "wealth": 0.33645289085376356,
+   "income": 0.40047080438651894,
+   "edu_rescue": 0.1989435608887868,
+   "mismatch": 0.0641327438709307
+  },
+  "matched": 0.9358672561290693
+ },
+ "loadings": {
+  "husband": {
+   "H_inc": 0.8880440784770395,
+   "H_wlt": 0.5403514093070466,
+   "H_edu": 0.4927600213548328
+  },
+  "wife_family": {
+   "F_inc": 0.9515887219685214,
+   "F_wlt": 0.7373969014928853,
+   "F_edu": 0.5915577227440288,
+   "W_edu": 0.5365303747938275
+  }
+ },
+ "rho_raw_pairs": {
+  "H_inc~F_inc": 0.391502095446053,
+  "H_inc~F_wlt": 0.40692166510590083,
+  "H_inc~F_edu": 0.30959637269961704,
+  "H_inc~W_edu": 0.44226842676051975,
+  "H_wlt~F_inc": 0.2617408243309201,
+  "H_wlt~F_wlt": 0.3710389251490382,
+  "H_wlt~F_edu": 0.12832933951632944,
+  "H_wlt~W_edu": 0.19999899620260328,
+  "H_edu~F_inc": 0.3769276660555585,
+  "H_edu~F_wlt": 0.3717384867348325,
+  "H_edu~F_edu": 0.4053766529043411,
+  "H_edu~W_edu": 0.5450456970929459
+ },
+ "rho_clark_pairs": {
+  "H_inc~F_inc": 0.4632871792388868,
+  "H_inc~F_wlt": 0.6214053411767911,
+  "H_inc~F_edu": 0.5893376847489723,
+  "H_inc~W_edu": 0.9282332046612514,
+  "H_wlt~F_inc": 0.5090329450081832,
+  "H_wlt~F_wlt": 0.9311976607270297,
+  "H_wlt~F_edu": 0.4014694861413356,
+  "H_wlt~W_edu": 0.6898540424844987,
+  "H_edu~F_inc": 0.8038467564956555,
+  "H_edu~F_wlt": 1.0230591711467552,
+  "H_edu~F_edu": 1.3906765730547086,
+  "H_edu~W_edu": 2.0615939743122453
+ },
+ "rho_composite": 0.56008611249248,
+ "rho_clark": 0.746850399490077,
+ "cfa": {
+  "rho": 0.75631949200698,
+  "loadings": {
+   "H_earn": 0.5580606832005257,
+   "H_edu": 0.6707960416103685,
+   "F_inc": 0.82425687935386,
+   "F_wlt": 0.7481067191411613,
+   "F_edu": 0.6842817163016023,
+   "W_edu": 0.5245739918249334
+  },
+  "direct": {
+   "H_edu~W_edu": 0.27891036267835767
+  },
+  "rmse": 0.05068675320070562
+ },
+ "cfa_all": {
+  "rho": 0.6513721495717459,
+  "loadings": {
+   "H_earn": 0.7365627135698234,
+   "H_inc": 0.888209384342473,
+   "H_wlt": 0.5256179787392353,
+   "H_edu": 0.5879666670949655,
+   "F_inc": 0.8016421794871719,
+   "F_wlt": 0.7750516801400495,
+   "F_edu": 0.6437274006175915,
+   "W_edu": 0.560747267890932
+  },
+  "direct": {
+   "H_edu~W_edu": 0.3302878420938459
+  },
+  "rmse": 0.07303245094476345
+ },
+ "rho_cascade": 0.36,
+ "rho_cascade_matched_only": 0.52,
+ "fits": [
+  {
+   "rho": 0.0,
+   "wealth_near": 0.449665,
+   "income_near": 0.52813,
+   "edu_rescue": 0.6725275,
+   "matched": 0.8961425,
+   "sse": 0.03617958671548252
+  },
+  {
+   "rho": 0.02,
+   "wealth_near": 0.451135,
+   "income_near": 0.531575,
+   "edu_rescue": 0.67316,
+   "matched": 0.89739,
+   "sse": 0.035516078055447056
+  },
+  {
+   "rho": 0.04,
+   "wealth_near": 0.4527225,
+   "income_near": 0.5351325,
+   "edu_rescue": 0.6737175,
+   "matched": 0.8985525,
+   "sse": 0.034907268301027534
+  },
+  {
+   "rho": 0.06,
+   "wealth_near": 0.45436,
+   "income_near": 0.5388075,
+   "edu_rescue": 0.6743775,
+   "matched": 0.899975,
+   "sse": 0.03428208036138595
+  },
+  {
+   "rho": 0.08,
+   "wealth_near": 0.456115,
+   "income_near": 0.542425,
+   "edu_rescue": 0.6749475,
+   "matched": 0.9014075,
+   "sse": 0.03374930946334809
+  },
+  {
+   "rho": 0.1,
+   "wealth_near": 0.4576375,
+   "income_near": 0.5463,
+   "edu_rescue": 0.6753825,
+   "matched": 0.90274,
+   "sse": 0.03317747511817097
+  },
+  {
+   "rho": 0.12,
+   "wealth_near": 0.459315,
+   "income_near": 0.55004,
+   "edu_rescue": 0.676015,
+   "matched": 0.9041525,
+   "sse": 0.0326676837585306
+  },
+  {
+   "rho": 0.14,
+   "wealth_near": 0.4610475,
+   "income_near": 0.55413,
+   "edu_rescue": 0.6766175,
+   "matched": 0.90572,
+   "sse": 0.03214294000881518
+  },
+  {
+   "rho": 0.16,
+   "wealth_near": 0.46294,
+   "income_near": 0.558115,
+   "edu_rescue": 0.677095,
+   "matched": 0.9071725,
+   "sse": 0.031750071890074505
+  },
+  {
+   "rho": 0.18,
+   "wealth_near": 0.4647075,
+   "income_near": 0.5623325,
+   "edu_rescue": 0.677635,
+   "matched": 0.90864,
+   "sse": 0.031319128279830556
+  },
+  {
+   "rho": 0.2,
+   "wealth_near": 0.46663,
+   "income_near": 0.5662075,
+   "edu_rescue": 0.6782275,
+   "matched": 0.910125,
+   "sse": 0.031018374235953897
+  },
+  {
+   "rho": 0.22,
+   "wealth_near": 0.4683775,
+   "income_near": 0.5706575,
+   "edu_rescue": 0.6787975,
+   "matched": 0.9116375,
+   "sse": 0.030631951962059832
+  },
+  {
+   "rho": 0.24,
+   "wealth_near": 0.470305,
+   "income_near": 0.57505,
+   "edu_rescue": 0.6792725,
+   "matched": 0.91308,
+   "sse": 0.030371831620497378
+  },
+  {
+   "rho": 0.26,
+   "wealth_near": 0.4722475,
+   "income_near": 0.57954,
+   "edu_rescue": 0.679815,
+   "matched": 0.9146225,
+   "sse": 0.030138218522757013
+  },
+  {
+   "rho": 0.28,
+   "wealth_near": 0.474335,
+   "income_near": 0.5839275,
+   "edu_rescue": 0.6804175,
+   "matched": 0.9160175,
+   "sse": 0.030005842418741175
+  },
+  {
+   "rho": 0.3,
+   "wealth_near": 0.476405,
+   "income_near": 0.5887425,
+   "edu_rescue": 0.680985,
+   "matched": 0.91757,
+   "sse": 0.029873129611694207
+  },
+  {
+   "rho": 0.32,
+   "wealth_near": 0.4782925,
+   "income_near": 0.5934625,
+   "edu_rescue": 0.6815825,
+   "matched": 0.91911,
+   "sse": 0.02975404473625712
+  },
+  {
+   "rho": 0.34,
+   "wealth_near": 0.4802625,
+   "income_near": 0.5983575,
+   "edu_rescue": 0.68223,
+   "matched": 0.920545,
+   "sse": 0.029694879968175283
+  },
+  {
+   "rho": 0.36,
+   "wealth_near": 0.48225,
+   "income_near": 0.6035125,
+   "edu_rescue": 0.682855,
+   "matched": 0.9221125,
+   "sse": 0.029680408261934264
+  },
+  {
+   "rho": 0.38,
+   "wealth_near": 0.48409,
+   "income_near": 0.60908,
+   "edu_rescue": 0.6833225,
+   "matched": 0.9236625,
+   "sse": 0.029686106202783714
+  },
+  {
+   "rho": 0.4,
+   "wealth_near": 0.4862,
+   "income_near": 0.614395,
+   "edu_rescue": 0.6841425,
+   "matched": 0.92537,
+   "sse": 0.02980156213004839
+  },
+  {
+   "rho": 0.42,
+   "wealth_near": 0.4882025,
+   "income_near": 0.619915,
+   "edu_rescue": 0.684635,
+   "matched": 0.92687,
+   "sse": 0.03000276033479805
+  },
+  {
+   "rho": 0.44,
+   "wealth_near": 0.4901175,
+   "income_near": 0.62553,
+   "edu_rescue": 0.6851825,
+   "matched": 0.928445,
+   "sse": 0.030237707825716754
+  },
+  {
+   "rho": 0.46,
+   "wealth_near": 0.49213,
+   "income_near": 0.6312075,
+   "edu_rescue": 0.6858525,
+   "matched": 0.930165,
+   "sse": 0.03055650007520291
+  },
+  {
+   "rho": 0.48,
+   "wealth_near": 0.4940675,
+   "income_near": 0.6373475,
+   "edu_rescue": 0.68646,
+   "matched": 0.9319425,
+   "sse": 0.030934046537597768
+  },
+  {
+   "rho": 0.5,
+   "wealth_near": 0.496165,
+   "income_near": 0.643505,
+   "edu_rescue": 0.6869975,
+   "matched": 0.9336425,
+   "sse": 0.031463760570358504
+  },
+  {
+   "rho": 0.52,
+   "wealth_near": 0.4984775,
+   "income_near": 0.64984,
+   "edu_rescue": 0.6876525,
+   "matched": 0.93533,
+   "sse": 0.03213820428795625
+  },
+  {
+   "rho": 0.54,
+   "wealth_near": 0.500525,
+   "income_near": 0.65646,
+   "edu_rescue": 0.6882125,
+   "matched": 0.9370025,
+   "sse": 0.03284461968010903
+  },
+  {
+   "rho": 0.56,
+   "wealth_near": 0.5028975,
+   "income_near": 0.663055,
+   "edu_rescue": 0.68881,
+   "matched": 0.9388125,
+   "sse": 0.03375555277167473
+  },
+  {
+   "rho": 0.58,
+   "wealth_near": 0.505055,
+   "income_near": 0.6698075,
+   "edu_rescue": 0.6895725,
+   "matched": 0.9407175,
+   "sse": 0.03468388166627808
+  },
+  {
+   "rho": 0.6,
+   "wealth_near": 0.5073425,
+   "income_near": 0.6772375,
+   "edu_rescue": 0.6902625,
+   "matched": 0.9425825,
+   "sse": 0.035820491923298885
+  },
+  {
+   "rho": 0.62,
+   "wealth_near": 0.5096775,
+   "income_near": 0.684385,
+   "edu_rescue": 0.690985,
+   "matched": 0.94459,
+   "sse": 0.03707706968011586
+  },
+  {
+   "rho": 0.64,
+   "wealth_near": 0.5120975,
+   "income_near": 0.691785,
+   "edu_rescue": 0.691565,
+   "matched": 0.9464825,
+   "sse": 0.038528031836127574
+  },
+  {
+   "rho": 0.66,
+   "wealth_near": 0.5145,
+   "income_near": 0.6994125,
+   "edu_rescue": 0.692245,
+   "matched": 0.948415,
+   "sse": 0.04011367176695341
+  },
+  {
+   "rho": 0.68,
+   "wealth_near": 0.5167425,
+   "income_near": 0.70741,
+   "edu_rescue": 0.6929325,
+   "matched": 0.9502925,
+   "sse": 0.04182212566994547
+  },
+  {
+   "rho": 0.7,
+   "wealth_near": 0.518945,
+   "income_near": 0.7160275,
+   "edu_rescue": 0.6934475,
+   "matched": 0.952185,
+   "sse": 0.04377591059960579
+  },
+  {
+   "rho": 0.72,
+   "wealth_near": 0.5214325,
+   "income_near": 0.7245375,
+   "edu_rescue": 0.6941025,
+   "matched": 0.9541875,
+   "sse": 0.04596800097479453
+  },
+  {
+   "rho": 0.74,
+   "wealth_near": 0.5237825,
+   "income_near": 0.7330075,
+   "edu_rescue": 0.694725,
+   "matched": 0.95622,
+   "sse": 0.048273247557642486
+  },
+  {
+   "rho": 0.76,
+   "wealth_near": 0.52648,
+   "income_near": 0.74191,
+   "edu_rescue": 0.69539,
+   "matched": 0.9582475,
+   "sse": 0.050952568533081326
+  },
+  {
+   "rho": 0.78,
+   "wealth_near": 0.5287875,
+   "income_near": 0.751405,
+   "edu_rescue": 0.696235,
+   "matched": 0.96021,
+   "sse": 0.05376333519140652
+  },
+  {
+   "rho": 0.8,
+   "wealth_near": 0.53116,
+   "income_near": 0.76146,
+   "edu_rescue": 0.696825,
+   "matched": 0.9623725,
+   "sse": 0.05697573197312985
+  },
+  {
+   "rho": 0.82,
+   "wealth_near": 0.5336475,
+   "income_near": 0.7712625,
+   "edu_rescue": 0.6976625,
+   "matched": 0.964775,
+   "sse": 0.060373428915853226
+  },
+  {
+   "rho": 0.84,
+   "wealth_near": 0.5359775,
+   "income_near": 0.7818975,
+   "edu_rescue": 0.6981375,
+   "matched": 0.96686,
+   "sse": 0.06418283892050529
+  },
+  {
+   "rho": 0.86,
+   "wealth_near": 0.538665,
+   "income_near": 0.79272,
+   "edu_rescue": 0.698865,
+   "matched": 0.9691275,
+   "sse": 0.06841778224728298
+  },
+  {
+   "rho": 0.88,
+   "wealth_near": 0.5414575,
+   "income_near": 0.8035775,
+   "edu_rescue": 0.69951,
+   "matched": 0.9711325,
+   "sse": 0.07295905864210774
+  },
+  {
+   "rho": 0.9,
+   "wealth_near": 0.543605,
+   "income_near": 0.8154525,
+   "edu_rescue": 0.700165,
+   "matched": 0.973245,
+   "sse": 0.07784784494434477
+  },
+  {
+   "rho": 0.92,
+   "wealth_near": 0.5463375,
+   "income_near": 0.827635,
+   "edu_rescue": 0.7008625,
+   "matched": 0.9754775,
+   "sse": 0.08339993487227224
+  },
+  {
+   "rho": 0.94,
+   "wealth_near": 0.5489425,
+   "income_near": 0.840625,
+   "edu_rescue": 0.70171,
+   "matched": 0.977825,
+   "sse": 0.08952854413741045
+  },
+  {
+   "rho": 0.96,
+   "wealth_near": 0.5515475,
+   "income_near": 0.8535825,
+   "edu_rescue": 0.702435,
+   "matched": 0.980155,
+   "sse": 0.0960205822200829
+  },
+  {
+   "rho": 0.98,
+   "wealth_near": 0.554005,
+   "income_near": 0.867205,
+   "edu_rescue": 0.7030525,
+   "matched": 0.9822475,
+   "sse": 0.10309734529114853
+  },
+  {
+   "rho": 1.0,
+   "wealth_near": 0.55655,
+   "income_near": 0.8803675,
+   "edu_rescue": 0.7042125,
+   "matched": 0.984375,
+   "sse": 0.11032563707639713
+  }
+ ]
+}

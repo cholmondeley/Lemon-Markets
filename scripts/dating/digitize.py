@@ -8,7 +8,9 @@ src/data/dating/digitized.json:
 - the four bar histograms from Paul's "What really happens inside a dating app"
   (blog.luap.info, Jan 2025);
 - OkCupid's "How a person's desirability changes with time" (Rudder, OkTrends / Dataclysm);
-- Geruso et al. (2023) Appendix Figure A4, monthly probability of a pregnancy ending in birth.
+- Geruso et al. (2023) Appendix Figure A4, monthly probability of a pregnancy ending in birth;
+- the author's chart of the share of US women married by age, one line per decade of birth
+  ("Marriage - 1 by cohort pure annotation.png": 1950 drawn by hand, 1960-2000 from real data).
 
 Bars are found by color; heights are in pixels (the y axis has no usable scale on two of the four
 charts, so counts are relative). The chart library draws a 2 px stub for empty bins (every bin past
@@ -88,6 +90,36 @@ def geruso_curve():
     return rows
 
 
+# Cohort lines: core color of each line, sampled from the chart. Axes: age 15 at x = 172 px, 45 at
+# 1468; 0% at y = 1008, 100% at 127. The 2000s line is near-black (stop at 24, before its label).
+COHORT_COLORS = {1940: (190, 126, 126), 1950: (216, 219, 173), 1960: (163, 204, 162), 1970: (153, 197, 204),
+                 1980: (130, 126, 190), 1990: (196, 136, 188), 2000: (45, 45, 45)}
+
+
+def cohort_curves():
+    im = np.asarray(Image.open(CHARTS / "Marriage - 1 by cohort pure annotation.png").convert("RGB")).astype(int)
+    x_of = lambda age: 172 + (age - 15) / 30 * (1468 - 172)
+    out = {}
+    for cohort, rgb in COHORT_COLORS.items():
+        dist = np.sqrt(((im - np.array(rgb)) ** 2).sum(-1))
+        pts = []
+        for age in np.arange(15, 45.01, 0.5):
+            if cohort == 2000 and age > 24:
+                break
+            x = int(round(x_of(age)))
+            ys = np.where(dist[130:1005, x - 1:x + 2].min(1) < (45 if cohort == 2000 else 16))[0] + 130
+            if cohort == 2000:
+                ys = ys[ys > 700]   # the black line only; the "2000" label sits right of age 24
+            if len(ys) == 0:
+                continue
+            # The thick line's center: the median of its pixels (lines are 5-8 px thick).
+            y = np.median(ys)
+            pts.append((float(age), round((1008 - y) / (1008 - 127), 4)))
+        out[cohort] = pts
+        print(f"cohort {cohort}: {len(pts)} points, at 25 {dict(pts).get(25.0)}, at 30 {dict(pts).get(30.0)}")
+    return out
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     data = {}
@@ -112,6 +144,11 @@ def main():
         "# Geruso et al. (2023) App. Fig. A4: monthly prob. a pregnancy ending in birth begins\nage,prob\n"
         + "".join(f"{a},{p}\n" for a, p in ge))
     data["geruso"] = {"age": [a for a, _ in ge], "monthly": [p for _, p in ge]}
+    co = cohort_curves()
+    (OUT / "married_by_age_cohort.csv").write_text(
+        "# share of US women married, by age and decade of birth (author's chart, digitized)\ncohort,age,married\n"
+        + "".join(f"{c},{a},{v}\n" for c, pts in co.items() for a, v in pts))
+    data["cohorts"] = {str(c): pts for c, pts in co.items()}
     js = ROOT / "src/data/dating/digitized.json"
     js.write_text(json.dumps(data))
     print(f"wrote {js.relative_to(ROOT)}")
