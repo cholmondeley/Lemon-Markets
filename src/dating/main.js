@@ -235,9 +235,11 @@ table(fig('exchange'), ['Her WHR', 'Share of single women 22-29', 'Men she can r
   SITE.exchange.tiers.map((t) => [`≤ ${t.whr}`, pct(t.share, t.share < 0.01 ? 2 : 1), money(t.income) + '+', money(t.net_worth) + '+']), { hl: 2 });
 {
   const x = (a, b) => (a > 0.0005 ? `${(b / a).toFixed(1)}×` : '—');
-  table(fig('glp'), ['Where she starts on WHR', 'Reaches WHR ≤ 0.74', 'Millionaire husband: now → after', 'Lift', 'Open to men 15 years older: now → after', 'Lift'],
-    SITE.glp.map((g) => [`${g.lo === 0 ? 'Top 5%' : `Top ${Math.round(g.lo * 100)}-${Math.round(g.hi * 100)}%`} (WHR ${g.whr.toFixed(2)})`, g.lo === 0 ? `${pct(g.q0)} already, ${pct(g.q2)} after` : pct(g.q2),
-      `${pct(g.mil0, 1)} → ${pct(g.mil2, 1)}`, x(g.mil0, g.mil2), `${pct(g.milGap0, 1)} → ${pct(g.milGap2, 1)}`, x(g.milGap0, g.milGap2)]), { hl: 2 });
+  const r = SITE.glpRef, g0 = SITE.glp[0];
+  table(fig('glp'), ['Husband, and where she starts on WHR', 'Reaches WHR ≤ 0.74', 'Five years: now → after', 'Lift', 'Open to men 15 years older: now → after', 'Lift'], [
+    [`<em>For scale: a top-5% man, top-5% WHR (0.73)</em>`, `${pct(g0.q0)} already, ${pct(g0.q2)} after`, `${pct(r.top5_0, 1)} → ${pct(r.top5_2, 1)}`, x(r.top5_0, r.top5_2), `${pct(r.gap0, 1)} → ${pct(r.gap2, 1)}`, x(r.gap0, r.gap2)],
+    ...SITE.glp.map((g) => [`A millionaire, ${g.lo === 0 ? 'top 5%' : `top ${Math.round(g.lo * 100)}-${Math.round(g.hi * 100)}%`} WHR (${g.whr.toFixed(2)})`, g.lo === 0 ? `${pct(g.q0)} already, ${pct(g.q2)} after` : pct(g.q2),
+      `${pct(g.mil0, 1)} → ${pct(g.mil2, 1)}`, x(g.mil0, g.mil2), `${pct(g.milGap0, 1)} → ${pct(g.milGap2, 1)}`, x(g.milGap0, g.milGap2)])], { hl: 3 });
 }
 {
   const ages = [...new Set(SITE.reach.map((x) => x.wife_age))];

@@ -218,7 +218,9 @@ out.leverAppeal = { glp: r4(vGlp), glpGlutes: r4(vGlpG) };
   // GLP-1s for a woman already in the top 20% on WHR (80th percentile), from 27.
   const p0 = 0.8, v0 = appealFromWhr(p0), v1 = appealFromWhr(afterGlp(p0, 'gg'));
   const o0 = herYears({ ...baseW, v: v0 }).odds, o1 = herYears({ ...baseW, v: v1, rareV: v0 }).odds;
-  out.glpTop20 = round({ v0, v1, pAfter: afterGlp(p0, 'gg'), any0: o0.any, any1: o1.any, top10_0: o0.top10, top10_1: o1.top10, rare0: o0.rare, rare1: o1.rare });
+  const g0 = herYears({ ...baseW, v: v0, gap: 15 }).odds, g1 = herYears({ ...baseW, v: v1, gap: 15 }).odds;
+  out.glpTop20 = round({ v0, v1, pAfter: afterGlp(p0, 'gg'), any0: o0.any, any1: o1.any, top10_0: o0.top10, top10_1: o1.top10, rare0: o0.rare, rare1: o1.rare,
+    gapTop10_0: g0.top10, gapTop10_1: g1.top10 });
 }
 {
   // Everything together from 23 for a top-20% woman going for a top-10% man, one step at a time.
@@ -236,6 +238,12 @@ out.glp = [0, 0.05, 0.1, 0.25, 0.5].map((lo) => {
     v0, v1, v2, mil0: o0.mil, mil2: o2.mil, milGap0: g0.mil, milGap2: g2.mil, top10_0: o0.top10, top10_2: o2.top10 });
 });
 out.glpAll = r4(glp1.qualify_all);
+// For scale, the same odds for a top-5% man (standing now), for a top-5%-WHR woman.
+{
+  const b = gb(0), v0 = appealFromWhr(1 - (b.band[0] + b.band[1]) / 2), v2 = appealFromWhr(b.pct_glp1_glutes);
+  const at = (v, gap = 2) => herYears({ start: 25, v, gap }).odds;
+  out.glpRef = round({ top5_0: at(v0).top5, top5_2: at(v2).top5, gap0: at(v0, 15).top5, gap2: at(v2, 15).top5 });
+}
 out.exchange = { tiers: exchange.tiers, metros: exchange.metros };
 out.reach = ag.reach_recent_5y;
 out.gapByIncome = { recent: ag.recent_5y.bands, recent3045: ag.recent_5y_husband_30_45.bands, all: ag.all.bands };
