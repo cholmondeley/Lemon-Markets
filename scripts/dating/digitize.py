@@ -10,7 +10,9 @@ src/data/dating/digitized.json:
 - OkCupid's "How a person's desirability changes with time" (Rudder, OkTrends / Dataclysm);
 - Geruso et al. (2023) Appendix Figure A4, monthly probability of a pregnancy ending in birth;
 - the author's chart of the share of US women married by age, one line per decade of birth
-  ("Marriage - 1 by cohort pure annotation.png": 1950 drawn by hand, 1960-2000 from real data).
+  ("Marriage - 1 by cohort pure annotation.png": 1950 drawn by hand, 1960-2000 from real data);
+- Rudder (2014), *Dataclysm*: messages received per week by attractiveness percentile, women and men
+  (OkCupid; "Dating - messages per week by attractiveness and gender.png").
 
 Bars are found by color; heights are in pixels (the y axis has no usable scale on two of the four
 charts, so counts are relative). The chart library draws a 2 px stub for empty bins (every bin past
@@ -120,6 +122,27 @@ def cohort_curves():
     return out
 
 
+# Messages a week: x = 390 + 9.81 * percentile px (0th to 90th ticks), y = 944 - 29.6 * messages px
+# (0 and 30 ticks). Women: the red line. Men: the lowest dark line (the dotted "all" series is above it).
+def okc_messages():
+    im = np.asarray(Image.open(CHARTS / "Dating - messages per week by attractiveness and gender.png").convert("RGB")).astype(int)
+    r, g, b = im[..., 0], im[..., 1], im[..., 2]
+    red = (r - g > 40) & (r < 230)
+    dark = (r < 120) & (g < 120) & (b < 120)
+    rows = []
+    for p in range(0, 100):
+        x = int(round(390 + 9.81 * p))
+        yw = np.where(red[100:945, x - 1:x + 2].any(1))[0] + 100
+        yd = np.where(dark[100:942, x - 1:x + 2].any(1))[0] + 100
+        if len(yw) == 0 or len(yd) == 0:
+            continue
+        # The men's line: the bottom run of dark pixels.
+        bottom = yd.max()
+        run = yd[yd >= bottom - 8]
+        rows.append((p, round((944 - np.median(yw)) / 29.6, 3), round((944 - np.median(run)) / 29.6, 3)))
+    return rows
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     data = {}
@@ -144,6 +167,13 @@ def main():
         "# Geruso et al. (2023) App. Fig. A4: monthly prob. a pregnancy ending in birth begins\nage,prob\n"
         + "".join(f"{a},{p}\n" for a, p in ge))
     data["geruso"] = {"age": [a for a, _ in ge], "monthly": [p for _, p in ge]}
+    ms = okc_messages()
+    (OUT / "okcupid_messages_per_week.csv").write_text(
+        "# messages received per week by attractiveness percentile (Rudder 2014, Dataclysm; digitized)\npercentile,women,men\n"
+        + "".join(f"{p},{w},{m}\n" for p, w, m in ms))
+    data["okc_messages"] = {"pct": [p for p, _, _ in ms], "women": [w for _, w, _ in ms], "men": [m for _, _, m in ms]}
+    print("messages/week women at 10/50/90/99:", [dict((p, w) for p, w, _ in ms).get(q) for q in (10, 50, 90, 99)],
+          "men:", [dict((p, m) for p, _, m in ms).get(q) for q in (10, 50, 90, 99)])
     co = cohort_curves()
     (OUT / "married_by_age_cohort.csv").write_text(
         "# share of US women married, by age and decade of birth (author's chart, digitized)\ncohort,age,married\n"

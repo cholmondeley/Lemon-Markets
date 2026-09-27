@@ -221,9 +221,9 @@ out.leverAppeal = { glp: r4(vGlp), glpGlutes: r4(vGlpG) };
   out.glpTop20 = round({ v0, v1, pAfter: afterGlp(p0, 'gg'), any0: o0.any, any1: o1.any, top10_0: o0.top10, top10_1: o1.top10, rare0: o0.rare, rare1: o1.rare });
 }
 {
-  // Everything together from 23 for a top-20% woman, one step at a time (a waterfall).
+  // Everything together from 23 for a top-20% woman going for a top-10% man, one step at a time.
   const v = 0.8, b = { ...baseW, v };
-  const steps = [["Don't start looking till 27", {}], ['Start at 23', { start: 23 }], ['Open to men 10 years older', { gap: 10 }], ['GLP-1 plus glute work', { v: glpAppeal(v) }], ['Three men a year', { n: 3 }]];
+  const steps = [["Don't start looking till 27", {}], ['Start at 23', { start: 23 }], ['Open to men 15 years older', { gap: 15 }], ['GLP-1 plus glute work', { v: glpAppeal(v) }], ['Three men a year', { n: 3 }]];
   let o = {};
   out.waterfall = steps.map(([label, d]) => { o = { ...o, ...d }; const r = herYears({ ...b, ...o }); return { label, ...round(r.odds) }; });
 }
@@ -245,18 +245,20 @@ out.gapTop = [23, 27, 31].map((start) => ({ start, rows: [2, 10, 15].map((gap) =
 log('men');
 const baseM = { age: 30, lo: 22, hi: 30, uLooks: 0.5, status: 0.5, social: 0.5, height: 0.5 };
 const mlever = (label, o) => { const r = hisYears({ ...baseM, ...o }); return { label, mvPct: r4(r.mvPct), dates: r3(r.first.dates), ...round(r.odds) }; };
-// Body is half of a man's looks (assumption): fit = body at the 75th percentile, abs = the top 5%
-// (the Dating Calculator's fit/abs flag: 5.3% of single men 25-35), face at the median.
+// Body is half of a man's looks (assumption), face at the median. The rungs are the Dating
+// Calculator's flags among single men 25-35 (parquet): not overweight or obese 40% (body at the 60th
+// percentile), fit 5.3% (body fat up to 20%: the 94.7th), strict abs 2.2% (up to 17%: the 97.8th).
 const looksWithBody = (pBody) => normCdf(D.zTop(1 - pBody) / Math.SQRT2);
 out.menLevers = [
   mlever('Baseline: a median man, 30, on the apps', {}),
   mlever('Get off the apps: approach two women a month', { ch: 'inperson' }),
-  mlever('Get fit (body to the 75th percentile)', { uLooks: looksWithBody(0.75) }),
-  mlever('Get abs (body to the top 5%)', { uLooks: looksWithBody(0.95) }),
+  mlever('Lose the weight (out of overweight: top 40%)', { uLooks: looksWithBody(0.6) }),
+  mlever('Get fit (top 5% of bodies)', { uLooks: looksWithBody(0.947) }),
+  mlever('Get strict abs (top 2%)', { uLooks: looksWithBody(0.978) }),
   mlever('Status to the 75th percentile (income, career)', { status: 0.75 }),
   mlever('Status to the 90th percentile', { status: 0.9 }),
   mlever('Social skills to the 75th percentile', { social: 0.75 }),
-  mlever('Fit, plus status and social skills at the 75th', { status: 0.75, uLooks: looksWithBody(0.75), social: 0.75 }),
+  mlever('Out of overweight, plus status and social skills at the 75th', { status: 0.75, uLooks: looksWithBody(0.6), social: 0.75 }),
 ];
 out.assort = { rho: assort.cfa.rho, composite: assort.rho_composite, cascade: assort.observed.cascade, matched: assort.observed.matched, independent: assort.fits[0].matched, n: assort.observed.n };
 

@@ -106,8 +106,9 @@ One thing at a time, from a median man of 30:
 |---|---|---|---|---|
 | Baseline | 50th | 16% | 0.8% | 0.2% |
 | In person, 2 approaches a month | 50th | 41% | 2.3% | 0.5% |
-| Get fit (looks 68th) | 56th | 37% | 3.6% | 0.9% |
-| Get abs (looks 88th) | 66th | 66% | 19.6% | 6.9% |
+| Out of overweight (looks 57th) | 52nd | 23% | 1.5% | 0.3% |
+| Fit, top 5% of bodies (looks 87th) | 65th | 66% | 18.9% | 6.6% |
+| Strict abs, top 2% (looks 92nd) | 69th | 67% | 28.1% | 11.8% |
 | Status 75th | 72nd | 15% | 2.8% | 1.0% |
 | Status 90th | 86th | 12% | 4.7% | 2.2% |
 | Social 75th | 59th | 16% | 1.5% | 0.4% |

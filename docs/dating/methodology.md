@@ -263,6 +263,12 @@ the odds of 1 in 10,000 fall to 7%.
 the apps (women: a day; men: a week) map to a percentile through the funnel (§4, §7), and the worker
 runs `herYears` (from 25) or `hisYears` (from 30, women 22-30, everything else median).
 
+**Likes or messages.** Every calculator takes either likes on the apps or messages a week. Messages map
+to a percentile through Rudder's (2014, *Dataclysm*) OkCupid messages received per week by
+attractiveness percentile, digitized (`okc_messages`; women about 2 / 6 / 11 / 25 a week at the 10th /
+50th / 90th / 99th percentile, men 0.3 / 0.5 / 1.4 / 3.4), lightly smoothed and made non-decreasing so
+it can be read backwards.
+
 ## 11. Levers: age gaps, GLP-1s, men's levers, exchange rates
 
 - **Age gaps, empirical** (`agegap.py`, ACS 2024, married within five years). Share of husbands in the
@@ -286,13 +292,16 @@ runs `herYears` (from 25) or `hisYears` (from 30, women 22-30, everything else m
   23, age gaps of 10 and 15, GLP-1 plus glutes (her WHR percentile from her appeal, WHR z = appeal z /
   0.6, moved by the NHANES bands), three men a year. The waterfall is a top-20% woman. For a top-20%
   woman on WHR (80th percentile) from 27, GLP-1 plus glutes: any committed man 43% → 48%, top 10% 0.2% →
-  0.9%.
+  0.9%. The waterfall: a top-20% woman going for a top-10% man, one step at a time: not looking till 27
+  1.0%; start at 23 1.0% (top-10% men today are mostly older); open to men 15 years older 4.1%; GLP-1
+  plus glutes 7.5%; three men a year 10.1%.
 - **Men's levers** (`hisYears`, a median man of 30, women 22-30, five years): get off the apps (in person,
-  two approaches a month) 16% → 41%; get fit (body at the 75th percentile, body half of looks, face at
-  the median: looks 68th) 37%; get abs (body top 5%: the Dating Calculator's fit/abs flag, 5.3% of single
-  men 25-35; looks 88th, 6.8 first dates a year) 66%, and a 75th-percentile woman or better 0.8% → 20%;
-  status to the 90th percentile: any 12% (he is choosier) but a 75th-percentile woman 4.7%; fit plus
-  status and social skills at the 75th: a 75th-percentile woman 12%.
+  two approaches a month) 16% → 41%. The body ladder uses the Dating Calculator's flags among single men
+  25-35 (body half of looks, face at the median): out of overweight and obese (40%: body at the 60th
+  percentile, looks 57th) 23%; fit (the `fit` flag, identical to `abs`: 5.3%, body fat up to 20%; looks
+  87th, 6.6 first dates a year) 66%; strict abs (`abs_strict`: 2.2%, body fat up to 17%; looks 92nd)
+  67%, and a 75th-percentile woman or better 0.8% → 28%. Status to the 90th percentile: any 12% (he is
+  choosier) but a 75th-percentile woman 4.7%.
 - **Exchange rates** (`exchange.py`): the income or net worth that as many single men 28-42 clear as
   single women 22-29 clear a WHR tier. WHR ≤ 0.74 (4.0%) ↔ $163k+ or $1.1M+. Metros: single women 22-29
   at WHR ≤ 0.74 per single man 28-42 worth $1M+ (bodies imputed from NHANES).
@@ -332,6 +341,7 @@ weaker, mixed evidence (Bellou 2015 finds broadband raised marriage rates).
 | Men per woman over a year | 1.5 | Pew ever-used, NSFG |
 | Months-long dates per year | 2 | Author's 4-20 over a decade |
 | Body share of a woman's appeal; of a man's looks | 0.6; 0.5 | Assumptions |
+| Men's body rungs | 60th / 94.7th / 97.8th percentile | Parquet flags: not overweight, fit, strict abs |
 | In person (men): approaches a year; her yes bar | 24; app like rate × 2.7 | The author's post; §3 |
 | GLP-1 weight loss; waist per weight; hip slope; glutes | trials; 0.84; 0.657; 1 in | STEP 1, SURMOUNT-1, WHR notebook, assumption |
 

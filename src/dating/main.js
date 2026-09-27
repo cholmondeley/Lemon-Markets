@@ -227,7 +227,10 @@ table(fig('searchOdds'), ['Up-front read', '1 in 1,000', '1 in 10,000', '1 in 10
   document.getElementById('leverWho').addEventListener('change', draw);
   draw();
 }
-waterfall(fig('waterfall'), SITE.waterfall.map((w) => ({ label: w.label, value: w.any })), { max: 1, sub: (s, i) => `as good as her or better: ${pct(SITE.waterfall[i].rare)} · top 10%: ${pct(SITE.waterfall[i].top10, 1)}` });
+// A top-20% woman reaching for a top-10% man: bars are her odds of one; under each, any committed man
+// and one as good as her or better.
+waterfall(fig('waterfall'), SITE.waterfall.map((w) => ({ label: w.label, value: w.top10 })),
+  { max: Math.max(...SITE.waterfall.map((w) => w.top10)) * 1.15, fmt: (v) => pct(v, 1), sub: (s, i) => `any committed man: ${pct(SITE.waterfall[i].any)} · as good as her: ${pct(SITE.waterfall[i].rare)}` });
 table(fig('exchange'), ['Her WHR', 'Share of single women 22-29', 'Men she can reach: earning', 'or worth'],
   SITE.exchange.tiers.map((t) => [`≤ ${t.whr}`, pct(t.share, t.share < 0.01 ? 2 : 1), money(t.income) + '+', money(t.net_worth) + '+']), { hl: 2 });
 table(fig('glp'), ['Where she starts on WHR', 'WHR', 'Reaches ≤ 0.74: GLP-1 / + glutes', 'WHR percentile after', 'Top-10% man, 5 yrs'],
@@ -265,8 +268,38 @@ const menLikes = SITE.funnelByU.map((r) => ({ p: r.p / 100, w: r.likes / 52 }));
 const menPctFromLikes = (perWeek) => clampP(invert(menLikes, 'p', 'w', perWeek));
 const womenLikes = SITE.womenByU.map((r) => ({ v: r.v, d: r.likesPerDay }));
 const womenPctFromLikes = (perDay) => clampP(invert(womenLikes, 'v', 'd', perDay));
-const menLikesAt = (v) => 0.05 * Math.pow(5000, v / 100);        // slider 0-100 -> 0.05-250 a week
-const womenLikesAt = (v) => 5 * Math.pow(60, v / 100);            // slider 0-100 -> 5-300 a day
+// Or messages a week, on OkCupid (Rudder 2014, digitized): lightly smoothed and made non-decreasing so
+// it can be read backwards, messages -> percentile.
+const okm = digitized.okc_messages;
+const monotone = (ys) => { let m = 0; return ys.map((_, i) => { const a = ys.slice(Math.max(0, i - 2), i + 3); m = Math.max(m, a.reduce((t, v) => t + v, 0) / a.length); return m; }); };
+const msgTable = (sex) => { const ys = monotone(okm[sex]); return okm.pct.map((p, i) => ({ p: p / 100, m: ys[i] })); };
+const womenMsgs = msgTable('women'), menMsgs = msgTable('men');
+// One control, two measures: slider position <-> a count on a log scale, and count -> percentile.
+const SIGNALS = {
+  woman: { likes: { label: 'Likes you get a day', lo: 5, hi: 300, pct: (c) => womenPctFromLikes(c) },
+    messages: { label: 'Messages you get a week', lo: 0.8, hi: 30, pct: (c) => clampP(invert(womenMsgs, 'p', 'm', c)) } },
+  man: { likes: { label: 'Likes you get a week', lo: 0.05, hi: 250, pct: (c) => menPctFromLikes(c) },
+    messages: { label: 'Messages you get a week', lo: 0.2, hi: 5, pct: (c) => clampP(invert(menMsgs, 'p', 'm', c)) } },
+};
+const countAt = (sig, v) => sig.lo * Math.pow(sig.hi / sig.lo, v / 100);
+const medianSlider = (sex, unit) => {
+  const sig = SIGNALS[sex][unit];
+  const med = unit === 'likes' ? (sex === 'man' ? invert(menLikes, 'w', 'p', 0.5) : invert(womenLikes, 'd', 'v', 0.5)) : invert(sex === 'man' ? menMsgs : womenMsgs, 'm', 'p', 0.5);
+  return Math.round(100 * Math.log(med / sig.lo) / Math.log(sig.hi / sig.lo));
+};
+// Wire a unit select and slider (ids `${pre}unit`, `${pre}unitLabel`, slider, readout). sexOf() fixes
+// the side or follows the page. Returns () -> { count, pct }; resets to the median on a unit or side change.
+function signal(pre, sliderId, outId, sexOf) {
+  let last = null;
+  return () => {
+    const sex = sexOf(), unit = $(pre + 'unit').value, key = sex + unit;
+    if (key !== last) { $(sliderId).value = medianSlider(sex, unit); last = key; }
+    const sig = SIGNALS[sex][unit], count = countAt(sig, +$(sliderId).value);
+    $(pre + 'unitLabel').textContent = sig.label;
+    $(outId).textContent = count < 1 ? count.toFixed(1) : num(count);
+    return { count, pct: sig.pct(count) };
+  };
+}
 // A woman's appeal for her age from her app appeal (which already carries her age): OkCupid shift.
 const womenShift = (a) => D.zTop(1 - 0.5 * Math.max(1e-4, D.curveAt(digitized.okcupid_age, 'women', Math.min(a, 48))));
 const forHerAge = (pApp, age) => clampP(normCdf(D.zTop(1 - pApp) - womenShift(age)));
@@ -302,14 +335,11 @@ const forHerAge = (pApp, age) => clampP(normCdf(D.zTop(1 - pApp) - womenShift(ag
   // Share of a bin (index k of n equal-width percentile bins) at or above t.
   const above = (k, n, t) => Math.max(0, Math.min(1, ((k + 1) / n - t) * n));
   const split = (arr, t) => { let hi = 0, lo = 0; arr.forEach((v, k) => { const a = above(k, arr.length, t); hi += v * a; lo += v * (1 - a); }); return { hi, lo }; };
-  let lastSex = null;
+  const sig = signal('p3', 'p3likes', 'p3likesOut', getSex);
   const run = () => {
     const man = getSex() === 'man';
-    if (lastSex !== getSex()) $('p3likes').value = man ? 51 : 70;   // a week for men, a day for women: start at the median
-    lastSex = getSex();
-    const likes = man ? menLikesAt(+$('p3likes').value) : womenLikesAt(+$('p3likes').value);
-    const p = Math.round((man ? menPctFromLikes(likes) : womenPctFromLikes(likes)) * 100), t = +$('p3t').value / 100;
-    $('p3likesOut').textContent = likes < 1 ? likes.toFixed(1) : num(likes); $('p3rank').textContent = `About the ${ord(p)} percentile${man ? ' of men on the apps' : ' of women on the apps'}.`;
+    const p = Math.round(sig().pct * 100), t = +$('p3t').value / 100;
+    $('p3rank').textContent = `About the ${ord(p)} percentile${man ? ' of men on the apps' : ' of women on the apps'}.`;
     $('p3tOut').textContent = ord(t * 100);
     $('p3key').innerHTML = `<span><i style="background:var(--dating)"></i>${man ? 'Women' : 'Men'} at the ${ord(t * 100)} percentile or better</span><span><i style="background:var(--neutral)"></i>Below</span>`;
     if (man) {
@@ -334,7 +364,7 @@ const forHerAge = (pApp, age) => clampP(normCdf(D.zTop(1 - pApp) - womenShift(ag
         [`First dates with them`, `${Dd.hi.toFixed(1)} of ${Math.round(dates)}`, 'a year, if you are actively dating']]);
     }
   };
-  ['p3likes', 'p3t'].forEach((id) => $(id).addEventListener('input', run));
+  ['p3likes', 'p3t', 'p3unit'].forEach((id) => $(id).addEventListener('input', run));
   sexSubs.push(run);
   run();
 }
@@ -389,14 +419,15 @@ const warming = (host) => readouts(host, [['Warming up the model', '…', 'a few
 // Act V: your clock (her) and your odds (him).
 {
   const out = $('p5out');
+  const herSig = signal('p5', 'p5likes', 'p5likesOut', () => 'woman'), hisSig = signal('p5m', 'p5mlikes', 'p5mlikesOut', () => 'man');
   const herParams = () => {
-    const age = +$('p5age').value, d = womenLikesAt(+$('p5likes').value), v = forHerAge(womenPctFromLikes(d), age);
-    $('p5likesOut').textContent = num(d); $('p5ageOut').textContent = age; $('p5gapOut').textContent = '+' + $('p5gap').value + ' years';
+    const age = +$('p5age').value, v = forHerAge(herSig().pct, age);
+    $('p5ageOut').textContent = age; $('p5gapOut').textContent = '+' + $('p5gap').value + ' years';
     $('p5rank').textContent = `About the ${ord(v * 100)} percentile for your age.`;
     return { start: age, v, gap: +$('p5gap').value };
   };
   const hisParams = () => {
-    const perWeek = menLikesAt(+$('p5mlikes').value), uLooks = menPctFromLikes(perWeek);
+    const uLooks = hisSig().pct;
     const age = +$('p5mage').value, inc = +$('p5inc').value === 0 ? 0 : 10000 * Math.pow(100, +$('p5inc').value / 100);
     const band = Object.values(status.earnings).find((b) => age >= b.lo && age <= b.hi) ?? Object.values(status.earnings).at(-1);
     let st = 0.5;
@@ -409,7 +440,7 @@ const warming = (host) => readouts(host, [['Warming up the model', '…', 'a few
     else for (let i = 1; i < hq.inches.length; i++) if (ht <= hq.inches[i]) { hp = hq.q[i - 1] + (hq.q[i] - hq.q[i - 1]) * (ht - hq.inches[i - 1]) / (hq.inches[i] - hq.inches[i - 1]); break; }
     let lo = +$('p5lo').value, hi = +$('p5hi').value;
     if (lo > hi) [lo, hi] = [hi, lo];
-    $('p5mlikesOut').textContent = perWeek < 1 ? perWeek.toFixed(1) : num(perWeek); $('p5mlooks').textContent = `About the ${ord(uLooks * 100)} percentile on looks, among men on the apps.`;
+    $('p5mlooks').textContent = `About the ${ord(uLooks * 100)} percentile on looks, among men on the apps.`;
     $('p5incOut').textContent = inc === 0 ? '$0' : money(inc); $('p5mstatus').textContent = `About the ${ord(clampP(st) * 100)} percentile for your age.`;
     $('p5heightOut').textContent = `${Math.floor(ht / 12)}'${ht % 12}"`; $('p5mageOut').textContent = age; $('p5rangeOut').textContent = `${lo}-${hi}`;
     return { age, uLooks, status: clampP(st), height: clampP(hp), lo, hi };
@@ -422,7 +453,7 @@ const warming = (host) => readouts(host, [['Warming up the model', '…', 'a few
       readouts(out, [['A man who commits, within 5 years', pct(r.any)], ['…as good as you or better', pct(r.rare)], ['…in the top 10% of men', pct(r.top10, 1)], ['…top 5%', pct(r.top5, 1), `top 1%: ${pct(r.top1, 1)}`]]);
     }
   });
-  ['p5age', 'p5likes', 'p5gap', 'p5mlikes', 'p5inc', 'p5height', 'p5mage', 'p5lo', 'p5hi'].forEach((id) => $(id).addEventListener('input', go));
+  ['p5age', 'p5likes', 'p5gap', 'p5mlikes', 'p5inc', 'p5height', 'p5mage', 'p5lo', 'p5hi', 'p5unit', 'p5munit'].forEach((id) => $(id).addEventListener('input', go));
   sexSubs.push(go);
   herParams(); hisParams(); warming(out);
   go();
@@ -432,19 +463,15 @@ const warming = (host) => readouts(host, [['Warming up the model', '…', 'a few
 {
   const host = $('p6bars');
   const plot = bars(host, [], { max: 1 });
-  let lastSex = null;
+  const sig = signal('p6', 'p6likes', 'p6likesOut', getSex);
   const params = () => {
-    const man = getSex() === 'man';
-    if (lastSex !== getSex()) $('p6likes').value = man ? 51 : 70;
-    lastSex = getSex();
-    const likes = man ? menLikesAt(+$('p6likes').value) : womenLikesAt(+$('p6likes').value);
-    $('p6likesOut').textContent = likes < 1 ? likes.toFixed(1) : num(likes);
+    const man = getSex() === 'man', { pct: u0 } = sig();
     if (man) {
-      const u = menPctFromLikes(likes);
+      const u = u0;
       $('p6rank').textContent = `About the ${ord(u * 100)} percentile on looks, among men on the apps.`;
       return { type: 'his', params: { age: 30, lo: 22, hi: 30, uLooks: u, status: 0.5, social: 0.5, height: 0.5 } };
     }
-    const v = forHerAge(womenPctFromLikes(likes), 25);
+    const v = forHerAge(u0, 25);
     $('p6rank').textContent = `About the ${ord(v * 100)} percentile for your age.`;
     return { type: 'her', params: { start: 25, v, gap: 2 } };
   };
@@ -454,7 +481,7 @@ const warming = (host) => readouts(host, [['Warming up the model', '…', 'a few
       : [['A man who commits', r.any, 'women'], ['…as good as you or better', r.rare, 'accent'], ['…in the top 10% of men', r.top10, 'women'], ['…top 5%', r.top5, 'women']];
     plot.update(rows.map(([label, v, cls]) => ({ label, value: v, text: pct(v, v < 0.1 ? 1 : 0), cls })));
   });
-  $('p6likes').addEventListener('input', go);
+  ['p6likes', 'p6unit'].forEach((id) => $(id).addEventListener('input', go));
   sexSubs.push(go);
   go();
 }
