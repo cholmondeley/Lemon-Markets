@@ -19,8 +19,8 @@ npm test         # checks the simulation against the closed-form theory
 Requires Node 18+.
 
 Two essays, two URLs: `hiring/index.html` (`/Lemon-Markets/hiring/`) and `dating/index.html`
-(`/Lemon-Markets/dating/`). The root `index.html` redirects old links, `#section` included, to the
-hiring essay. In dev, open http://localhost:5173/hiring/ or http://localhost:5173/dating/.
+(`/Lemon-Markets/dating/`). The root `index.html` is a landing page to choose between
+them; old links with a `#section` still land on the hiring essay. In dev, open http://localhost:5173/hiring/ or http://localhost:5173/dating/.
 
 ## Layout
 

@@ -4,13 +4,40 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Lemon Market</title>
-<meta name="description" content="Explorable essays on lemon markets: hiring and dating.">
-<!-- The hiring essay moved to ./hiring/; old links (and their #sections) land there. -->
-<meta http-equiv="refresh" content="0; url=./hiring/">
-<script>location.replace('./hiring/' + location.search + location.hash);</script>
-<style>body{font-family:system-ui,sans-serif;margin:4rem auto;max-width:34rem;padding:0 16px;line-height:1.6;background:#fbfaf7;color:#1f1f1c}@media (prefers-color-scheme:dark){body{background:#151513;color:#ecebe6}a{color:#e2c85a}}</style>
+<meta name="description" content="Explorable essays on lemon markets: why the people easiest to find are so often the ones nobody chose to keep, in hiring and in dating.">
+<!-- Old links to the hiring essay's sections (#act-2 etc.) land where they used to. -->
+<script>if (location.hash && location.hash !== '#top') location.replace('./hiring/' + location.search + location.hash);</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Domine:wght@500;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 </head>
 <body>
-<p>The Lemon Market has moved: <a href="./hiring/">hiring</a> and <a href="./dating/">dating</a>.</p>
+
+<main id="top">
+  <section class="hero landing">
+    <div class="hero-field" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <p class="eyebrow">Two explorable essays</p>
+      <h1 class="display">The <span class="lemon-underline">Lemon</span> Market</h1>
+      <p class="dek">Used cars, jobs, dates: in every market where you can't see what you're getting, the people easiest to find are disproportionately the ones nobody chose to keep. Pick a market.</p>
+      <nav class="choices" aria-label="Essays">
+        <a class="choice hiring" href="./hiring/">
+          <span class="eyebrow">Five acts</span>
+          <span class="choice-title display">Hiring</span>
+          <span class="choice-text">Why the best people are rarely the ones looking for a job, and what you can do about it when you're hiring.</span>
+          <span class="choice-go">Read the hiring essay <i aria-hidden="true">→</i></span>
+        </a>
+        <a class="choice dating" href="./dating/">
+          <span class="eyebrow">Seven acts</span>
+          <span class="choice-title display">Dating</span>
+          <span class="choice-text">Why dating feels broken for almost everyone, why the people still single are so often the ones you don't want, and what actually moves your odds.</span>
+          <span class="choice-go">Read the dating essay <i aria-hidden="true">→</i></span>
+        </a>
+      </nav>
+    </div>
+  </section>
+</main>
+
+<script type="module" src="/src/landing.js"></script>
 </body>
 </html>

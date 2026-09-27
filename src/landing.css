@@ -1,0 +1,23 @@
+/* Root landing page: two essay cards under the shared hero. */
+:root{ --dating:#7a3f73; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --dating:#d08bc4; } }
+:root[data-theme="dark"]{ --dating:#d08bc4; }
+
+.landing .hero-inner{max-width:900px;}
+.landing .dek{margin-bottom:36px;}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:18px;text-align:left;}
+.choice{position:relative;display:flex;flex-direction:column;gap:8px;padding:24px 24px 20px;background:var(--surface);border:1px solid var(--rule);
+  border-radius:16px;box-shadow:var(--shadow);color:var(--ink);text-decoration:none;overflow:hidden;transition:transform .2s ease, box-shadow .2s ease, border-color .2s;}
+.choice::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--lemon);}
+.choice.dating::before{background:var(--dating);}
+.choice:hover,.choice:focus-visible{transform:translateY(-3px);box-shadow:var(--shadow-float);border-color:var(--rule-strong);}
+.choice:focus-visible{outline:2px solid var(--ink);outline-offset:3px;}
+.choice .eyebrow{margin:0;}
+.choice-title{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:700;line-height:1.05;}
+.choice-text{font-size:0.98rem;line-height:1.55;color:var(--ink-muted);flex:1;}
+.choice-go{margin-top:6px;font-size:0.85rem;font-weight:600;color:var(--ink);}
+.choice-go i{display:inline-block;font-style:normal;transition:transform .2s ease;}
+.choice:hover .choice-go i{transform:translateX(4px);}
+.choice.dating .choice-go{color:var(--dating);}
+@media (max-width:640px){ .choices{grid-template-columns:1fr;} .choice{padding:20px 18px 18px;} }
+@media (prefers-reduced-motion: reduce){ .choice,.choice-go i{transition:none;} }
