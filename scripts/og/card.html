@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Social preview card (1200 x 630), rendered to public/og/*.png by scripts/og/render.py.
+     ?essay=root|hiring|dating picks the text and accent. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Domine:wght@700&family=IBM+Plex+Sans:wght@400;600&display=block">
+<style>
+  :root{ --bg:#e9eae1; --surface:#f6f7f1; --ink:#1f211a; --muted:#5b5f50; --faint:#8b9080; --lemon:#e2b714; --lemon-soft:#f6ebb8;
+    --red:#d0301c; --blue:#2f6fce; --dating:#7a3f73; }
+  html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:var(--bg);font-family:"IBM Plex Sans",sans-serif;color:var(--ink);}
+  .card{position:relative;width:1200px;height:630px;display:grid;place-items:center;}
+  .dot{position:absolute;border-radius:50%;z-index:0;}
+  .inner{position:relative;z-index:1;text-align:center;max-width:980px;padding:0 60px;}
+  .inner::before{content:"";position:absolute;inset:-70px -90px;background:radial-gradient(closest-side, var(--bg) 60%, transparent);z-index:-1;}
+  .eyebrow{text-transform:uppercase;letter-spacing:0.14em;font-size:22px;font-weight:600;color:var(--faint);margin:0 0 22px;}
+  h1{font-family:"Domine",Georgia,serif;font-weight:700;font-size:112px;line-height:0.98;letter-spacing:-0.02em;margin:0 0 30px;}
+  h1 .sub{display:block;font-size:84px;margin-top:8px;}
+  .lemon{background:linear-gradient(transparent 62%, var(--lemon-soft) 62%, var(--lemon-soft) 92%, transparent 92%);padding:0 0.05em;}
+  .dek{font-size:30px;line-height:1.4;color:var(--muted);margin:0 auto;max-width:900px;}
+  .bar{position:absolute;inset:0 0 auto 0;height:14px;background:var(--lemon);}
+  .dating .bar{background:var(--dating);}
+  .dating h1 .sub{color:var(--dating);}
+  .url{position:absolute;bottom:30px;right:44px;font-size:20px;color:var(--faint);font-weight:600;letter-spacing:0.02em;}
+</style>
+</head>
+<body>
+<div class="card" id="card"><div class="bar"></div><div class="inner" id="inner"></div><div class="url">cholmondeley.github.io/Lemon-Markets</div></div>
+<script>
+  const essay = new URLSearchParams(location.search).get('essay') || 'root';
+  const T = {
+    root: { eyebrow: 'Two explorable essays', title: 'The <span class="lemon">Lemon</span> Market', sub: '', dek: 'Where you can’t see what you’re getting, the people easiest to find are the ones nobody chose to keep.' },
+    hiring: { eyebrow: 'An explorable essay', title: 'The <span class="lemon">Lemon</span> Market', sub: 'Hiring', dek: 'Why the best people are rarely the ones looking for a job, and what you can do about it when you’re hiring.' },
+    dating: { eyebrow: 'An explorable essay', title: 'The <span class="lemon">Lemon</span> Market', sub: 'Dating', dek: 'Why dating feels broken for almost everyone, who’s left single and why, and what actually moves your odds.' },
+  }[essay];
+  document.getElementById('card').classList.add(essay);
+  document.getElementById('inner').innerHTML = `<p class="eyebrow">${T.eyebrow}</p><h1>${T.title}${T.sub ? `<span class="sub">${T.sub}</span>` : ''}</h1><p class="dek">${T.dek}</p>`;
+  // The hero's drifting dots, frozen: seeded so every render is identical.
+  let s = 7; const rnd = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+  const tones = ['var(--red)', 'var(--red)', 'var(--red)', 'var(--faint)', 'var(--faint)', 'var(--blue)', 'var(--blue)', 'var(--lemon)'];
+  for (let i = 0; i < 90; i++) {
+    const d = document.createElement('span'), depth = 0.15 + rnd() * 0.85, size = 6 + depth * 20, x = rnd() * 100, y = rnd() * 100;
+    if ((Math.abs(x - 50) < 38 && Math.abs(y - 52) < 36) || (x > 60 && y > 86)) continue;   // keep the text and the URL clear
+    d.className = 'dot';
+    Object.assign(d.style, { left: x + '%', top: y + '%', width: size + 'px', height: size + 'px', background: tones[Math.floor(rnd() * tones.length)], opacity: 0.3 + depth * 0.55 });
+    document.getElementById('card').prepend(d);
+  }
+</script>
+</body>
+</html>
