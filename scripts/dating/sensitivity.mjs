@@ -174,7 +174,7 @@ say(table(['Read r', '1 in 1k Gaussian', '1 in 1k t(4)', '1 in 10k Gaussian', '1
 const chRows = D.DATING_CHANNELS.map((ch) => {
   const o = D.channelOdds(ch, { n: 10, N: 1000, years: 1 });
   const o5 = D.channelOdds(ch, { n: 10, N: 1000, years: 5 });
-  return [ch.label, pct(ch.met2017), ch.met, ch.r, pct(o.p, o.p < 0.1 ? 1 : 0), pct(o.odds), oneIn(1 / o.median), pct(o5.odds)];
+  return [ch.label, pct(ch.met2017) + (ch.met2017Note ?? ""), ch.met, ch.r, pct(o.p, o.p < 0.1 ? 1 : 0), pct(o.odds), oneIn(1 / o.median), pct(o5.odds)];
 });
 say('## 7. Channels (illustrative)', '',
   'You meet `met` people a year through a channel, go deep with the 10 who read best, and read them with validity r.',

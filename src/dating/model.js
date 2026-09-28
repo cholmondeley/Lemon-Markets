@@ -310,7 +310,7 @@ export function traitRarity({ k, q, rho = 0 }) {
 // sliders on the page. met2017: share of 2017 couples who met this way (Rosenfeld et al. 2019).
 export const DATING_CHANNELS = [
   { key: 'apps', label: 'Apps', met: 2000, r: 0.35, met2017: 0.39 },
-  { key: 'bars', label: 'Bars and restaurants', met: 150, r: 0.35, met2017: 0.27 },
+  { key: 'bars', label: 'Bars and restaurants', met: 150, r: 0.35, met2017: 0.27, met2017Note: ' (15% without couples who met online)' },
   { key: 'friends', label: 'Through friends', met: 25, r: 0.55, met2017: 0.20 },
   { key: 'work', label: 'Work', met: 15, r: 0.7, met2017: 0.11 },
   { key: 'school', label: 'School / college', met: 30, r: 0.7, met2017: 0.09 },

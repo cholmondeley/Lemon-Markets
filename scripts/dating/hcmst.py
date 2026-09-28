@@ -94,8 +94,18 @@ def main():
         both = g["Bar or restaurant"] & g.Online
         bar_online.append({"year": y, "n": int(len(g)), "overlap": float(np.average(both, weights=g.w)) if len(g) else 0.0})
         print(f"  bar and online, met {y - h}-{y + h}: {bar_online[-1]['overlap']:.1%}")
+    # How long from the start of the relationship to the wedding, for couples who married 2005-2017:
+    # the lag between committing (what the model counts) and the census's marriage date.
+    lag = df[(df.w1_same_sex_couple != 1) & df.w1_q21d_year.between(2005, 2017) & df.w1_q21b_year.notna()]
+    t = lambda y, mo: y + (mo.fillna(6) - 1) / 12
+    gap = (t(lag.w1_q21d_year, lag.w1_q21d_month) - t(lag.w1_q21b_year, lag.w1_q21b_month))
+    keep = gap.between(0, 30)
+    gap, w = gap[keep].to_numpy(), lag.w1_weight_combo[keep].to_numpy()
+    o = np.argsort(gap)
+    wedding_lag = {"n": int(len(gap)), "median": round(float(gap[o][np.searchsorted(np.cumsum(w[o]) / w.sum(), 0.5)]), 2), "mean": round(float(np.average(gap, weights=w)), 2)}
+    print(f"relationship start to wedding, married 2005-2017: median {wedding_lag['median']} years, mean {wedding_lag['mean']} (n={wedding_lag['n']})")
     out = {"source": "HCMST 2017-2020-2022 (Rosenfeld), small public v2.2: heterosexual couples, year first met; weighted.",
-           "periods": periods, "by_year": by_year, "bar_online": bar_online, "channels": list(CHANNELS)}
+           "periods": periods, "by_year": by_year, "bar_online": bar_online, "wedding_lag": wedding_lag, "channels": list(CHANNELS)}
     OUT.write_text(json.dumps(out, indent=1))
     print(f"wrote {OUT.relative_to(ROOT)}")
 

@@ -44,6 +44,12 @@ export const DEFAULTS = {
   ageWeight: 0.5,    // how much of women's age preference (OkCupid) lowers an older man's bar
   sigmaFirst: 1,     // after one date, the read on whether to keep seeing someone is twice as noisy
   casualPursue: 0.8, // casual men keep seeing a woman who likes them (it's what they're there for)  // share of casual men she can spot and skip up front (stated intent on the profile, never married at 42)
+  // Relaxing toward what you can get: the searcher's bar falls to the best they can expect before a
+  // planning horizon, women's earlier (the age effect). Chosen so the top deciles' marriage rates match
+  // Add Health (disattenuated; scripts/dating/addhealth_curve.py): women 32 of 32/35/38, men 36 of 32/36/42.
+  relax: true,
+  horizonW: 32,
+  horizonM: 36,
 };
 
 // The author's dating power equation: .1 height + .5 status + .2 social skills + .2 attractiveness.
@@ -57,7 +63,7 @@ const GRIDS = { fine: { men: [61, 61], women: [61, 41] }, coarse: { men: [31, 31
 export function createScenario({ digitized, pools, calibration: cal, nsfg, status }, { grid = 'fine', fitted = null } = {}) {
   const G = GRIDS[grid];
   const BASE = { ...DEFAULTS };
-  if (fitted) for (const k of ['tolerance', 'commitScale', 'theta', 'p0']) if (fitted[k] != null) BASE[k] = fitted[k];
+  if (fitted) for (const k of ['tolerance', 'commitScale', 'theta', 'p0', 'sigma', 'intentShown', 'evalPerYear']) if (fitted[k] != null) BASE[k] = fitted[k];
   const meanOf = (h) => D.histMean(D.histPoints(h));
   const W = D.activityWeighted(D.histPoints(digitized.luap_like_rate_women), meanOf(digitized.luap_received_ratio_men)).pts;
   const Mn = D.activityWeighted(D.histPoints(digitized.luap_like_rate_men), meanOf(digitized.luap_received_ratio_women)).pts;
@@ -188,6 +194,36 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
     const d = o.tolerance ?? BASE.tolerance, s = o.sigma ?? BASE.sigma, k = o.kappa ?? BASE.kappa, opt = o.options ?? 1;
     return (xEff, yEff, uHer) => D.normSf((yEff - d + k * premium('w', uHer, opt) - xEff) / s);
   };
+  // Their own-level bars, on the other side's mate-value scale.
+  const herOwnBar = (yEff, uHer, o = {}) => yEff - (o.tolerance ?? BASE.tolerance) + (o.kappa ?? BASE.kappa) * premium('w', uHer, o.options ?? 1);
+  const hisOwnBar = (x, u, M, o = {}) => x + menAgeDiscount(M) - (o.tolerance ?? BASE.tolerance) + (o.kappa ?? BASE.kappa) * premium('m', u, o.options ?? 1);
+
+  // Relaxing toward what you can get (McCall). Top people on both sides don't hold out for someone
+  // at their own level when they rarely meet one: they settle for the best they can expect. With K
+  // more evaluations before the planning horizon, each an offer with chance p (the other person
+  // would commit and it works out), offer values X ~ G, the optimal-stopping reservation value is
+  //   R_K = p E[max(X, R_(K-1))] + (1 - p) R_(K-1),  R_0 = G's 5th percentile
+  // (at the horizon, nearly anyone who'd commit). The bar is the lower of that and their own-level
+  // bar: people relax, they don't tighten.
+  const reservationValue = (offers, p, K) => {
+    const tot = offers.reduce((t, x) => t + x.w, 0);
+    if (!(tot > 0) || !(p > 0)) return Infinity;
+    const xs = offers.filter((x) => x.w > 0).map((x) => ({ x: x.x, w: x.w / tot })).sort((a, b2) => a.x - b2.x);
+    let acc = 0, R = xs[xs.length - 1].x;
+    for (const x of xs) { acc += x.w; if (acc >= 0.05) { R = x.x; break; } }
+    for (let i = 0; i < Math.ceil(K); i++) R = p * xs.reduce((t, x) => t + x.w * Math.max(x.x, R), 0) + (1 - p) * R;
+    return R;
+  };
+  // Success over the evaluated people, with the searcher's relaxed bar: offer(c) = the other side
+  // commits (and it works out); the searcher commits to value c[valueKey] above bar, with noise sigma.
+  const relaxedOutcome = (final, count, bars, offer, ownBar, K, o) => {
+    const fc = final.cells, s = o.sigma ?? BASE.sigma;
+    const p = fc.reduce((t, c) => t + c.w * offer(c), 0);
+    const bar = Math.min(ownBar, reservationValue(fc.map((c) => ({ x: c.Q, w: c.w * offer(c) })), p, K));
+    const commit = (c) => offer(c) * D.normSf((bar - c.Q) / s);
+    const multi = Object.fromEntries(Object.entries(bars).map(([k, b2]) => [k, 1 - Math.pow(1 - C.describe(fc, b2, commit).good, count)]));
+    return { multi, bar, ...C.describe(fc, 0, commit) };
+  };
 
   // After a first date: does he want to keep seeing her (months of dating take two)? The same bar as
   // committing, read more noisily. Casual men mostly do, which is how they cost women years.
@@ -239,11 +275,15 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
         n: o.n ?? BASE.evalPerYear, bar: 0, bars, commit: (cell) => his(cell, yEff) * hers(cell.Q, yEff, uApp),
         pursue: (cell) => hisWant(cell, yEff),
       });
-      for (const k of Object.keys(bars)) miss[k] *= 1 - r.multi[k];
+      // Her bar relaxes toward the best of the men who'd commit to her before her horizon.
+      const out = (o.relax ?? BASE.relax)
+        ? relaxedOutcome(r.final, r.evaluated, bars, (c) => his(c, yEff), herOwnBar(yEff, uApp, o), r.evaluated * Math.max(0, (o.horizon ?? BASE.horizonW) - age), o)
+        : r;
+      for (const k of Object.keys(bars)) miss[k] *= 1 - out.multi[k];
       // Who she ends up with (type), weighted by the chance her first success comes this year.
-      const pYear = reach * r.multi.any;
-      xm += pYear * r.xMean; xs += pYear * r.xSq; got += pYear; reach *= 1 - r.multi.any;
-      rows.push({ age, yEff, matches: r.matches, dated: r.dated, evaluated: r.evaluated, odds: r.multi, zPct: r.zPct, commits: r.commits });
+      const pYear = reach * out.multi.any;
+      xm += pYear * out.xMean; xs += pYear * out.xSq; got += pYear; reach *= 1 - out.multi.any;
+      rows.push({ age, yEff, matches: r.matches, dated: r.dated, evaluated: r.evaluated, odds: out.multi, zPct: r.zPct, commits: out.commits, bar: out.bar });
     }
     const odds = Object.fromEntries(Object.entries(miss).map(([k, v2]) => [k, 1 - v2]));
     return { odds, rows, first: rows[0], last: rows[rows.length - 1], partner: { mean: got > 0 ? xm / got : 0, sq: got > 0 ? xs / got : 0 } };
@@ -341,8 +381,14 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
         pursue: (c) => herWant(xType, c.Q, normCdf(c.Q)),
         commit: (c) => (c.serious ? 1 : kc) * his(me, c.Q) * hers(xType, c.Q, normCdf(c.Q)),
       });
-      for (const k of Object.keys(bars)) miss[k] *= 1 - r.multi[k];
-      rows.push({ age: M, dates, evaluated: r.evaluated, odds: r.multi });
+      // His bar relaxes toward the best of the women who'd commit to him before his horizon.
+      const m = o.commitScale ?? BASE.commitScale;
+      const out = (o.relax ?? BASE.relax)
+        ? relaxedOutcome(r.final, r.evaluated, bars, (c) => (c.serious ? 1 : kc) * m * hers(xType, c.Q, normCdf(c.Q)),
+          hisOwnBar(xType, uLooks, M, o), r.evaluated * Math.max(0, (o.horizon ?? BASE.horizonM) - M), o)
+        : r;
+      for (const k of Object.keys(bars)) miss[k] *= 1 - out.multi[k];
+      rows.push({ age: M, dates, evaluated: r.evaluated, odds: out.multi, bar: out.bar });
     }
     return { odds: Object.fromEntries(Object.entries(miss).map(([k, v2]) => [k, 1 - v2])), rows, first: rows[0], mvPct: normCdf(xType), uLooks };
   }

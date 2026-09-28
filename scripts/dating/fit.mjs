@@ -4,8 +4,13 @@
 //                quintile (59% bottom -> 91% top), with earnings correlating earnStatus with status;
 //   tolerance    how far below their own level people commit: couples' mate values correlate 0.76
 //                (latent status, PSID; scripts/dating/assort.py);
-//   commitScale  the chance a relationship works out when both would commit: never-married women 25
-//                who marry by 30 (census), averaged over women's appeal.
+//   commitScale  the chance a relationship works out when both would commit: a woman's odds of a
+//                committed man from 25 to 30, averaged over women's appeal, = the census share of
+//                never-married women 27 who marry by 32 (committing comes about two years before the
+//                wedding: HCMST's median from relationship start to wedding is 2.8 years), divided by
+//                the share of never-married women 23-28 who expect to marry (NSFG): the model's women
+//                are searching for a husband.
+// Checks: lifetime odds (committed by 35) by appeal against Add Health's, disattenuated, for both sexes.
 // Run: node scripts/dating/fit.mjs   (after the data scripts; takes a few minutes)
 import { readFileSync, writeFileSync } from 'node:fs';
 import * as D from '../../src/dating/model.js';
@@ -19,6 +24,7 @@ const inputs = {
   status: read('../../src/data/dating/status.json'),
 };
 const assort = read('../../src/data/dating/assort.json');
+const expect = read('../../src/data/dating/expect.json'), hcmst = read('../../src/data/dating/hcmst.json'), addhealth = read('../../src/data/dating/addhealth.json');
 const prev = (() => { try { return read('../../src/data/dating/fitted.json'); } catch { return {}; } })();
 const t0 = Date.now();
 const log = (m) => console.log(`${((Date.now() - t0) / 1000).toFixed(0)}s ${m}`);
@@ -58,7 +64,11 @@ log(`theta ${theta}: model ${quint.map((x) => (x * 100).toFixed(0)).join(' ')} v
 
 // ---------- tolerance and commitScale ----------
 S = createScenario(inputs, { grid: 'coarse', fitted: { p0, theta } });
-const target = 1 - S.censusW[30] / S.censusW[25];
+const LAG = 2;
+const expectW = expect.by_age.women.filter((r) => r.lo >= 23 && r.hi <= 28).reduce((t, r, _, a) => t + r.yes / a.length, 0);
+const married = 1 - S.censusW[25 + LAG + 5] / S.censusW[25 + LAG];
+const target = married / expectW;
+log(`level: census ${25 + LAG}->${30 + LAG} ${(married * 100).toFixed(1)}% / expect to marry ${(expectW * 100).toFixed(0)}% = ${(target * 100).toFixed(1)}% (wedding lag median ${hcmst.wedding_lag.median} yrs)`);
 const vs = [0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95];   // equal-weight quantiles of her appeal
 const run = (o) => vs.map((v) => S.herYears({ start: 25, years: 5, v, gap: 2, ...o }));
 const avgAny = (rs) => rs.reduce((s, r) => s + r.odds.any, 0) / rs.length;
@@ -84,8 +94,20 @@ for (let it = 0; it < 10; it++) {
   fit = { tolerance: +d.toFixed(3), commitScale: +m.toFixed(3), rho };
   if (rho > rhoTarget) dLo = d; else dHi = d;
 }
+// Checks: committed by 35 (searching from 22) by appeal, against Add Health's ever married by ~37
+// by true appeal (r = 0.6). Only the top is fitted (the horizons); the bottom is left to the model.
+S = createScenario(inputs, { grid: 'coarse', fitted: { p0, theta, tolerance: fit.tolerance, commitScale: fit.commitScale } });
+const lv = [0.1, 0.3, 0.5, 0.7, 0.9, 0.95, 0.99];
+const ah = (sex) => { const f = addhealth.fits[`${sex}_w5_r${addhealth.r_main}`]; return lv.map((v) => normCdf(f.a + f.b * D.zTop(1 - v))); };
+const lifeW = lv.map((v) => S.herYears({ start: 22, years: 13, v, gap: 2 }).odds.any);
+const lifeM = lv.map((mv) => S.hisYears({ age: 22, years: 16, lo: 20, hi: 34, mv }).odds.any);
+const pc = (x) => `${Math.round(x * 100)}%`;
+log(`women by 35, at ${lv.join('/')}: model ${lifeW.map(pc).join(' ')} vs Add Health ${ah('women').map(pc).join(' ')}`);
+log(`men by 38 (apps), same: model ${lifeM.map(pc).join(' ')} vs Add Health ${ah('men').map(pc).join(' ')}`);
 const out = { ...prev, p0, theta, tolerance: fit.tolerance, commitScale: fit.commitScale,
-  checks: { marriageByEarnings: { model: quint, acs }, couplesCorrelation: { model: fit.rho, target: rhoTarget }, census25to30: target } };
+  checks: { marriageByEarnings: { model: quint, acs }, couplesCorrelation: { model: fit.rho, target: rhoTarget },
+    level: { census: married, expect: expectW, target, lag: LAG },
+    lifetime: { at: lv, women: lifeW, womenAddHealth: ah('women'), men: lifeM, menAddHealth: ah('men') } } };
 delete out.commitMedian;
 writeFileSync(new URL('../../src/data/dating/fitted.json', import.meta.url), JSON.stringify(out, null, 1));
 log(`wrote fitted.json ${JSON.stringify({ theta, tolerance: fit.tolerance, commitScale: fit.commitScale })}`);

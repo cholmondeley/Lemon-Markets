@@ -229,6 +229,11 @@
    "overlap": 0.12326979448367523
   }
  ],
+ "wedding_lag": {
+  "n": 607,
+  "median": 2.83,
+  "mean": 4.32
+ },
  "channels": [
   "Online",
   "Through friends",

@@ -1,0 +1,121 @@
+{
+ "source": "NSFG 2017-2019, never-married respondents: share who think they will definitely or probably marry (MARRCHANCE), weighted.",
+ "by_age": {
+  "women": [
+   {
+    "lo": 18,
+    "hi": 19,
+    "n": 382,
+    "yes": 0.9251,
+    "definitely": 0.6621
+   },
+   {
+    "lo": 20,
+    "hi": 22,
+    "n": 399,
+    "yes": 0.9105,
+    "definitely": 0.5874
+   },
+   {
+    "lo": 23,
+    "hi": 25,
+    "n": 456,
+    "yes": 0.9026,
+    "definitely": 0.5413
+   },
+   {
+    "lo": 26,
+    "hi": 28,
+    "n": 385,
+    "yes": 0.8811,
+    "definitely": 0.5615
+   },
+   {
+    "lo": 29,
+    "hi": 31,
+    "n": 339,
+    "yes": 0.8191,
+    "definitely": 0.4673
+   },
+   {
+    "lo": 32,
+    "hi": 34,
+    "n": 232,
+    "yes": 0.8109,
+    "definitely": 0.3286
+   },
+   {
+    "lo": 35,
+    "hi": 39,
+    "n": 281,
+    "yes": 0.7532,
+    "definitely": 0.3114
+   },
+   {
+    "lo": 40,
+    "hi": 49,
+    "n": 317,
+    "yes": 0.598,
+    "definitely": 0.2267
+   }
+  ],
+  "men": [
+   {
+    "lo": 18,
+    "hi": 19,
+    "n": 429,
+    "yes": 0.9591,
+    "definitely": 0.607
+   },
+   {
+    "lo": 20,
+    "hi": 22,
+    "n": 366,
+    "yes": 0.9301,
+    "definitely": 0.5756
+   },
+   {
+    "lo": 23,
+    "hi": 25,
+    "n": 365,
+    "yes": 0.9435,
+    "definitely": 0.6079
+   },
+   {
+    "lo": 26,
+    "hi": 28,
+    "n": 345,
+    "yes": 0.9034,
+    "definitely": 0.5066
+   },
+   {
+    "lo": 29,
+    "hi": 31,
+    "n": 289,
+    "yes": 0.8972,
+    "definitely": 0.49
+   },
+   {
+    "lo": 32,
+    "hi": 34,
+    "n": 238,
+    "yes": 0.8999,
+    "definitely": 0.4423
+   },
+   {
+    "lo": 35,
+    "hi": 39,
+    "n": 255,
+    "yes": 0.7454,
+    "definitely": 0.3156
+   },
+   {
+    "lo": 40,
+    "hi": 49,
+    "n": 311,
+    "yes": 0.6555,
+    "definitely": 0.2333
+   }
+  ]
+ }
+}

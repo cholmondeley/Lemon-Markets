@@ -226,8 +226,19 @@ test('men: getting off the apps and getting fit both raise his odds', () => {
   assert.ok(S.hisYears({ age: 30, lo: 22, hi: 30, uLooks: 0.68 }).odds.any > 1.5 * base);
 });
 
-test('the fit: single women 25 who marry by 30, averaged over appeal, match the census', () => {
+test('the fit: women searching from 25 find a committed man by 30 at the census rate, lagged, among those who expect to marry', () => {
   const vs = [0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95];
   const avg = vs.reduce((s, v) => s + S.herYears({ start: 25, v, gap: 2 }).odds.any, 0) / vs.length;
-  close(avg, 1 - S.censusW[30] / S.censusW[25], 0.01);
+  const { lag, expect } = readJ('fitted.json').checks.level;
+  close(avg, (1 - S.censusW[30 + lag] / S.censusW[25 + lag]) / expect, 0.01);
+});
+
+test('relaxing toward what you can get: only ever helps, and the top clears', () => {
+  for (const v of [0.2, 0.5, 0.9, 0.99]) {
+    const strict = S.herYears({ start: 25, v, relax: false }).odds.any, relaxed = S.herYears({ start: 25, v }).odds.any;
+    assert.ok(relaxed >= strict - 1e-9, `${v}: ${strict} -> ${relaxed}`);
+  }
+  const life = [0.9, 0.95, 0.99].map((v) => S.herYears({ start: 22, years: 13, v }).odds.any);
+  assert.ok(life.every((p) => p > 0.85), `top women committed by 35: ${life}`);
+  assert.ok(life[2] > S.herYears({ start: 22, years: 13, v: 0.99, relax: false }).odds.any + 0.05, 'the 99th percentile gains most');
 });
