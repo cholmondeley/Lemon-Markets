@@ -181,7 +181,7 @@ Met and r are assumptions for review; the 2017 shares are Rosenfeld, Thomas & Ha
 | Channel | Couples met 2017 | Met / yr | Read r | Pre-filter | P(≥ 1 in 1k) in a year | Best, median luck | P(≥ 1 in 1k) in 5 years |
 |---|---|---|---|---|---|---|---|
 | Apps | 39% | 2000 | 0.35 | 0.5% | 13% | 1 in 131 | 19% |
-| Bars and restaurants | 27% | 150 | 0.35 | 6.7% | 5% | 1 in 56 | 10% |
+| Bars and restaurants | 27% (15% without couples who met online) | 150 | 0.35 | 6.7% | 5% | 1 in 56 | 10% |
 | Through friends | 20% | 25 | 0.55 | 40% | 2% | 1 in 33 | 8% |
 | Work | 11% | 15 | 0.7 | 67% | 1% | 1 in 22 | 7% |
 | School / college | 9% | 30 | 0.7 | 33% | 3% | 1 in 43 | 12% |

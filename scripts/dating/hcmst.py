@@ -10,6 +10,12 @@ reported in 2020 (wave 2) and 2022 (wave 3), each with the year the pair first m
 (Rosenfeld's coded q24 flags). Weights: wave 1 combined weight for the 2017 partners, wave 2 and
 wave 3 combined weights for the new ones. Shares by year met and by pooled periods, with the raw
 counts, since the recent years rest on few couples.
+
+Bar overlap: the categories aren't exclusive, and Rosenfeld, Thomas & Hausen (2019) note that the
+published chart's post-2010 rise in meeting at a bar or restaurant is entirely couples who met online
+and then had their first in-person meeting at one. For each year on the published chart this writes
+the weighted share of 2017 couples coded both bar/restaurant and online (a window around that year),
+which the page subtracts from the published bar line.
 Data: https://data.stanford.edu/hcmst2017 (HCMST 2017 to 2022 small public version 2.2.dta)
 Run: uv run scripts/dating/hcmst.py [path/to/hcmst.dta]
 """
@@ -34,6 +40,8 @@ CHANNELS = {
     "School or college": ["school", "college"],
     "Church": ["church"],
 }
+# Years on the published chart and the half-width of the window of years met around each.
+BAR_YEARS = [(1940, 5), (1950, 5), (1960, 5), (1970, 5), (1980, 5), (1990, 3), (1995, 3), (2000, 3), (2005, 3), (2010, 3), (2013, 2), (2017, 2)]
 PERIODS = [(1990, 1999), (2000, 2004), (2005, 2009), (2010, 2014), (2015, 2017), (2018, 2019), (2020, 2022)]
 
 
@@ -80,8 +88,14 @@ def main():
         g = R[R.year == y]
         if len(g):
             by_year.append({"year": y, "n": int(len(g)), "online": float(np.average(g.Online, weights=g.w))})
+    bar_online = []
+    for y, h in BAR_YEARS:
+        g = R[(R.wave == 1) & R.year.between(y - h, y + h)]
+        both = g["Bar or restaurant"] & g.Online
+        bar_online.append({"year": y, "n": int(len(g)), "overlap": float(np.average(both, weights=g.w)) if len(g) else 0.0})
+        print(f"  bar and online, met {y - h}-{y + h}: {bar_online[-1]['overlap']:.1%}")
     out = {"source": "HCMST 2017-2020-2022 (Rosenfeld), small public v2.2: heterosexual couples, year first met; weighted.",
-           "periods": periods, "by_year": by_year, "channels": list(CHANNELS)}
+           "periods": periods, "by_year": by_year, "bar_online": bar_online, "channels": list(CHANNELS)}
     OUT.write_text(json.dumps(out, indent=1))
     print(f"wrote {OUT.relative_to(ROOT)}")
 

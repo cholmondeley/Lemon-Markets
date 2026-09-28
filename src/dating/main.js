@@ -62,13 +62,15 @@ lineChart(fig('cohorts'), {
   const ch = SITE.channels, h = SITE.hcmst.at(-1);
   const focus = { Online: '--dating', 'Through friends': '--ink-muted' };
   lineChart(fig('channels'), {
-    height: 340, aria: `Line chart of how couples met, 1940 to 2022: online rises from zero after 1995 to 39% in 2017 and ${pct(h.online)} for couples who met in 2020-22; meeting through friends falls from 34% to 20%.`,
+    height: 340, aria: `Line chart of how couples met, 1940 to 2022: online rises from zero after 1995 to 39% in 2017 and ${pct(h.online)} for couples who met in 2020-22; meeting through friends falls from 34% to 20%; meeting at a bar or restaurant, leaving out couples who met online, drifts down from 19% to ${pct(ch.series['Bar or restaurant'].at(-1))}.`,
     x: { min: 1940, max: 2022, ticks: [1940, 1960, 1980, 2000, 2021], fmt: (v) => (v === 2021 ? '2020-22' : v) },
     y: { min: 0, max: 0.7, ticks: [0, 0.2, 0.4, 0.6], fmt: (v) => pct(v) },
-    series: [
-      ...Object.entries(ch.series).map(([label, ys]) => ({ label, color: focus[label] || '--rule-strong', width: label === 'Online' ? 3 : focus[label] ? 2 : 1.5, points: ch.years.map((y, i) => [y, ys[i]]) })),
-      { label: `2020-22 (n=${h.n})`, color: '--dating', width: 0.01, dots: true, points: [[2021, h.online]] },
-    ],
+    // Online runs on to the newest wave (couples who met in 2020-22); the other channels stop at 2017.
+    series: Object.entries(ch.series).map(([label, ys]) => ({
+      label, color: focus[label] || '--rule-strong', width: label === 'Online' ? 3 : focus[label] ? 2 : 1.5,
+      points: [...ch.years.map((y, i) => [y, ys[i]]), ...(label === 'Online' ? [[2021, h.online]] : [])],
+    })),
+    marks: [{ x: 2021, y: h.online, color: '--dating', text: `n=${h.n}`, align: 'right' }],
   });
 }
 SITE.calcExamples.forEach((ex, i) => {

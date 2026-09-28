@@ -45,6 +45,12 @@ out.channels = {
     School: [0.27, 0.24, 0.21, 0.17, 0.14, 0.12, 0.10, 0.10, 0.09, 0.08, 0.07, 0.05],
   },
 };
+// Bar or restaurant without the couples who met online and had their first date at one: they are the
+// whole of the published line's post-2010 rise (Rosenfeld et al. 2019). Overlap from the microdata.
+{
+  const ch = out.channels, ov = new Map(hcmst.bar_online.map((r) => [r.year, r.overlap]));
+  ch.series['Bar or restaurant'] = ch.series['Bar or restaurant'].map((v, i) => r3(v - (ov.get(ch.years[i]) ?? 0)));
+}
 out.hcmst = hcmst.periods.map((p) => round({ from: p.from, to: p.to, n: p.n, online: p.Online, se: p.online_se, ci: 1.96 * p.online_se, friends: p["Through friends"] }));
 const singleUS = (sex, lo, hi) => inputs.pools.by_age.filter((r) => r.sex === sex && r.age >= lo && r.age <= hi).reduce((s, r) => s + r.pop * r.single, 0);
 // The Dating Calculator's counts (the author's screenshots), with the whole-country and metro steps
