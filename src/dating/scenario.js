@@ -60,7 +60,7 @@ export const RHO_LOOKS_VALUE = POWER.looks / NORM;                      // 0.34
 
 const GRIDS = { fine: { men: [61, 61], women: [61, 41] }, coarse: { men: [31, 31], women: [31, 21] } };
 
-export function createScenario({ digitized, pools, calibration: cal, nsfg, status }, { grid = 'fine', fitted = null } = {}) {
+export function createScenario({ digitized, pools, calibration: cal, nsfg, status, keep = null }, { grid = 'fine', fitted = null } = {}) {
   const G = GRIDS[grid];
   const BASE = { ...DEFAULTS };
   if (fitted) for (const k of ['tolerance', 'commitScale', 'theta', 'p0', 'sigma', 'intentShown', 'evalPerYear']) if (fitted[k] != null) BASE[k] = fitted[k];
@@ -252,6 +252,29 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
   // succeeds if both commit. Odds of at least one success, overall and with a man above each bar:
   // top 10 / 5 / 1% of men 22-55 by standing now, and "as good as her or better" (his rank on
   // potential at least her rank among women her age).
+  // One year of her search: who she sees, likes, matches, dates and goes on to date for months.
+  function herSearch(age, yEff, gap, ch, o, bars, commit, hisWant) {
+    const C0 = CHANNELS[ch], uApp = normCdf(yEff), skip = o.intentShown ?? BASE.intentShown;
+    const pool = (o.pool ?? herPool(age, gap, o)).map((c) => (c.serious ? c : { ...c, w: c.w * (1 - skip) }));
+    return C.search(pool, {
+      a: o.a ?? C0.a, c: o.c ?? C0.c, rhoQz: RHO_LOOKS_VALUE, exposure: ch === 'app' ? cal.exposure.men : 0,
+      likeRate: C0.like ?? likeW(uApp), back: C.backRule(likeM, rhoM, yEff),
+      views: o.views ?? C0.views, dates: ch === 'app' ? (o.datesW ?? BASE.datesW) : C0.dates, read2: o.read2 ?? BASE.read2,
+      n: o.n ?? BASE.evalPerYear, bar: 0, bars, commit, pursue: (cell) => hisWant(cell, yEff),
+    });
+  }
+  // The read (after a first date) a man has to clear for a woman on the apps to keep seeing him: she has
+  // about 13 first dates a year and properly dates only the best two, so she keeps the men above this
+  // threshold. By her age and appeal; cached on a 0.1-SD grid.
+  // Precomputed by scripts/dating/keep.mjs (src/data/dating/keep.json) when given; computed on demand otherwise.
+  const keepCache = new Map(Object.entries(keep?.t ?? {}));
+  const keepAt = (age, ya) => herSearch(age, ya, 2, 'app', {}, { any: 0 }, () => 0, hisInterest({})).final.t;
+  const herKeepBar = (age, yEff) => {
+    const ya = Math.round(yEff * 10) / 10, key = `${age}_${ya.toFixed(1)}`;
+    if (!keepCache.has(key)) keepCache.set(key, keepAt(age, ya));
+    return keepCache.get(key);
+  };
+
   function herYears({ start = 25, years = BASE.years, v = 0.5, ch = 'app', gap = 2, ...o } = {}) {
     const C0 = CHANNELS[ch], his = hisCommit(o), hers = herCommit(o), hisWant = hisInterest(o), y0 = D.zTop(1 - v);
     // "As good as her or better" is rank for rank on potential (his for his age, hers for her age);
@@ -266,15 +289,7 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
     let reach = 1, xm = 0, xs = 0, got = 0;
     for (let t = 0; t < years; t++) {
       const age = start + t, yEff = y0 + womenShift(age), uApp = normCdf(yEff);
-      const skip = o.intentShown ?? BASE.intentShown;
-      const pool = (o.pool ?? herPool(age, gap, o)).map((c) => (c.serious ? c : { ...c, w: c.w * (1 - skip) }));
-      const r = C.search(pool, {
-        a: o.a ?? C0.a, c: o.c ?? C0.c, rhoQz: RHO_LOOKS_VALUE, exposure: ch === 'app' ? cal.exposure.men : 0,
-        likeRate: C0.like ?? likeW(uApp), back: C.backRule(likeM, rhoM, yEff),
-        views: o.views ?? C0.views, dates: ch === 'app' ? (o.datesW ?? BASE.datesW) : C0.dates, read2: o.read2 ?? BASE.read2,
-        n: o.n ?? BASE.evalPerYear, bar: 0, bars, commit: (cell) => his(cell, yEff) * hers(cell.Q, yEff, uApp),
-        pursue: (cell) => hisWant(cell, yEff),
-      });
+      const r = herSearch(age, yEff, gap, ch, o, bars, (cell) => his(cell, yEff) * hers(cell.Q, yEff, uApp), hisWant);
       // Her bar relaxes toward the best of the men who'd commit to her before her horizon.
       const out = (o.relax ?? BASE.relax)
         ? relaxedOutcome(r.final, r.evaluated, bars, (c) => his(c, yEff), herOwnBar(yEff, uApp, o), r.evaluated * Math.max(0, (o.horizon ?? BASE.horizonW) - age), o)
@@ -336,6 +351,7 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
   };
   function hisYears({ age = 30, years = BASE.years, uLooks = null, status: us = 0.5, height = 0.5, social = 0.5, mv = null, lo = age - 8, hi = age, ch = 'app', ...o } = {}) {
     const his = hisCommit(o), hers = herCommit(o), herWant = herInterest(o);
+    const r2 = BASE.read2, sdKeep = C.readSd(r2.a, r2.c, RHO_LOOKS_VALUE);
     let z, e;
     if (mv != null) {
       const x = D.zTop(1 - mv);
@@ -378,7 +394,11 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
       const dates = ch === 'app' ? Math.max(0.05, datesAt(normCdf(zApp))) : ch === 'inperson' ? ip.approaches * yes / Math.max(liked, 1e-12) : CHANNELS[ch].dates;
       const r = C.evaluate({ cells: C.normalize(cells), count: dates }, {
         n: o.n ?? BASE.evalPerYear, read2: { a: 0, c: 0.7 }, rhoQz: 1, bar: 0, bars,
-        pursue: (c) => herWant(xType, c.Q, normCdf(c.Q)),
+        // On the apps she keeps seeing him only if he beats her other first dates (her threshold, from her
+        // own search). In person she isn't juggling a dozen app dates: her own bar decides.
+        pursue: ch === 'app'
+          ? (c) => D.normSf((herKeepBar(c.a, c.Q) - (r2.a * z + r2.c * xType)) / sdKeep)
+          : (c) => herWant(xType, c.Q, normCdf(c.Q)),
         commit: (c) => (c.serious ? 1 : kc) * his(me, c.Q) * hers(xType, c.Q, normCdf(c.Q)),
       });
       // His bar relaxes toward the best of the women who'd commit to him before his horizon.
@@ -400,7 +420,7 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
     BASE, CHANNELS, rhoW, rhoM, demandM, demandW, likeM, likeW, b, kc, x50, ok, censusM, censusW, cal,
     menPop, menSingle, womenPop, womenSingle, hisCommit, herCommit, cohortM, poolAt, poolCells, herPool, hisPool, menOptionsAt,
     womenShift, menLooksShift, menAgeDiscount, menBar, datesAt, POWER_NORM: { W_OTHER, NORM }, menScale, xNow,
-    herYears, hisYears, funnel, fMen, fWomen, p0, appealFromWhr,
+    herYears, hisYears, herKeepBar, keepAt, funnel, fMen, fWomen, p0, appealFromWhr,
     fitted: { tolerance: BASE.tolerance, commitScale: BASE.commitScale, theta: BASE.theta, p0 },
   };
 }

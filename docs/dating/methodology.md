@@ -248,15 +248,23 @@ Odds over the years: 1 − Π(1 − oddsₜ), for each bar: any committed man; o
 **His search.** Women decide who gets first dates, so his first dates are the funnel's number for a man
 with his looks (fewer as he ages, via the OkCupid men's curve), with the single women of his target
 ages who would pick him: her read of him (0.48·looks + 0.2·value) against her own like rate (pickier
-the more appealing she is), times his liking her back. Then months of dating need her interest; he
-properly dates the best two a year; success if both commit. Bars: her appeal for her age at the 50 / 75 /
-90 / 95th percentile, and as good as him or better. For a median man of 30 (women 22-30), five years: 24%.
+the more appealing she is), times his liking her back. Then months of dating need her to keep seeing
+him, and on the apps that is decided from her side: she has about 13 first dates a year and properly
+dates only the best two by what a first date shows (0.3 looks + 0.5 value), so she keeps him only if his
+read clears the threshold her own search sets (`herKeepBar`; precomputed by age and appeal in
+`keep.json` by `keep.mjs`, after `fit.mjs`). A median man's first dates mostly go nowhere: about 10%
+become months of dating (it was 72% when her own bar alone decided, ignoring that she is also dating
+better-looking men), in line with the funnel's ~4% of his first dates that end in sex. He properly
+dates the best two a year; success if both commit. Bars: her appeal for her age at the 50 / 75 / 90 /
+95th percentile, and as good as him or better. For a median man of 30 (women 22-30), five years: 3.9%;
+by looks percentile 10th 0.4%, 25th 1.2%, 75th 11%, 90th 24%, 99th 55%.
 
 **In person (men).** He approaches two women a month (the post: once a month puts a man in the top
 quarter of single men), choosing women he likes; each says yes to a date if her read of him (0.3 looks,
 0.45 value) clears her own bar, set at her app like rate × 2.7 (she isn't flooded: the 50/50 logic of
-§3). No swipe funnel, no competition with the top 10% for her dozen first dates. A median man: 1.7
-first dates a year (0.75 on the apps), 50% odds in five years (24%).
+§3). No swipe funnel, no competition with the top 10% for her dozen first dates, so her own bar decides
+whether she keeps seeing him. A median man: 1.7 first dates a year (0.75 on the apps), 50% odds in five
+years (3.9% on the apps).
 
 **Reads.** Connelly & Ones (2010): strangers ~.17, coworkers ~.26, friends ~.47. Profile: 0.48 looks,
 0.2 value; after a first date 0.3 looks, 0.5 value. Channels: apps 15,000 profiles a year, 13 first
@@ -335,8 +343,9 @@ calculators use likes only.
   6.5% → 3.6% / 9.3% with GLP-1 plus glutes; top 5-10% 0.5% / 3.6% → 1.9% / 6.6%; top 10-25% 0.1% / 1.7%
   → 0.6% / 3.6%; median ≈ 0 / 0.1% → 0 / 0.4%.
 - **Men's levers** (`hisYears`, a median man of 30, women 22-30, five years), each on the apps and in
-  person (two approaches a month): baseline 24% / 50%. Status to the 90th percentile: 31% on the apps
-  (status barely shows on a profile, so his dates don't change) but 69% in person, and a
+  person (two approaches a month): baseline 3.9% / 50%. Getting fit: 43% / 73%; strict abs 58% / 74%.
+  Status to the 90th percentile: 9.3% on the apps (status barely shows on a profile, so his dates don't
+  change) but 69% in person, and a
   75th-percentile woman or better 2.8% → 38% in person. All of it (fit, status and social skills at the
   75th, about the 88th percentile as a partner) in person: 71%, and a 75th-percentile woman 55%. The body ladder uses the Dating Calculator's flags among single men
   25-35 (body half of looks, face at the median): out of overweight and obese (40%: body at the 60th
@@ -390,7 +399,7 @@ weaker, mixed evidence (Bellou 2015 finds broadband raised marriage rates).
 
 ## 14. Validation
 
-`npm test` runs 49 checks (21 hiring, 28 dating). Dating checks include the single-stage identities (tail
+`npm test` runs 50 checks (21 hiring, 29 dating). Dating checks include the single-stage identities (tail
 accuracy, digitized medians, law of total probability, McCall fixed point, bivariate tail limits,
 the author's odds table), the grid and funnel accounting, the cohort reproducing the census, the
 evaluate step's limits, and the calibrated scenario: men commit up and rarely down (a 25th-percentile man
@@ -403,7 +412,7 @@ which never lowers anyone's odds and lifts top women past 85% committed by 35.
 Fitted exactly: the three targets in §13. Out of sample: Hinge top 1/10% and bottom 50%; NSFG men's 3.4
 partners; the founder's intent gradient from selection alone; the census rate at which single women
 marry at other ages (above it at 22, close at 24-28 and 36-38, below it at 30-34);
-a median man's five-year odds (24% on the apps, 50% in person) against the census rate for never-married men 30 → 35 (27%, all
+a median man's five-year odds (3.9% on the apps, 50% in person) against the census rate for never-married men 30 → 35 (27%, all
 channels).
 
 ## 15. Assumptions and limitations
@@ -438,5 +447,8 @@ channels).
 | `uv run scripts/dating/status.py` | `src/data/dating/status.json` |
 | `node scripts/dating/sensitivity.mjs` | `calibration.json`, `docs/dating/sensitivity.md` |
 | `node scripts/dating/fit.mjs` (~10 min) | `src/data/dating/fitted.json` |
+| `node scripts/dating/keep.mjs` (~1 min, after fit) | `src/data/dating/keep.json` (women's keep-seeing thresholds) |
+| `uv run scripts/dating/nsfg_expect.py` | `src/data/dating/expect.json` |
+| `uv run scripts/dating/addhealth_curve.py` | `src/data/dating/addhealth.json` (from the author's `addhealth.py` group estimates) |
 | `node scripts/dating/chain.mjs` | `docs/dating/results.md` |
 | `node scripts/dating/site-data.mjs` | `src/data/dating/site.json` (the page's precomputed tables) |

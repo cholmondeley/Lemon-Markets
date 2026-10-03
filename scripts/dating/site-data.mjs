@@ -15,6 +15,7 @@ const inputs = {
   digitized: read('../../src/data/dating/digitized.json'), pools: read('../../src/data/dating/pools.json'),
   calibration: read('../../src/data/dating/calibration.json'), nsfg: read('../../src/data/dating/nsfg.json'),
   status: read('../../src/data/dating/status.json'),
+  keep: read('../../src/data/dating/keep.json'),   // scripts/dating/keep.mjs, after fit.mjs
 };
 const gss = read('../../src/data/dating/gss.json'), ag = read('../../src/data/dating/agegap.json'), tails = read('../../src/data/dating/tails.json');
 const exchange = read('../../src/data/dating/exchange.json'), glp1 = read('../../src/data/dating/glp1.json'), hcmst = read('../../src/data/dating/hcmst.json');

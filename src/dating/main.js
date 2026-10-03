@@ -30,7 +30,7 @@ try { const saved = localStorage.getItem('lemon-dating-sex'); if (saved === 'man
 
 // ---------- numbers in the prose ----------
 const get = (path) => path.split('.').reduce((o, k) => (o == null ? o : o[k]), SITE);
-const FMT = { pct: (v) => pct(v), pct1: (v) => pct(v, 1), num: (v) => (v >= 10 ? Math.round(v).toString() : v.toFixed(1)), k: (v) => Math.round(v / 1000), ord: (v) => ord(v * 100), pts: (v) => Math.round(v * 100) };
+const FMT = { pct: (v) => pct(v), pct1: (v) => pct(v, 1), lt: (v) => (v < 0.001 ? '<0.1%' : pct(v, 1)), num: (v) => (v >= 10 ? Math.round(v).toString() : v.toFixed(1)), k: (v) => Math.round(v / 1000), ord: (v) => ord(v * 100), pts: (v) => Math.round(v * 100) };
 document.querySelectorAll('[data-v]').forEach((el) => {
   const v = get(el.dataset.v);
   if (typeof v === 'number') el.textContent = (FMT[el.dataset.f] || FMT.num)(v);
@@ -255,7 +255,7 @@ table(fig('exchange'), ['Her WHR', 'Share of single women 22-29', 'Men she can r
   bars(fig('metrosW'), m.slice(0, 8).map((x) => ({ label: x.name.split('-')[0].split(',')[0], value: x.women_per_millionaire, text: x.women_per_millionaire.toFixed(1), cls: 'women' })), { max: 1.5 });
 }
 table(fig('menLevers'), ['Strategy', 'His value pctile', 'Committed woman: on the apps', 'in person', '75th-pctile woman+: on the apps', 'in person'],
-  SITE.menLevers.map((l) => [l.label, ord(l.mvPct * 100), pct(l.any), pct(l.ip.any), pct(l.p75, 1), pct(l.ip.p75, 1)]), { hl: 0 });
+  SITE.menLevers.map((l) => [l.label, ord(l.mvPct * 100), pct(l.any), pct(l.ip.any), FMT.lt(l.p75), FMT.lt(l.ip.p75)]), { hl: 0 });
 // ---------- scrolling stories ----------
 const stories = [...document.querySelectorAll('[data-scrolly]')].map((root) => {
   const st = createStepper(root, root.querySelector('.stage'));

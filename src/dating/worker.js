@@ -6,10 +6,11 @@ import calibration from '../data/dating/calibration.json';
 import nsfg from '../data/dating/nsfg.json';
 import status from '../data/dating/status.json';
 import fitted from '../data/dating/fitted.json';
+import keep from '../data/dating/keep.json';
 import { createScenario } from './scenario.js';
 
 let S = null;
-const scenario = () => (S ??= createScenario({ digitized, pools, calibration, nsfg, status }, { grid: 'coarse', fitted }));
+const scenario = () => (S ??= createScenario({ digitized, pools, calibration, nsfg, status, keep }, { grid: 'coarse', fitted }));
 
 // { type: 'her', params } -> her odds (any, as rare or better, top 10 / 5 / 1% of men) over the years.
 // { type: 'his', params } -> his odds (any, a woman at the 50 / 75 / 90 / 95th percentile for her age,

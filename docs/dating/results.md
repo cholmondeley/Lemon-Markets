@@ -95,25 +95,25 @@ A 90th-percentile woman:
 
 | His percentile | Looks pctile (expected) | First dates / yr | Any | 50th+ | 75th+ | 90th+ | 95th+ | As good+ |
 |---|---|---|---|---|---|---|---|---|
-| 10th | 33rd | 0.30 | 5% | 0% | 0.0% | 0.0% | 0.0% | 3% |
-| 25th | 41st | 0.48 | 12% | 3% | 0.0% | 0.0% | 0.0% | 8% |
-| 50th | 50th | 0.75 | 24% | 12% | 1.0% | 0.2% | 0.0% | 12% |
-| 75th | 59th | 1.19 | 39% | 29% | 6.6% | 2.5% | 0.6% | 7% |
-| 90th | 67th | 1.82 | 52% | 45% | 17.9% | 9.2% | 3.7% | 9% |
-| 99th | 79th | 3.55 | 67% | 65% | 42.2% | 29.0% | 16.8% | 3% |
+| 10th | 33rd | 0.30 | 0% | 0% | 0.0% | 0.0% | 0.0% | 0% |
+| 25th | 41st | 0.48 | 1% | 0% | 0.0% | 0.0% | 0.0% | 0% |
+| 50th | 50th | 0.75 | 4% | 1% | 0.0% | 0.0% | 0.0% | 1% |
+| 75th | 59th | 1.19 | 11% | 3% | 0.4% | 0.2% | 0.0% | 0% |
+| 90th | 67th | 1.82 | 24% | 12% | 2.3% | 1.1% | 0.4% | 1% |
+| 99th | 79th | 3.55 | 55% | 46% | 17.8% | 10.2% | 5.2% | 1% |
 One thing at a time, from a median man of 30:
 | Change | Value pctile | Any | 75th+ | 90th+ |
 |---|---|---|---|---|
-| Baseline | 50th | 24% | 1.0% | 0.2% |
+| Baseline | 50th | 4% | 0.0% | 0.0% |
 | In person, 2 approaches a month | 50th | 50% | 2.8% | 0.6% |
-| Out of overweight (looks 57th) | 52nd | 31% | 1.8% | 0.4% |
-| Fit, top 5% of bodies (looks 87th) | 65th | 73% | 22.6% | 8.1% |
-| Strict abs, top 2% (looks 92nd) | 69th | 74% | 33.4% | 14.3% |
-| Status 75th | 72nd | 29% | 3.5% | 1.2% |
-| Status 90th | 86th | 31% | 6.2% | 2.8% |
-| Social 75th | 59th | 26% | 1.8% | 0.5% |
-| Height 90th | 59th | 26% | 1.8% | 0.5% |
-| All three 75th | 85th | 61% | 23.3% | 11.5% |
+| Out of overweight (looks 57th) | 52nd | 6% | 0.1% | 0.0% |
+| Fit, top 5% of bodies (looks 87th) | 65th | 43% | 3.1% | 1.0% |
+| Strict abs, top 2% (looks 92nd) | 69th | 58% | 8.1% | 2.9% |
+| Status 75th | 72nd | 6% | 0.2% | 0.1% |
+| Status 90th | 86th | 9% | 0.5% | 0.2% |
+| Social 75th | 59th | 5% | 0.1% | 0.0% |
+| Height 90th | 59th | 5% | 0.1% | 0.0% |
+| All three 75th | 85th | 30% | 3.1% | 1.4% |
 
 ## F. What moves a median woman's odds (from 27, five years)
 

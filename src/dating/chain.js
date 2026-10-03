@@ -146,18 +146,19 @@ export function commitRule(demand, { median = 0.2, beta = 0.56, kc = 0.1, option
 // ---------- stage 3-4: search ----------
 // A read of a candidate: S = a z + c Q + noise, scaled to unit variance in the population (a: how
 // much looks drive it, c: how much real quality shows through).
-const readSd = (a, c, rhoQz) => Math.sqrt(Math.max(1e-6, 1 - (a * a + c * c + 2 * a * c * rhoQz)));
+export const readSd = (a, c, rhoQz) => Math.sqrt(Math.max(1e-6, 1 - (a * a + c * c + 2 * a * c * rhoQz)));
 
 // Keep the best K of N people (distribution `cells`) by a read: returns the kept distribution and
 // how many were kept. If N <= K everyone is kept.
+// Also returns t, the read a person has to clear to be kept (-Infinity when everyone is).
 export function keepTop(cells, N, K, { a, c, rhoQz }) {
-  if (N <= K) return { cells, count: N };
+  if (N <= K) return { cells, count: N, t: -Infinity };
   const sd = readSd(a, c, rhoQz), mu = cells.map((x) => a * x.z + c * x.Q);
   const share = (t) => cells.reduce((acc, x, i) => acc + x.w * normSf((t - mu[i]) / sd), 0);
   let lo = -10, hi = 10;
   for (let it = 0; it < 60; it++) { const m = (lo + hi) / 2; if (share(m) > K / N) lo = m; else hi = m; }
   const t = (lo + hi) / 2;
-  return { cells: normalize(cells.map((x, i) => ({ ...x, w: x.w * normSf((t - mu[i]) / sd) }))), count: K };
+  return { cells: normalize(cells.map((x, i) => ({ ...x, w: x.w * normSf((t - mu[i]) / sd) }))), count: K, t };
 }
 
 // A whole search:

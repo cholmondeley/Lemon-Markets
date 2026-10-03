@@ -193,7 +193,7 @@ test('evaluate: everyone wanting to continue changes nothing; half wanting halve
 });
 
 const readJ = (p) => JSON.parse(readFileSync(new URL(`../src/data/dating/${p}`, import.meta.url)));
-const S = createScenario({ digitized: data, pools: readJ('pools.json'), calibration: readJ('calibration.json'), nsfg: readJ('nsfg.json'), status: readJ('status.json') },
+const S = createScenario({ digitized: data, pools: readJ('pools.json'), calibration: readJ('calibration.json'), nsfg: readJ('nsfg.json'), status: readJ('status.json'), keep: readJ('keep.json') },
   { grid: 'coarse', fitted: readJ('fitted.json') });
 
 test('commitment follows rank: men commit up, rarely down', () => {
@@ -241,4 +241,11 @@ test('relaxing toward what you can get: only ever helps, and the top clears', ()
   const life = [0.9, 0.95, 0.99].map((v) => S.herYears({ start: 22, years: 13, v }).odds.any);
   assert.ok(life.every((p) => p > 0.85), `top women committed by 35: ${life}`);
   assert.ok(life[2] > S.herYears({ start: 22, years: 13, v: 0.99, relax: false }).odds.any + 0.05, 'the 99th percentile gains most');
+});
+
+test('on the apps she keeps seeing a man only if he beats her other first dates', () => {
+  const r = S.hisYears({ age: 30, lo: 22, hi: 30, uLooks: 0.5 }).rows[0];
+  const kept = r.evaluated / r.dates;
+  assert.ok(kept < 0.25, `a median man's first dates that become months of dating: ${kept}`);
+  assert.ok(S.hisYears({ age: 30, lo: 22, hi: 30, uLooks: 0.5, ch: 'inperson' }).odds.any > 4 * S.hisYears({ age: 30, lo: 22, hi: 30, uLooks: 0.5 }).odds.any, 'in person far better for him');
 });

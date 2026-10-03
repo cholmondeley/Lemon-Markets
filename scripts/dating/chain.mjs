@@ -11,6 +11,7 @@ const inputs = {
   digitized: read('../../src/data/dating/digitized.json'), pools: read('../../src/data/dating/pools.json'),
   calibration: read('../../src/data/dating/calibration.json'), nsfg: read('../../src/data/dating/nsfg.json'),
   status: read('../../src/data/dating/status.json'),
+  keep: read('../../src/data/dating/keep.json'),   // scripts/dating/keep.mjs, after fit.mjs
 };
 const fitted = read('../../src/data/dating/fitted.json'), assort = read('../../src/data/dating/assort.json'), glp1 = read('../../src/data/dating/glp1.json');
 const S = createScenario(inputs, { grid: 'coarse', fitted });
