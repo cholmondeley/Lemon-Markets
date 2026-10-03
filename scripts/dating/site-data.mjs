@@ -149,19 +149,13 @@ out.intent = {
 const manAt = (p, M = 30) => { const x = D.zTop(1 - p); return { Q: x, u: normCdf(RHO_LOOKS_VALUE * x), serious: true, M }; };
 const decide = (p, v) => his(manAt(p), D.zTop(1 - v) + S.womenShift(28)) / BASE.commitScale;
 out.commitBars = [0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99].map((p) => ({ p, median: r4(decide(p, 0.5)), top10: r4(decide(p, 0.9)), bottom: r4(decide(p, 0.25)) }));
-// Per first date, by his looks band: the chance it becomes a relationship both commit to. His mate
-// value given his looks: x = rho z + sqrt(1 - rho^2) e, averaged over e.
+// Per first date, by his looks band: the chance it becomes a relationship both commit to. From his own
+// search (a man of 30 at the band's middle, women 22-30, a year on the apps): the women who keep seeing
+// him (most don't: they're dating better-looking men too), the ones he properly dates, and the chance
+// both commit, spread over all his first dates.
 out.perDate = F.byBand.map((x) => {
-  const sel = (c) => c.u >= x.lo && c.u < x.hi;
-  const men = SF.fMen.cells.filter(sel), dated = F.datedWomen(sel);
-  const W0 = men.reduce((t, c) => t + c.w, 0);
-  const es = [-2, -1, 0, 1, 2].map((e) => ({ e, w: Math.exp(-e * e / 2) })), We = es.reduce((s, q) => s + q.w, 0);
-  let hc = 0;
-  for (const m of men) for (const { e, w: we } of es) {
-    const xm = RHO_LOOKS_VALUE * m.z + Math.sqrt(1 - RHO_LOOKS_VALUE ** 2) * e;
-    for (const w of dated) { const y = w.z + S.womenShift(28); hc += (m.w / W0) * (we / We) * w.w * his({ Q: xm, u: m.u, serious: m.serious, M: 30 }, y) * hers(xm, y, normCdf(y)) * (w.serious ? 1 : S.kc); }
-  }
-  return { lo: x.lo, hi: x.hi, dates: r3(x.dates), p: r4(Math.min(1, BASE.evalPerYear / Math.max(x.dates, 1e-9)) * hc) };
+  const y = hisYears({ age: 30, lo: 22, hi: 30, years: 1, uLooks: (x.lo + x.hi) / 2 }).rows[0];
+  return { lo: x.lo, hi: x.hi, dates: r3(x.dates), p: r4(y.evaluated * y.success / Math.max(y.dates, 1e-9)) };
 });
 {
   // Who is single: the casual share among all men, men on the apps, single men 25-35, never-married men at 40.
@@ -260,7 +254,7 @@ out.gapTop = [23, 27, 31].map((start) => ({ start, rows: [2, 10, 15].map((gap) =
 // Men: a 30-year-old at the median on everything, looking at women 22-30; move one thing at a time.
 log('men');
 const baseM = { age: 30, lo: 22, hi: 30, uLooks: 0.5, status: 0.5, social: 0.5, height: 0.5 };
-// Each lever on the apps and off them (in person: two approaches a month).
+// Each lever on the apps and off them (in person: one approach a month).
 const mlever = (label, o) => {
   const a = hisYears({ ...baseM, ...o }), p = hisYears({ ...baseM, ...o, ch: 'inperson' });
   return { label, mvPct: r4(a.mvPct), dates: r3(a.first.dates), datesIP: r3(p.first.dates), ...round(a.odds), ip: round(p.odds) };

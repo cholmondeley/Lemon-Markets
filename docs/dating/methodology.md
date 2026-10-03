@@ -159,9 +159,10 @@ deciles' lifetime marriage rates match Add Health's (below). Without it, a 99th-
 committed less often than a 90th, because she would only take a top-1% man and almost never met one.
 
 **Fits** (`fit.mjs`, coarse grid):
-- d = 0.753 so that couples formed in the model correlate 0.756 in mate value, the PSID latent status
-  correlation (§6a);
-- m = 0.228 so that a woman searching from 25, averaged over appeal, finds a committed man by 30 at the
+- d = 0.247 so that couples formed in the model correlate 0.756 in mate value, the PSID latent status
+  correlation (§6a). Once both sides' capacity is modeled (§8: each properly dates only their best two
+  first dates a year), much less of that sorting comes for free, and commitment itself has to be strict;
+- m = 0.771 so that a woman searching from 25, averaged over appeal, finds a committed man by 30 at the
   census rate, lagged and among women who want to marry: 35.6% of never-married women 27 marry by 32
   (committing comes about two years before the wedding; HCMST's median from relationship start to wedding
   is 2.8 years for 2005-17 weddings), divided by the 89% of never-married women 23-28 who expect to marry
@@ -174,25 +175,37 @@ top tenth, men 57 / 66 / 75 / 76 / 85%; the two sexes' top deciles match. One in
 noisy (ratings of the same person correlate 0.30 a year apart and 0.14 in adulthood), so the averaged
 score correlates about r = 0.6 with true appeal; undoing that, ever married by ~37 at the 10th / 50th /
 90th / 99th percentile of true appeal is women 61 / 75 / 86 / 92%, men 49 / 72 / 88 / 95%. The model,
-committed by 35 searching from 22: women 30 / 74 / 92 / 92%, men (apps, by 38) 16 / 59 / 86 / 94%. The top
-matches; the bottom is lower in the model. That is expected: Add Health's cohort (born ~1976-83) dated
+committed by 35 searching from 22: women 14 / 76 / 98 / 99%, men (apps, by 38) 1 / 29 / 89 / 99%. The model
+is for someone actively searching on the apps who wants to marry, so it runs above Add Health at the top,
+whose figures include people not looking; the bottom is lower in the model. That is expected: Add Health's cohort (born ~1976-83) dated
 mostly before the apps, the model's level is set by today's census (women born in the 1990s), and falling
 pairing hits the bottom of both sexes first. Add Health's own terms bar AI tools from individual-level
 data, so the author ran `addhealth.py` and only its group estimates were used here.
 
 **Will he commit?** (Act IV's chart shows his decision alone, without m.) A serious man of 30 with a
-median woman of 28: 10th-percentile man 100%, 25th 99%, median 83%, 75th 33%, 90th 4.7%, 95th 0.8%;
-with a top-10% woman: 100%, 100%, 100%, 98%, 81%, 56%. Then the relationship works out 23% of the time.
+median woman of 28: 10th-percentile man 99.5%, 25th 91%, median 47%, 75th 7.4%, 90th 0.4%, 95th <0.1%;
+with a top-10% woman: 100%, 100%, 99%, 87%, 45%, 19%. Then the relationship works out 77% of the time.
+Consistent with the PSID sorting: a 0.756 correlation leaves only about 7% of 90th-percentile husbands
+with wives at or below the median, and those are couples formed, not his decision per relationship.
 
 **Outcome bars.** "As good as her or better" is rank for rank on potential (for a lever that raises her
 appeal, like GLP-1s, measured against where she started, `rareV`, so the target doesn't move with her) (his value percentile for
 his age at least her appeal percentile for her age). "A top-10 / 5 / 1% man" is on standing now:
 current mate value, with his status moved to his age's median and spread (`status.py`: men's earnings
 rank among men 22-55 climbs into the 40s and fans out, so top earners are mostly over 35), ranked among
-all men 22-55. "A millionaire husband" is the top 8.2% on the same scale (the share of men 22-55
-worth $1M+, parquet: 0.5% at 22-26, 5% at 32-36, 17% at 47-55). That is what she marries into, and what makes an age gap buy top-tier men: a 23-year-old
-at the 80th percentile open to men 15 years older goes from 1.3% to 5.1% for a top-10% man. Commitment
-itself runs on potential.
+all men 22-55. That is what she marries into, and what makes an age gap buy top-tier men: a 23-year-old
+at the 80th percentile open to men 15 years older goes from 0.4% to 7.6% for a top-10% man. Commitment
+itself runs on potential. "A millionaire husband" counts each man with his own chance of being worth
+$1M+ (`pMil`): from the parquet, P(net worth ≥ $1M) by age band and earnings score (`status.py`,
+`millionaire_by_z`; it climbs steeply with both: two SDs up in earnings it is 24% at 27-31 and 41% at
+37-41); his earnings score is his age's earnings median and spread applied to his status (earnings
+correlate 0.8 with status), averaged over the noise. Across men 22-55 it reproduces the parquet's 8.2%.
+Before, the top 8.2% on standing counted as millionaires, which overstated it: standing is not wealth.
+
+**Open issue: the age-gap lift for young women is now steeper than the ACS.** For a top-20% woman of 23,
+top-10% men are 0.6% of her commitments open to men 2 years older and 12% open to 15 years older (19x);
+the ACS for brides 18-22 has top-10% earners at 1.3% (gap under 2) and 5.8% (gap 10+), 4.4x. With strict
+sorting she commits near her own potential, and a young man near it rarely has top-10% standing yet.
 
 ### 6a. How tightly couples sort (PSID)
 
@@ -251,20 +264,38 @@ ages who would pick him: her read of him (0.48·looks + 0.2·value) against her 
 the more appealing she is), times his liking her back. Then months of dating need her to keep seeing
 him, and on the apps that is decided from her side: she has about 13 first dates a year and properly
 dates only the best two by what a first date shows (0.3 looks + 0.5 value), so she keeps him only if his
-read clears the threshold her own search sets (`herKeepBar`; precomputed by age and appeal in
-`keep.json` by `keep.mjs`, after `fit.mjs`). A median man's first dates mostly go nowhere: about 10%
-become months of dating (it was 72% when her own bar alone decided, ignoring that she is also dating
-better-looking men), in line with the funnel's ~4% of his first dates that end in sex. He properly
-dates the best two a year; success if both commit. Bars: her appeal for her age at the 50 / 75 / 90 /
-95th percentile, and as good as him or better. For a median man of 30 (women 22-30), five years: 3.9%;
-by looks percentile 10th 0.4%, 25th 1.2%, 75th 11%, 90th 24%, 99th 55%.
+read clears the threshold her own search sets (`herKeepBar`). A median man's first dates mostly go
+nowhere: about 8% become months of dating (it was 72% when her own bar alone decided, ignoring that she
+is also dating better-looking men), in line with the funnel's ~4% of his first dates that end in sex.
+He properly dates the best two a year; success if both commit. Bars: her appeal for her age at the 50 /
+75 / 90 / 95th percentile, and as good as him or better. For a median man of 30 (women 22-30), five
+years: 9.3%; by looks percentile 10th 0.2%, 25th 1.1%, 75th 43%, 90th 76%, 99th 85%.
 
-**In person (men).** He approaches two women a month (the post: once a month puts a man in the top
-quarter of single men), choosing women he likes; each says yes to a date if her read of him (0.3 looks,
-0.45 value) clears her own bar, set at her app like rate × 2.7 (she isn't flooded: the 50/50 logic of
-§3). No swipe funnel, no competition with the top 10% for her dozen first dates, so her own bar decides
-whether she keeps seeing him. A median man: 1.7 first dates a year (0.75 on the apps), 50% odds in five
-years (3.9% on the apps).
+**Capacity on both sides** (`keep.mjs` → `keep.json`). The same holds for him: a man with dozens of
+first dates (a 99th-percentile-looks man has about 41 a year, and 14 women who'd keep seeing him) properly
+dates only his best two, so in her search he keeps seeing her only if her read (0.7 × her appeal) clears
+his threshold (`hisKeepBar`). Casual men keep seeing 80% of women regardless. Each side's thresholds
+depend on the other's, so they are solved in rounds (her thresholds moved 0.24, 0.023, 0.006 SD; three
+rounds). Only men above looks z 0.6 ever have more than two women keeping them. Without this, women's
+searches started months-long relationships with men who were in many at once: counted from women's
+side, 9.9% of single women committed a year against 2.3% of single men from men's own app searches; now
+men's app searches give 4.8% a year, against about 4% implied by the census (6.8% of never-married men
+marry a year) and HCMST's 59% of recent couples meeting online.
+
+**In person (men)**, fitted to Date Psychology's survey of men who approached women in the past year
+(`approach.json`, read from the charts in the author's draft "why you should approach more"): 48% of men
+approached at least once, those who did averaged 5.4 approaches, 1.35 dates (0.25 per approach), 0.37
+two-month relationships (28.5% of dates) and 0.16 long-term ones; 13.4% got at least one long-term
+relationship. He approaches one woman a month (the post: that puts a man in the top quarter of single
+men; about twice the survey's average), choosing women he likes; she says yes if her read of him (0.3
+looks, 0.45 value) clears a bar at her app like rate × ipYes, fitted to the dates per approach (ipYes =
+6.6). She keeps seeing him if he clears her app keep-seeing threshold less ipKeepShift (fitted to the
+28.5%: 0.64 SD lower; she has fewer alternatives than on the apps, but some). Fitted for a median man;
+the survey's approachers are probably above the median, so this flatters him a little. Check: a median
+man approaching 5.4 times a year commits within the year 10.8% of the time, against the survey's 13.4%
+with a long-term relationship. A median man approaching once a month: 3.0 first dates a year (0.75 on the
+apps), 29% kept, 65% odds in five years (9.3% on the apps). At two a month it would be 82%, but that is
+four times the survey's average approacher.
 
 **Reads.** Connelly & Ones (2010): strangers ~.17, coworkers ~.26, friends ~.47. Profile: 0.48 looks,
 0.2 value; after a first date 0.3 looks, 0.5 value. Channels: apps 15,000 profiles a year, 13 first
@@ -319,8 +350,8 @@ calculators use likes only.
   1.3% (4.4x, 337 couples with a 10+ gap), 23-26 7.9% vs 4.6% (1.7x, 795), 27-35 about 1x, 36-45 1.4x.
   Current income rises with age, so part of what a gap buys is an established man.
 - **Age gaps, modeled.** Open to men 15 years older instead of 2: for a median woman almost nothing
-  (from 27: any 38% → 38%, as rare 22% → 22%): the top men aren't in her reach either way. For a
-  90th-percentile woman from 31: top 10% 5.0% → 14.8%, top 5% 0.9% → 6.2%, top 1% 0.02% → 0.37%. From 23
+  (from 27: any 41% → 46%, as rare 19% → 25%): the top men aren't in her reach either way. For a
+  90th-percentile woman from 31: top 10% 5.0% → 24%, top 5% 0.7% → 9.4%, top 1% 0.01% → 0.38%. From 23
   a gap lowers her odds: young attractive women can already reach top men their own age (on potential).
 - **GLP-1s and the gym** (`glp1.py`). NHANES women 20-29 (n = 923), each given 500 simulated responses:
   weight loss from the trials (semaglutide 2.4 mg, STEP 1: −14.9%, SD ~11 points; tirzepatide 15 mg,
@@ -334,20 +365,22 @@ calculators use likes only.
 - **Women's levers**, for a median, 70th-percentile and top-10% woman (the page's dropdown): start at
   23, age gaps of 10 and 15, GLP-1 plus glutes (her WHR percentile from her appeal, WHR z = appeal z /
   0.6, moved by the NHANES bands), three men a year. The waterfall is a top-20% woman. For a top-20%
-  woman on WHR (80th percentile) from 27, GLP-1 plus glutes: any committed man 43% → 48%, top 10% 0.2% →
-  0.9%. The waterfall: a top-20% woman going for a top-10% man, one step at a time: not looking till 27
-  1.0%; start at 23 1.0% (top-10% men today are mostly older); open to men 15 years older 4.1%; GLP-1
-  plus glutes 7.5%; dating 2 → 3 men a year 10.1%. Starting at 23 adds nothing on its own because top-10%
+  woman on WHR (80th percentile) from 27, GLP-1 plus glutes: any committed man 59% → 67%, top 10% 0.1% →
+  0.5%. The waterfall: a top-20% woman going for a top-10% man, one step at a time: not looking till 27
+  0.6%; start at 23 0.4% (top-10% men today are mostly older); open to men 15 years older 7.6%; GLP-1
+  plus glutes 13.7%; dating 2 → 3 men a year 18.6%. Starting at 23 adds nothing on its own because top-10%
   men today are rare among single men her age (0.2-0.6% at 22-25, 2% at 30, 4% at 38).
-- **Millionaire odds and GLP-1s** (five years from 25, open to +2 / +15 years): a top-5% WHR woman 1.8% /
-  6.5% → 3.6% / 9.3% with GLP-1 plus glutes; top 5-10% 0.5% / 3.6% → 1.9% / 6.6%; top 10-25% 0.1% / 1.7%
-  → 0.6% / 3.6%; median ≈ 0 / 0.1% → 0 / 0.4%.
+- **Millionaire odds and GLP-1s** (five years from 25, open to +2 / +15 years; each man at his chance of
+  being worth $1M+): a top-5% WHR woman 1.7% / 4.8% → 1.9% / 5.6% with GLP-1 plus glutes; top 5-10% 1.3%
+  / 3.8% → 1.7% / 4.9%; top 10-25% 1.0% / 2.9% → 1.3% / 3.8%; 25-50% 0.6% / 2.0% → 0.9% / 2.7%. The age gap
+  roughly triples them; few single men under 35 are worth $1M. A 90th-percentile woman from 30 open to
+  +15: 10.4%.
 - **Men's levers** (`hisYears`, a median man of 30, women 22-30, five years), each on the apps and in
-  person (two approaches a month): baseline 3.9% / 50%. Getting fit: 43% / 73%; strict abs 58% / 74%.
-  Status to the 90th percentile: 9.3% on the apps (status barely shows on a profile, so his dates don't
-  change) but 69% in person, and a
-  75th-percentile woman or better 2.8% → 38% in person. All of it (fit, status and social skills at the
-  75th, about the 88th percentile as a partner) in person: 71%, and a 75th-percentile woman 55%. The body ladder uses the Dating Calculator's flags among single men
+  person (one approach a month): baseline 9.3% / 65%. Getting fit: 72% / 88%; strict abs 85% / 88%.
+  Status to the 90th percentile: 28% on the apps (status barely shows on a profile, so his dates don't
+  change) but 85% in person, and a 75th-percentile woman or better 2.1% → 55% in person. All of it (fit,
+  status and social skills at the 75th, about the 88th percentile as a partner) in person: 86%, and a
+  75th-percentile woman 75%. The body ladder uses the Dating Calculator's flags among single men
   25-35 (body half of looks, face at the median): out of overweight and obese (40%: body at the 60th
   percentile, looks 57th) 23%; fit (the `fit` flag, identical to `abs`: 5.3%, body fat up to 20%; looks
   87th, 6.6 first dates a year) 66%; strict abs (`abs_strict`: 2.2%, body fat up to 17%; looks 92nd)
@@ -379,8 +412,8 @@ weaker, mixed evidence (Bellou 2015 finds broadband raised marriage rates).
 | Casual share b, casual pair-off k_c, x at median | 0.2, 0.1, 1.65 | Fitted to luap intent chart, §5 |
 | Lemon effect | 0.3 | Solomon & Jackson 2014 |
 | Mate value weights (status, social, looks, height) | 0.5, 0.2, 0.2, 0.1 | The author's dating power equation |
-| Tolerance d | 0.753 | Fitted: couples correlate 0.756 (PSID) |
-| Commit scale m | 0.228 | Fitted: census 27 → 32 among women who expect to marry (39.9%) |
+| Tolerance d | 0.247 | Fitted: couples correlate 0.756 (PSID) |
+| Commit scale m | 0.771 | Fitted: census 27 → 32 among women who expect to marry (39.9%) |
 | Planning horizons (relaxing toward what you can get) | women 32, men 36 | Chosen: Add Health top deciles |
 | θ (higher-value men marry faster) | 1.15 | Fitted: ACS ever married by earnings quintile |
 | Commitment noise σ; first-date noise | 0.5; 1.0 | Assumptions, swept in `results.md` §H |
@@ -394,12 +427,12 @@ weaker, mixed evidence (Bellou 2015 finds broadband raised marriage rates).
 | Months-long dates per year | 2 | Author's 4-20 over a decade |
 | Body share of a woman's appeal; of a man's looks | 0.6; 0.5 | Assumptions |
 | Men's body rungs | 60th / 94.7th / 97.8th percentile | Parquet flags: not overweight, fit, strict abs |
-| In person (men): approaches a year; her yes bar | 24; app like rate × 2.7 | The author's post; §3 |
+| In person (men): approaches a year; her yes bar; her keep-seeing bar | 12; app like rate × 6.6; app threshold − 0.64 | Post (once a month = top quarter); fitted to Date Psychology (§8) |
 | GLP-1 weight loss; waist per weight; hip slope; glutes | trials; 0.84; 0.657; 1 in | STEP 1, SURMOUNT-1, WHR notebook, assumption |
 
 ## 14. Validation
 
-`npm test` runs 50 checks (21 hiring, 29 dating). Dating checks include the single-stage identities (tail
+`npm test` runs 52 checks (21 hiring, 31 dating). Dating checks include the single-stage identities (tail
 accuracy, digitized medians, law of total probability, McCall fixed point, bivariate tail limits,
 the author's odds table), the grid and funnel accounting, the cohort reproducing the census, the
 evaluate step's limits, and the calibrated scenario: men commit up and rarely down (a 25th-percentile man
@@ -412,7 +445,7 @@ which never lowers anyone's odds and lifts top women past 85% committed by 35.
 Fitted exactly: the three targets in §13. Out of sample: Hinge top 1/10% and bottom 50%; NSFG men's 3.4
 partners; the founder's intent gradient from selection alone; the census rate at which single women
 marry at other ages (above it at 22, close at 24-28 and 36-38, below it at 30-34);
-a median man's five-year odds (3.9% on the apps, 50% in person) against the census rate for never-married men 30 → 35 (27%, all
+a median man's five-year odds (9.3% on the apps, 65% in person) against the census rate for never-married men 30 → 35 (27%, all
 channels).
 
 ## 15. Assumptions and limitations
@@ -446,8 +479,8 @@ channels).
 | `uv run scripts/dating/glp1.py` | `src/data/dating/glp1.json` |
 | `uv run scripts/dating/status.py` | `src/data/dating/status.json` |
 | `node scripts/dating/sensitivity.mjs` | `calibration.json`, `docs/dating/sensitivity.md` |
-| `node scripts/dating/fit.mjs` (~10 min) | `src/data/dating/fitted.json` |
-| `node scripts/dating/keep.mjs` (~1 min, after fit) | `src/data/dating/keep.json` (women's keep-seeing thresholds) |
+| `node scripts/dating/keep.mjs` (~20 min, before fit) | `src/data/dating/keep.json` (both sides' keep-seeing thresholds) |
+| `node scripts/dating/fit.mjs` (~13 min) | `src/data/dating/fitted.json` (reads `approach.json`, the Date Psychology figures entered by hand) |
 | `uv run scripts/dating/nsfg_expect.py` | `src/data/dating/expect.json` |
 | `uv run scripts/dating/addhealth_curve.py` | `src/data/dating/addhealth.json` (from the author's `addhealth.py` group estimates) |
 | `node scripts/dating/chain.mjs` | `docs/dating/results.md` |

@@ -47,6 +47,8 @@ export const DEFAULTS = {
   // Relaxing toward what you can get: the searcher's bar falls to the best they can expect before a
   // planning horizon, women's earlier (the age effect). Chosen so the top deciles' marriage rates match
   // Add Health (disattenuated; scripts/dating/addhealth_curve.py): women 32 of 32/35/38, men 36 of 32/36/42.
+  ipYes: 2.7,        // in person: her yes bar = her app like rate x this (fitted: Date Psychology dates per approach)
+  ipKeepShift: 0,    // in person: how much lower her keep-seeing bar is than on the apps (fitted: dates -> two-month relationships)
   relax: true,
   horizonW: 32,
   horizonM: 36,
@@ -63,7 +65,7 @@ const GRIDS = { fine: { men: [61, 61], women: [61, 41] }, coarse: { men: [31, 31
 export function createScenario({ digitized, pools, calibration: cal, nsfg, status, keep = null }, { grid = 'fine', fitted = null } = {}) {
   const G = GRIDS[grid];
   const BASE = { ...DEFAULTS };
-  if (fitted) for (const k of ['tolerance', 'commitScale', 'theta', 'p0', 'sigma', 'intentShown', 'evalPerYear']) if (fitted[k] != null) BASE[k] = fitted[k];
+  if (fitted) for (const k of ['tolerance', 'commitScale', 'theta', 'p0', 'sigma', 'intentShown', 'evalPerYear', 'ipYes', 'ipKeepShift']) if (fitted[k] != null) BASE[k] = fitted[k];
   const meanOf = (h) => D.histMean(D.histPoints(h));
   const W = D.activityWeighted(D.histPoints(digitized.luap_like_rate_women), meanOf(digitized.luap_received_ratio_men)).pts;
   const Mn = D.activityWeighted(D.histPoints(digitized.luap_like_rate_men), meanOf(digitized.luap_received_ratio_women)).pts;
@@ -125,6 +127,31 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
     return { quantile };
   })();
   const menBar = (p) => ({ z: menScale.quantile(p), key: 'xn' });
+  // A millionaire: P(worth $1M+) by his age and earnings, from the parquet (status.py, millionaire_by_z).
+  // His status for his age given e (the non-looks part of his value) is SIO e + noise; earnings correlate
+  // earnStatus with status; his pooled earnings score is his age's mu + sigma x that. Averaged over the
+  // noise (Gauss-Hermite), read off the table by age band. Before, the top 8% on overall standing counted
+  // as millionaires, but standing isn't wealth: most top-8% men aren't worth $1M.
+  const MIL = status.millionaire_by_z, MILZ = status.millionaire_z_grid;
+  const milBand = (M) => Object.keys(MIL).find((k) => { const [lo, hi] = k.split('-').map(Number); return M >= lo && M <= hi; }) ?? (M < 22 ? '22-26' : '47-55');
+  const milAt = (band, z) => {
+    const t = MIL[band], i = (z - MILZ[0]) / (MILZ[1] - MILZ[0]);
+    if (i <= 0) return t[0] ?? 0;
+    if (i >= t.length - 1) return t[t.length - 1];
+    const j = Math.floor(i), f = i - j;
+    return (t[j] ?? 0) * (1 - f) + (t[j + 1] ?? t[j] ?? 0) * f;
+  };
+  const GH = [[-2.0202, 0.0199532], [-0.958572, 0.393619], [0, 0.945309], [0.958572, 0.393619], [2.0202, 0.0199532]];
+  const milCache = new Map();
+  const pMil = (c) => {
+    const key = `${c.M}_${c.e}`;
+    if (!milCache.has(key)) {
+      const { mu, sigma } = tail(c.M ?? 30), r = (BASE.earnStatus ?? 0.8) * SIO;
+      const m = mu + sigma * r * c.e, sd = sigma * Math.sqrt(1 - r * r), band = milBand(c.M ?? 30);
+      milCache.set(key, GH.reduce((t, [x, w]) => t + w * milAt(band, m + Math.SQRT2 * sd * x), 0) / Math.sqrt(Math.PI));
+    }
+    return milCache.get(key);
+  };
 
   // ---------- who is single at each age ----------
   // Never-married men: frailty model fitted to the census at every age, with higher-value men marrying
@@ -241,10 +268,11 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
     app: { label: 'Apps', a: BASE.read.a, c: BASE.read.c, views: 15000 },
     friends: { label: 'Friends', a: 0.3, c: 0.45, views: 60, like: 0.2, dates: 6 },
     work: { label: 'Work', a: 0.25, c: 0.4, views: 25, like: 0.2, dates: 3 },
-    // Men only: approaching women he likes, in person. Two a month puts a man well inside the top
-    // quarter of single men (the author's post). In person she reads more of him than a profile shows,
-    // and she isn't flooded: her yes rate is her app like rate x 2.7, the app's men-per-woman ratio.
-    inperson: { label: 'In person', a: 0.3, c: 0.45, approaches: 24 },
+    // Men only: approaching women he likes, in person. Once a month puts a man in the top quarter of
+    // single men (Date Psychology, via the author's post); the survey's approachers average 5.4 a year,
+    // so this is about twice the data. In person she reads more of him than a profile shows; her yes
+    // rate and keep-seeing bar are fitted to the survey (ipYes, ipKeepShift).
+    inperson: { label: 'In person', a: 0.3, c: 0.45, approaches: 12 },
   };
   // A woman at appeal percentile v for her age, searching for `years` from age `start`, open to men
   // `gap` years older. Each year: men's interest in her is at her age's level; she likes and dates by
@@ -268,7 +296,7 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
   // threshold. By her age and appeal; cached on a 0.1-SD grid.
   // Precomputed by scripts/dating/keep.mjs (src/data/dating/keep.json) when given; computed on demand otherwise.
   const keepCache = new Map(Object.entries(keep?.t ?? {}));
-  const keepAt = (age, ya) => herSearch(age, ya, 2, 'app', {}, { any: 0 }, () => 0, hisInterest({})).final.t;
+  const keepAt = (age, ya, hisKeep = keep?.m ? hisKeepsHer : hisInterest({})) => herSearch(age, ya, 2, 'app', {}, { any: 0 }, () => 0, hisKeep).final.t;
   const herKeepBar = (age, yEff) => {
     const ya = Math.round(yEff * 10) / 10, key = `${age}_${ya.toFixed(1)}`;
     if (!keepCache.has(key)) keepCache.set(key, keepAt(age, ya));
@@ -281,15 +309,15 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
     // the top-10/5/1% bars are on standing now.
     // `rareV` fixes that bar at a starting appeal, so a lever that raises her appeal doesn't move her target.
     const rv = o.rareV ?? v;
-    // "A millionaire": the share of men 22-55 worth $1M+ (8%), taken as the top of the same standing scale.
-    const bars = { any: 0, top10: menBar(0.9), top5: menBar(0.95), top1: menBar(0.99), mil: menBar(1 - (status.millionaire_share ?? 0.08)),
+    // "A millionaire": each man counts with his chance of being worth $1M+ (pMil).
+    const bars = { any: 0, top10: menBar(0.9), top5: menBar(0.95), top1: menBar(0.99), mil: { weight: pMil },
       rare: { z: D.zTop(1 - Math.min(0.999, Math.max(rv, 0.001))), key: 'xt' } };
     const miss = Object.fromEntries(Object.keys(bars).map((k) => [k, 1]));
     const rows = [];
     let reach = 1, xm = 0, xs = 0, got = 0;
     for (let t = 0; t < years; t++) {
       const age = start + t, yEff = y0 + womenShift(age), uApp = normCdf(yEff);
-      const r = herSearch(age, yEff, gap, ch, o, bars, (cell) => his(cell, yEff) * hers(cell.Q, yEff, uApp), hisWant);
+      const r = herSearch(age, yEff, gap, ch, o, bars, (cell) => his(cell, yEff) * hers(cell.Q, yEff, uApp), ch === 'app' ? hisKeepsHer : hisWant);
       // Her bar relaxes toward the best of the men who'd commit to her before her horizon.
       const out = (o.relax ?? BASE.relax)
         ? relaxedOutcome(r.final, r.evaluated, bars, (c) => his(c, yEff), herOwnBar(yEff, uApp, o), r.evaluated * Math.max(0, (o.horizon ?? BASE.horizonW) - age), o)
@@ -330,7 +358,8 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
       datesByU = [...acc.entries()].sort((p, q) => p[0] - q[0]).map(([uu, [w, d]]) => [uu, d / w]);
     }
     let j = datesByU.findIndex(([uu]) => uu >= u);
-    if (j <= 0) return datesByU[Math.max(0, j)][1];
+    if (j < 0) return datesByU[datesByU.length - 1][1];   // above the funnel's top bin: the top bin
+    if (j === 0) return datesByU[0][1];
     const [u0, d0] = datesByU[j - 1], [u1, d1] = datesByU[j];
     return d0 + (d1 - d0) * (u - u0) / (u1 - u0);
   };
@@ -349,9 +378,63 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
     if (!datedCache.has(uu)) datedCache.set(uu, F.datedWomen((c) => c.u === uu));
     return datedCache.get(uu);
   };
+  // One year of his search, aged M, with raw looks z and mate value x, looking at women lo-hi.
+  // Who he dates: the single women of those ages who would pick him and whom he likes back. On the apps,
+  // she picks him by her read of his profile (looks and a little status) against her own like rate,
+  // and he gets the funnel's number of first dates for his looks. In person he approaches women he
+  // likes; she says yes if her read of him clears a bar set by her app like rate times ipYes (fitted
+  // to Date Psychology's dates per approach). Months of dating then need her to keep seeing him: she
+  // keeps him only if he beats her other first dates (her threshold, herKeepBar); in person she has
+  // fewer of them, a bar ipKeepShift lower (fitted to the share of first dates that became two-month
+  // relationships). He properly dates the best evalPerYear of the women who keep seeing him.
+  function hisYear({ M, z, x, lo, hi, ch = 'app', o = {}, bars = { any: 0 }, commit = () => 0, herKeep = herKeepBar }) {
+    const r2 = BASE.read2, sdKeep = C.readSd(r2.a, r2.c, RHO_LOOKS_VALUE), u = normCdf(z);
+    const zApp = z + menLooksShift(M) - menLooksShift(29), mine = r2.a * z + r2.c * x;
+    const ages = [];
+    for (let a = Math.max(18, lo); a <= Math.min(48, hi); a++) { const r = byAge('women', a); ages.push([a, r.pop * r.single]); }
+    const aTot = ages.reduce((t, [, w]) => t + w, 0);
+    const sRead = BASE.read.a * zApp + BASE.read.c * x, sdRead = Math.sqrt(Math.max(1e-6, 1 - (BASE.read.a ** 2 + BASE.read.c ** 2 + 2 * BASE.read.a * BASE.read.c * RHO_LOOKS_VALUE)));
+    const tM = D.zTop(likeM(u)), sM = Math.sqrt(1 - rhoM * rhoM);
+    const ip = CHANNELS.inperson, sIP = ip.a * zApp + ip.c * x, sdIP = Math.sqrt(Math.max(1e-6, 1 - (ip.a ** 2 + ip.c ** 2 + 2 * ip.a * ip.c * RHO_LOOKS_VALUE)));
+    const yesMult = o.ipYes ?? BASE.ipYes, shift = ch === 'inperson' ? (o.ipKeepShift ?? BASE.ipKeepShift) : 0;
+    let liked = 0, yes = 0;
+    const cells = ages.flatMap(([a, w]) => womenSingleCells().map((c) => {
+      const Q = c.z + womenShift(a), wt = c.w * w / aTot, back = D.normSf((tM - rhoM * Q) / sM);
+      let pick = 1;
+      if (ch === 'app') pick = D.normSf((D.zTop(likeW(normCdf(Q))) - sRead) / sdRead) * back;
+      else if (ch === 'inperson') {
+        const y = D.normSf((D.zTop(Math.min(0.9, yesMult * likeW(normCdf(Q)))) - sIP) / sdIP);
+        liked += wt * back; yes += wt * back * y; pick = back * y;
+      }
+      return { ...c, xt: c.z, Q, a, w: wt * pick };
+    }));
+    const dates = ch === 'app' ? Math.max(0.05, datesAt(normCdf(zApp))) : ch === 'inperson' ? (o.approaches ?? ip.approaches) * yes / Math.max(liked, 1e-12) : CHANNELS[ch].dates;
+    const r = C.evaluate({ cells: C.normalize(cells), count: dates }, {
+      n: o.n ?? BASE.evalPerYear, read2: { a: 0, c: 0.7 }, rhoQz: 1, bar: 0, bars, commit,
+      pursue: (c) => D.normSf((herKeep(c.a, c.Q) - shift - mine) / sdKeep),
+    });
+    return { r, dates, perApproach: yes / Math.max(liked, 1e-12) };
+  }
+
+  // The read (0.7 x her appeal, after a first date) a woman has to clear for a man on the apps to keep
+  // seeing her: he too properly dates only his best two, so a man with dozens of first dates keeps few
+  // of the women he meets. By his age and type (z, e); precomputed in keep.json (keep.mjs).
+  const cellIndex = (() => { let m = null; return () => (m ??= new Map(menPop().cells.map((c, i) => [`${c.z}_${c.e}`, i]))); })();
+  const hisKeepTable = new Map(Object.entries(keep?.m ?? {}));
+  const hisKeepAt = (M, c, herKeep = herKeepBar) => hisYear({ M, z: c.z, x: c.Q, lo: M - 8, hi: M, herKeep }).r.final.t;
+  const hisKeepBar = (M, c) => {
+    const Mc = Math.max(22, Math.min(55, M)), row = hisKeepTable.get(String(Mc)), i = cellIndex().get(`${c.z}_${c.e}`);
+    if (row && i != null) return row[i] <= -90 ? -Infinity : row[i];
+    const key = `${Mc}_${c.z}_${c.e}`;
+    if (!hisKeepTable.has(key)) hisKeepTable.set(key, hisKeepAt(Mc, c));
+    return hisKeepTable.get(key);
+  };
+  // On the apps a man keeps seeing her if her read clears his threshold; casual men mostly do.
+  const sdHim = C.readSd(0, 0.7, 1);
+  const hisKeepsHer = (cell, yEff) => (cell.serious ? D.normSf((hisKeepBar(cell.M, cell) - 0.7 * yEff) / sdHim) : BASE.casualPursue);
+
   function hisYears({ age = 30, years = BASE.years, uLooks = null, status: us = 0.5, height = 0.5, social = 0.5, mv = null, lo = age - 8, hi = age, ch = 'app', ...o } = {}) {
-    const his = hisCommit(o), hers = herCommit(o), herWant = herInterest(o);
-    const r2 = BASE.read2, sdKeep = C.readSd(r2.a, r2.c, RHO_LOOKS_VALUE);
+    const his = hisCommit(o), hers = herCommit(o);
     let z, e;
     if (mv != null) {
       const x = D.zTop(1 - mv);
@@ -366,41 +449,11 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
     const bars = { any: 0, p50: { z: 0, key: 'xt' }, p75: { z: D.zTop(0.25), key: 'xt' }, p90: { z: D.zTop(0.1), key: 'xt' }, p95: { z: D.zTop(0.05), key: 'xt' },
       rare: { z: Math.min(3.5, xType), key: 'xt' } };
     const miss = Object.fromEntries(Object.keys(bars).map((k) => [k, 1]));
-    const ages = [];
-    for (let a = Math.max(18, lo); a <= Math.min(48, hi); a++) { const r = byAge('women', a); ages.push([a, r.pop * r.single]); }
-    const aTot = ages.reduce((t, [, w]) => t + w, 0);
     const rows = [];
     for (let t = 0; t < years; t++) {
-      const M = age + t, zApp = z + menLooksShift(M) - menLooksShift(29);
-      const me = { Q: xType, u: uLooks, serious: true, M };
-      // Who he dates: the single women of those ages who would pick him (her read of him: looks and a
-      // little status, against her own like rate, pickier the more appealing she is) and whom he likes
-      // back. How many: the funnel's first dates for a man with his looks. Through friends: the single
-      // women his friends know, with no swipe stage.
-      const sRead = BASE.read.a * zApp + BASE.read.c * xType, sdRead = Math.sqrt(Math.max(1e-6, 1 - (BASE.read.a ** 2 + BASE.read.c ** 2 + 2 * BASE.read.a * BASE.read.c * RHO_LOOKS_VALUE)));
-      const tM = D.zTop(likeM(uLooks)), sM = Math.sqrt(1 - rhoM * rhoM);
-      const ip = CHANNELS.inperson, sIP = ip.a * zApp + ip.c * xType, sdIP = Math.sqrt(Math.max(1e-6, 1 - (ip.a ** 2 + ip.c ** 2 + 2 * ip.a * ip.c * RHO_LOOKS_VALUE)));
-      let liked = 0, yes = 0;
-      const cells = ages.flatMap(([a, w]) => womenSingleCells().map((c) => {
-        const Q = c.z + womenShift(a), wt = c.w * w / aTot, back = D.normSf((tM - rhoM * Q) / sM);
-        let pick = 1;
-        if (ch === 'app') pick = D.normSf((D.zTop(likeW(normCdf(Q))) - sRead) / sdRead) * back;
-        else if (ch === 'inperson') {
-          const y = D.normSf((D.zTop(Math.min(0.9, 2.7 * likeW(normCdf(Q)))) - sIP) / sdIP);
-          liked += wt * back; yes += wt * back * y; pick = back * y;
-        }
-        return { ...c, xt: c.z, Q, a, w: wt * pick };
-      }));
-      const dates = ch === 'app' ? Math.max(0.05, datesAt(normCdf(zApp))) : ch === 'inperson' ? ip.approaches * yes / Math.max(liked, 1e-12) : CHANNELS[ch].dates;
-      const r = C.evaluate({ cells: C.normalize(cells), count: dates }, {
-        n: o.n ?? BASE.evalPerYear, read2: { a: 0, c: 0.7 }, rhoQz: 1, bar: 0, bars,
-        // On the apps she keeps seeing him only if he beats her other first dates (her threshold, from her
-        // own search). In person she isn't juggling a dozen app dates: her own bar decides.
-        pursue: ch === 'app'
-          ? (c) => D.normSf((herKeepBar(c.a, c.Q) - (r2.a * z + r2.c * xType)) / sdKeep)
-          : (c) => herWant(xType, c.Q, normCdf(c.Q)),
-        commit: (c) => (c.serious ? 1 : kc) * his(me, c.Q) * hers(xType, c.Q, normCdf(c.Q)),
-      });
+      const M = age + t, me = { Q: xType, u: uLooks, serious: true, M };
+      const { r, dates } = hisYear({ M, z, x: xType, lo, hi, ch, o, bars,
+        commit: (c) => (c.serious ? 1 : kc) * his(me, c.Q) * hers(xType, c.Q, normCdf(c.Q)) });
       // His bar relaxes toward the best of the women who'd commit to him before his horizon.
       const m = o.commitScale ?? BASE.commitScale;
       const out = (o.relax ?? BASE.relax)
@@ -408,7 +461,7 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
           hisOwnBar(xType, uLooks, M, o), r.evaluated * Math.max(0, (o.horizon ?? BASE.horizonM) - M), o)
         : r;
       for (const k of Object.keys(bars)) miss[k] *= 1 - out.multi[k];
-      rows.push({ age: M, dates, evaluated: r.evaluated, odds: out.multi, bar: out.bar });
+      rows.push({ age: M, dates, evaluated: r.evaluated, odds: out.multi, bar: out.bar, success: r.evaluated > 0 ? 1 - Math.pow(1 - out.multi.any, 1 / r.evaluated) : 0 });
     }
     return { odds: Object.fromEntries(Object.entries(miss).map(([k, v2]) => [k, 1 - v2])), rows, first: rows[0], mvPct: normCdf(xType), uLooks };
   }
@@ -420,7 +473,7 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
     BASE, CHANNELS, rhoW, rhoM, demandM, demandW, likeM, likeW, b, kc, x50, ok, censusM, censusW, cal,
     menPop, menSingle, womenPop, womenSingle, hisCommit, herCommit, cohortM, poolAt, poolCells, herPool, hisPool, menOptionsAt,
     womenShift, menLooksShift, menAgeDiscount, menBar, datesAt, POWER_NORM: { W_OTHER, NORM }, menScale, xNow,
-    herYears, hisYears, herKeepBar, keepAt, funnel, fMen, fWomen, p0, appealFromWhr,
+    herYears, hisYears, hisYear, herKeepBar, keepAt, hisKeepAt, hisKeepsHer, menPopCells: () => menPop().cells, pMil, funnel, fMen, fWomen, p0, appealFromWhr,
     fitted: { tolerance: BASE.tolerance, commitScale: BASE.commitScale, theta: BASE.theta, p0 },
   };
 }

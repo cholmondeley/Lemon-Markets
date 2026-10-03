@@ -73,7 +73,7 @@ export function singlePool(pop, { demand, x50, kc, lemon = 0 }) {
 // the first two moments of each person's type `xt` (if set) among those who would commit, so callers
 // can measure how tightly couples sort.
 export function describe(cells, bar = 0.9, commit = null) {
-  const zb = typeof bar === 'object' ? bar.z : bar <= 0 ? -Infinity : zTop(1 - bar);   // bar 0: no quality requirement
+  const zb = typeof bar === 'object' ? (bar.z ?? -Infinity) : bar <= 0 ? -Infinity : zTop(1 - bar);   // bar 0: no quality requirement
   const key = typeof bar === 'object' && bar.key ? bar.key : 'Q';                        // { z, key }: threshold on another field
   let serious = 0, qPct = 0, zPct = 0, good = 0, commits = 0, xm = 0, xs = 0;
   for (const c of cells) {
@@ -83,7 +83,8 @@ export function describe(cells, bar = 0.9, commit = null) {
     qPct += c.w * normCdf(c.Q);
     zPct += c.w * c.u;
     if (c.xt != null) { xm += c.w * k * c.xt; xs += c.w * k * c.xt * c.xt; }
-    if (c[key] >= zb) good += c.w * (commit ? k : (c.serious ? 1 : 0));
+    const hit = typeof bar === 'object' && bar.weight ? bar.weight(c) : c[key] >= zb ? 1 : 0;   // { weight }: a probability per person
+    if (hit) good += hit * c.w * (commit ? k : (c.serious ? 1 : 0));
   }
   return { serious, commits, qPct, zPct, good, xMean: commits > 0 ? xm / commits : 0, xSq: commits > 0 ? xs / commits : 0 };
 }

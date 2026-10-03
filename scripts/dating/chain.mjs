@@ -86,7 +86,7 @@ say('## E. His odds over five years from 30 (women 22-30), by his mate value', '
     [0.1, 0.25, 0.5, 0.75, 0.9, 0.99].map((mv) => { const r = hisYears({ age: 30, mv, lo: 22, hi: 30 }); return [ord(mv), ord(r.uLooks), r.first.dates.toFixed(2), pct(r.odds.any), pct(r.odds.p50), pct(r.odds.p75, 1), pct(r.odds.p90, 1), pct(r.odds.p95, 1), pct(r.odds.rare)]; })),
   'One thing at a time, from a median man of 30:',
   table(['Change', 'Value pctile', 'Any', '75th+', '90th+'],
-    [['Baseline', {}], ['In person, 2 approaches a month', { ch: 'inperson' }], ['Out of overweight (looks 57th)', { uLooks: 0.572 }], ['Fit, top 5% of bodies (looks 87th)', { uLooks: 0.873 }], ['Strict abs, top 2% (looks 92nd)', { uLooks: 0.922 }], ['Status 75th', { status: 0.75 }], ['Status 90th', { status: 0.9 }], ['Social 75th', { social: 0.75 }], ['Height 90th', { height: 0.9 }], ['All three 75th', { status: 0.75, uLooks: 0.75, social: 0.75 }]]
+    [['Baseline', {}], ['In person, one approach a month', { ch: 'inperson' }], ['Out of overweight (looks 57th)', { uLooks: 0.572 }], ['Fit, top 5% of bodies (looks 87th)', { uLooks: 0.873 }], ['Strict abs, top 2% (looks 92nd)', { uLooks: 0.922 }], ['Status 75th', { status: 0.75 }], ['Status 90th', { status: 0.9 }], ['Social 75th', { social: 0.75 }], ['Height 90th', { height: 0.9 }], ['All three 75th', { status: 0.75, uLooks: 0.75, social: 0.75 }]]
       .map(([l, o]) => { const r = hisYears({ age: 30, lo: 22, hi: 30, uLooks: 0.5, ...o }); return [l, ord(r.mvPct), pct(r.odds.any), pct(r.odds.p75, 1), pct(r.odds.p90, 1)]; })));
 log('E');
 

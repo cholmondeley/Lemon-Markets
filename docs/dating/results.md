@@ -13,8 +13,8 @@ Mate-value searches run on the coarse grid the page uses.
 | Parameter | Value | Fitted to | Model | Data |
 |---|---|---|---|---|
 | theta (higher-value men marry faster) | 1.15 | ever married at 40-49 by earnings quintile (ACS) | 59% 74% 81% 87% 92% | 59% 72% 80% 86% 91% |
-| tolerance (how far below their level people commit) | 0.753 | couples' latent status correlation (PSID) | 0.756 | 0.756 |
-| commitScale (a mutual commitment works out) | 0.228 | never-married women 25 married by 30 (census) | (fitted exactly) | NaN% |
+| tolerance (how far below their level people commit) | 0.247 | couples' latent status correlation (PSID) | 0.756 | 0.756 |
+| commitScale (a mutual commitment works out) | 0.771 | never-married women 25 married by 30 (census) | (fitted exactly) | NaN% |
 The couples target comes from `scripts/dating/assort.py`: a two-factor model on PSID couple-years 2000+ (the husband's
 own earnings and education against his wife's father's peak income, wealth and education and her own education, with
 education allowed to match directly) gives a latent status correlation of 0.76. The raw composite correlation
@@ -26,106 +26,106 @@ couples sort; simulated at the latent 0.76 it gives 95.8%.
 ## B. Will he commit?
 
 A serious man of 30 who has dated a woman of 28 for months: would he commit (his decision alone), by his mate-value
-percentile and hers. Whether the relationship then works out is a further 23% (commitScale), for both.
+percentile and hers. Whether the relationship then works out is a further 77% (commitScale), for both.
 | His percentile | Her 10th | Her 50th | Her 75th | Her 90th | Her 99th |
 |---|---|---|---|---|---|
-| 10th | 82.7% | 100.0% | 100.0% | 100.0% | 100.0% |
-| 25th | 39.3% | 98.9% | 100.0% | 100.0% | 100.0% |
-| 50th | 5.3% | 82.7% | 98.9% | 100.0% | 100.0% |
-| 75th | 0.1% | 34.2% | 82.7% | 98.5% | 100.0% |
-| 90th | 0.0% | 5.3% | 39.3% | 82.7% | 99.9% |
-| 95th | 0.0% | 0.9% | 15.9% | 58.6% | 98.9% |
-| 99th | 0.0% | 0.0% | 0.9% | 12.6% | 82.7% |
+| 10th | 47.3% | 99.4% | 100.0% | 100.0% | 100.0% |
+| 25th | 10.0% | 90.0% | 99.6% | 100.0% | 100.0% |
+| 50th | 0.4% | 47.3% | 90.0% | 99.4% | 100.0% |
+| 75th | 0.0% | 7.8% | 47.3% | 87.4% | 99.9% |
+| 90th | 0.0% | 0.4% | 10.0% | 47.3% | 97.8% |
+| 95th | 0.0% | 0.0% | 2.2% | 21.3% | 90.2% |
+| 99th | 0.0% | 0.0% | 0.0% | 1.5% | 47.3% |
 
 ## C. Her odds over five years from 25, by her appeal for her age
 
 Any committed man; one as good as her or better (on potential); one in the top 10 / 5 / 1% of men 22-55 by standing now.
 | Her appeal | Any | As good+ | Top 10% | Top 5% | Top 1% | Matches, year 1 |
 |---|---|---|---|---|---|---|
-| 10th | 13% | 12% | 0.0% | 0.0% | 0.00% | 35 |
-| 25th | 25% | 20% | 0.0% | 0.0% | 0.00% | 61 |
-| 50th | 42% | 29% | 0.0% | 0.0% | 0.00% | 101 |
-| 75th | 57% | 32% | 0.7% | 0.0% | 0.00% | 150 |
-| 90th | 63% | 25% | 5.8% | 0.6% | 0.00% | 197 |
-| 99th | 60% | 4% | 24.5% | 7.2% | 0.25% | 268 |
+| 10th | 6% | 5% | 0.0% | 0.0% | 0.00% | 35 |
+| 25th | 19% | 15% | 0.0% | 0.0% | 0.00% | 61 |
+| 50th | 42% | 26% | 0.0% | 0.0% | 0.00% | 101 |
+| 75th | 62% | 31% | 0.2% | 0.0% | 0.00% | 150 |
+| 90th | 70% | 23% | 3.4% | 0.3% | 0.00% | 197 |
+| 99th | 76% | 5% | 33.2% | 9.0% | 0.19% | 268 |
 
 ## D. By the age she starts (a median woman), against the census
 
 Census: the share of never-married women at that age who marry within five years.
 | Start | Any | As good+ | Top 10% | Census |
 |---|---|---|---|---|
-| 22 | 48% | 40% | 0.0% | 28% |
-| 24 | 44% | 33% | 0.0% | 34% |
-| 26 | 40% | 26% | 0.0% | 34% |
-| 28 | 36% | 19% | 0.0% | 35% |
-| 30 | 33% | 14% | 0.0% | 35% |
-| 32 | 30% | 10% | 0.0% | 36% |
-| 34 | 28% | 7% | 0.0% | 34% |
-| 36 | 26% | 5% | 0.0% | 23% |
-| 38 | 24% | 4% | 0.0% | 18% |
+| 22 | 47% | 37% | 0.0% | 28% |
+| 24 | 43% | 29% | 0.0% | 34% |
+| 26 | 41% | 22% | 0.0% | 34% |
+| 28 | 41% | 17% | 0.0% | 35% |
+| 30 | 39% | 12% | 0.0% | 35% |
+| 32 | 36% | 9% | 0.0% | 36% |
+| 34 | 32% | 6% | 0.0% | 34% |
+| 36 | 28% | 4% | 0.0% | 23% |
+| 38 | 25% | 3% | 0.0% | 18% |
 Age gaps (open to men up to `gap` years older), a median woman:
 | Start | Gap | Any | As good+ | Top 10% | Top 5% |
 |---|---|---|---|---|---|
-| 23 | 2 | 46% | 37% | 0.0% | 0.0% |
-| 23 | 5 | 46% | 36% | 0.0% | 0.0% |
-| 23 | 10 | 46% | 35% | 0.2% | 0.0% |
-| 23 | 15 | 45% | 35% | 0.5% | 0.1% |
-| 27 | 2 | 38% | 22% | 0.0% | 0.0% |
-| 27 | 5 | 38% | 22% | 0.0% | 0.0% |
-| 27 | 10 | 38% | 22% | 0.2% | 0.0% |
-| 27 | 15 | 38% | 22% | 0.5% | 0.1% |
-| 31 | 2 | 32% | 12% | 0.0% | 0.0% |
-| 31 | 5 | 32% | 12% | 0.1% | 0.0% |
-| 31 | 10 | 32% | 13% | 0.1% | 0.0% |
-| 31 | 15 | 32% | 14% | 0.3% | 0.0% |
+| 23 | 2 | 45% | 33% | 0.0% | 0.0% |
+| 23 | 5 | 46% | 33% | 0.0% | 0.0% |
+| 23 | 10 | 49% | 35% | 0.1% | 0.0% |
+| 23 | 15 | 50% | 36% | 0.5% | 0.1% |
+| 27 | 2 | 41% | 19% | 0.0% | 0.0% |
+| 27 | 5 | 43% | 20% | 0.0% | 0.0% |
+| 27 | 10 | 45% | 22% | 0.1% | 0.0% |
+| 27 | 15 | 46% | 25% | 0.4% | 0.0% |
+| 31 | 2 | 38% | 10% | 0.0% | 0.0% |
+| 31 | 5 | 39% | 11% | 0.0% | 0.0% |
+| 31 | 10 | 40% | 13% | 0.1% | 0.0% |
+| 31 | 15 | 39% | 15% | 0.2% | 0.0% |
 A 90th-percentile woman:
 | Start | Gap | Any | Top 10% | Top 5% | Top 1% |
 |---|---|---|---|---|---|
-| 23 | 2 | 67% | 5.6% | 0.5% | 0.00% |
-| 23 | 10 | 62% | 8.3% | 1.8% | 0.08% |
-| 23 | 15 | 61% | 10.9% | 3.6% | 0.33% |
-| 27 | 2 | 60% | 5.1% | 0.6% | 0.00% |
-| 27 | 10 | 56% | 9.7% | 3.0% | 0.16% |
-| 27 | 15 | 56% | 13.4% | 5.4% | 0.43% |
-| 31 | 2 | 56% | 5.0% | 0.9% | 0.02% |
-| 31 | 10 | 54% | 10.8% | 3.7% | 0.15% |
-| 31 | 15 | 54% | 14.8% | 6.2% | 0.37% |
+| 23 | 2 | 70% | 2.7% | 0.2% | 0.00% |
+| 23 | 10 | 66% | 8.9% | 2.0% | 0.06% |
+| 23 | 15 | 65% | 16.2% | 6.3% | 0.42% |
+| 27 | 2 | 76% | 3.6% | 0.3% | 0.00% |
+| 27 | 10 | 75% | 14.0% | 4.0% | 0.13% |
+| 27 | 15 | 75% | 23.3% | 9.1% | 0.51% |
+| 31 | 2 | 82% | 5.0% | 0.7% | 0.01% |
+| 31 | 10 | 81% | 15.8% | 4.5% | 0.12% |
+| 31 | 15 | 82% | 24.4% | 9.4% | 0.38% |
 
 ## E. His odds over five years from 30 (women 22-30), by his mate value
 
 | His percentile | Looks pctile (expected) | First dates / yr | Any | 50th+ | 75th+ | 90th+ | 95th+ | As good+ |
 |---|---|---|---|---|---|---|---|---|
 | 10th | 33rd | 0.30 | 0% | 0% | 0.0% | 0.0% | 0.0% | 0% |
-| 25th | 41st | 0.48 | 1% | 0% | 0.0% | 0.0% | 0.0% | 0% |
-| 50th | 50th | 0.75 | 4% | 1% | 0.0% | 0.0% | 0.0% | 1% |
-| 75th | 59th | 1.19 | 11% | 3% | 0.4% | 0.2% | 0.0% | 0% |
-| 90th | 67th | 1.82 | 24% | 12% | 2.3% | 1.1% | 0.4% | 1% |
-| 99th | 79th | 3.55 | 55% | 46% | 17.8% | 10.2% | 5.2% | 1% |
+| 25th | 41st | 0.48 | 2% | 0% | 0.0% | 0.0% | 0.0% | 1% |
+| 50th | 50th | 0.75 | 9% | 3% | 0.1% | 0.0% | 0.0% | 3% |
+| 75th | 59th | 1.19 | 32% | 20% | 2.2% | 0.6% | 0.1% | 2% |
+| 90th | 67th | 1.82 | 58% | 49% | 14.1% | 5.8% | 1.8% | 6% |
+| 99th | 79th | 3.55 | 78% | 77% | 57.9% | 41.4% | 23.7% | 3% |
 One thing at a time, from a median man of 30:
 | Change | Value pctile | Any | 75th+ | 90th+ |
 |---|---|---|---|---|
-| Baseline | 50th | 4% | 0.0% | 0.0% |
-| In person, 2 approaches a month | 50th | 50% | 2.8% | 0.6% |
-| Out of overweight (looks 57th) | 52nd | 6% | 0.1% | 0.0% |
-| Fit, top 5% of bodies (looks 87th) | 65th | 43% | 3.1% | 1.0% |
-| Strict abs, top 2% (looks 92nd) | 69th | 58% | 8.1% | 2.9% |
-| Status 75th | 72nd | 6% | 0.2% | 0.1% |
-| Status 90th | 86th | 9% | 0.5% | 0.2% |
-| Social 75th | 59th | 5% | 0.1% | 0.0% |
-| Height 90th | 59th | 5% | 0.1% | 0.0% |
-| All three 75th | 85th | 30% | 3.1% | 1.4% |
+| Baseline | 50th | 9% | 0.1% | 0.0% |
+| In person, one approach a month | 50th | 65% | 2.1% | 0.3% |
+| Out of overweight (looks 57th) | 52nd | 15% | 0.2% | 0.0% |
+| Fit, top 5% of bodies (looks 87th) | 65th | 72% | 10.2% | 2.4% |
+| Strict abs, top 2% (looks 92nd) | 69th | 84% | 24.2% | 7.0% |
+| Status 75th | 72nd | 19% | 0.8% | 0.2% |
+| Status 90th | 86th | 28% | 3.1% | 1.1% |
+| Social 75th | 59th | 13% | 0.2% | 0.0% |
+| Height 90th | 59th | 13% | 0.2% | 0.0% |
+| All three 75th | 85th | 63% | 16.5% | 6.2% |
 
 ## F. What moves a median woman's odds (from 27, five years)
 
 | Lever | Any | As good+ | Top 10% | Top 5% | Top 1% |
 |---|---|---|---|---|---|
-| Baseline | 38% | 22% | 0.0% | 0.0% | 0.00% |
-| Start at 23 | 46% | 37% | 0.0% | 0.0% | 0.00% |
-| Gap 10 | 38% | 22% | 0.2% | 0.0% | 0.00% |
-| Gap 15 | 38% | 22% | 0.5% | 0.1% | 0.00% |
-| GLP-1 + glutes (appeal 61st) | 45% | 23% | 0.1% | 0.0% | 0.00% |
-| Three men a year | 57% | 34% | 0.0% | 0.0% | 0.00% |
-| No app options premium (kappa 0) | 42% | 27% | 0.0% | 0.0% | 0.00% |
+| Baseline | 41% | 19% | 0.0% | 0.0% | 0.00% |
+| Start at 23 | 45% | 33% | 0.0% | 0.0% | 0.00% |
+| Gap 10 | 45% | 22% | 0.1% | 0.0% | 0.00% |
+| Gap 15 | 46% | 25% | 0.4% | 0.0% | 0.00% |
+| GLP-1 + glutes (appeal 61st) | 52% | 21% | 0.0% | 0.0% | 0.00% |
+| Three men a year | 63% | 31% | 0.0% | 0.0% | 0.00% |
+| No app options premium (kappa 0) | 45% | 23% | 0.0% | 0.0% | 0.00% |
 GLP-1s and glute training, by where she starts on WHR (NHANES women 20-29, simulated responses; `glp1.json`):
 | Start band | WHR | Reach ≤ 0.74 now / GLP-1 / + glutes | WHR pctile after (GLP-1 / + glutes) |
 |---|---|---|---|
@@ -152,14 +152,14 @@ transition is the same for both, so the app-era fall is all in marriage before 2
 
 ## H. Sensitivity (not refitted: each assumption moved alone)
 
-Baseline: a median woman from 27 (any 38%, as good+ 22%); a 90th-percentile woman from 25 (top 10% 6%).
+Baseline: a median woman from 27 (any 41%, as good+ 19%); a 90th-percentile woman from 25 (top 10% 3%).
 | Assumption (default) | Range | Median woman: any | Median woman: as good+ | 90th pctile: top 10% |
 |---|---|---|---|---|
-| Commitment noise sigma (0.5) | 0.35 → 0.65 | 38% → 38% | 20% → 24% | 5% → 6% |
-| Options premium kappa (0.25) | 0.00 → 0.50 | 42% → 34% | 27% → 18% | 8% → 4% |
-| Tolerance (0.753) | 0.60 → 0.90 | 31% → 44% | 16% → 29% | 4% → 8% |
-| Commit scale (0.228) | 0.17 → 0.29 | 30% → 45% | 17% → 27% | 4% → 7% |
-| Profile read of status c (0.2) | 0.10 → 0.30 | 47% → 28% | 25% → 18% | 4% → 7% |
+| Commitment noise sigma (0.5) | 0.35 → 0.65 | 38% → 44% | 11% → 26% | 1% → 5% |
+| Options premium kappa (0.25) | 0.00 → 0.50 | 45% → 37% | 23% → 16% | 5% → 2% |
+| Tolerance (0.247) | 0.10 → 0.40 | 33% → 51% | 12% → 28% | 2% → 5% |
+| Commit scale (0.771) | 0.58 → 0.96 | 33% → 47% | 15% → 23% | 3% → 4% |
+| Profile read of status c (0.2) | 0.10 → 0.30 | 55% → 26% | 23% → 13% | 3% → 4% |
 Fixed assumptions: the dating-power weights; how much of women's age preference lowers an older man's bar (0.5);
 a first-date read twice as noisy as the committed one; casual men keep dating a woman who likes them 80% of the time;
 half of casual men are recognizable from the profile; two men properly dated a year.

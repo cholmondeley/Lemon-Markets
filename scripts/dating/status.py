@@ -22,7 +22,7 @@ import pyarrow.parquet as pq
 from scipy.stats import norm
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT = Path.home() / "Desktop/Lemon dating/Dating app calculator data/dcalc_app_v2.parquet"
+DEFAULT = Path.home() / "Desktop/Recent Projects/Lemon dating/Dating app calculator data/dcalc_app_v2.parquet"
 SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT
 OUT = ROOT / "src/data/dating/status.json"
 QS = [0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99]
@@ -33,6 +33,21 @@ def wquant(x, w, qs):
     x, w = np.asarray(x)[o], np.asarray(w)[o]
     c = (np.cumsum(w) - 0.5 * w) / w.sum()
     return [float(np.interp(q, c, x)) for q in qs]
+
+
+ZGRID = [round(-2.5 + 0.25 * i, 2) for i in range(23)]   # -2.5 .. 3.0
+
+
+def mil_by_z(g):
+    """Weighted share worth $1M+ in each 0.25-wide bin of z (centers ZGRID), pooled with neighbours when thin."""
+    out = []
+    for c in ZGRID:
+        for half in (0.125, 0.25, 0.5):
+            b = g[(g.z >= c - half) & (g.z < c + half)]
+            if len(b) >= 200:
+                break
+        out.append(round(float(np.average(b.net_worth >= 1e6, weights=b.PWGTP)), 4) if len(b) else None)
+    return out
 
 
 def main():
@@ -68,12 +83,19 @@ def main():
         "millionaire_share": float(np.average(m.net_worth >= 1e6, weights=m.PWGTP)),
         "millionaire_by_age": {k: float(np.average(g.net_worth >= 1e6, weights=g.PWGTP)) for k, g in
                                [(f"{lo}-{hi}", m[m.age.between(lo, hi)]) for lo, hi in [(22, 26), (27, 31), (32, 36), (37, 41), (42, 46), (47, 55)]]},
+        # P(worth $1M+) by age band and earnings score (the pooled normal score z above, 0.25-wide bins):
+        # the model's "millionaire husband" reads this through each man's status, instead of treating
+        # the top 8% on his overall standing as millionaires.
+        "millionaire_by_z": {f"{lo}-{hi}": mil_by_z(m[m.age.between(lo, hi)]) for lo, hi in [(22, 26), (27, 31), (32, 36), (37, 41), (42, 46), (47, 55)]},
+        "millionaire_z_grid": ZGRID,
     }
     OUT.write_text(json.dumps(out, indent=1))
     print("status shift by age:", {a: round(out["status_by_age"][a], 2) for a in (22, 25, 28, 30, 35, 40, 45, 50)})
     print("status mu/sigma:", {a: (round(tail[a]["mu"], 2), round(tail[a]["sigma"], 2)) for a in (22, 25, 28, 30, 35, 40, 45, 50)})
     print("earnings 27-31:", [round(x / 1e3) for x in bands["27-31"]["earnings"]])
     print("height:", [round(x, 1) for x in out["height"]["inches"]])
+    for k, v in out["millionaire_by_z"].items():
+        print("P($1M+) by earnings z", k, " ".join("-" if x is None else f"{x:.2f}" for x in v[::2]))
     print(f"wrote {OUT.relative_to(ROOT)}")
 
 

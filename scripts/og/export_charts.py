@@ -71,7 +71,7 @@ TITLES = {
     "22-levers-women": ("What moves her odds", "A median woman, five years of searching; baseline: not looking till 27, open to men up to 2 years older."),
     "23-everything-together": ("Everything together: a top-20% woman going for a top-10% man", "Odds of a committed top-10% man within five years, each step added to the one before."),
     "24-whr-exchange-rates": ("What a waist-to-hip ratio can reach", "Single women 22-29 at each WHR tier, and the single men 28-42 who are as rare: by income or net worth."),
-    "28-levers-men": ("What moves his odds", "A median man of 30 looking at women 22-30, five years, on the apps and approaching two women a month in person."),
+    "28-levers-men": ("What moves his odds", "A median man of 30 looking at women 22-30, five years, on the apps and approaching one woman a month in person."),
 }
 
 OUT.mkdir(parents=True, exist_ok=True)

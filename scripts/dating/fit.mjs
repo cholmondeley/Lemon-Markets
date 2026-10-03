@@ -10,7 +10,13 @@
 //                wedding: HCMST's median from relationship start to wedding is 2.8 years), divided by
 //                the share of never-married women 23-28 who expect to marry (NSFG): the model's women
 //                are searching for a husband.
-// Checks: lifetime odds (committed by 35) by appeal against Add Health's, disattenuated, for both sexes.
+//   ipYes, ipKeepShift  men in person (Date Psychology's survey of men who approached, approach.json):
+//                her yes bar is her app like rate x ipYes, fitted to their dates per approach (0.25);
+//                her keep-seeing bar is ipKeepShift below her app bar, fitted to the share of first dates
+//                that became two-month relationships (28%). For a median man: approachers are probably
+//                above the median, so this flatters the median man a little.
+// Checks: lifetime odds (committed by 35) by appeal against Add Health's, disattenuated, for both sexes;
+// a median man approaching as often as the average approacher, against their long-term relationships.
 // Run: node scripts/dating/fit.mjs   (after the data scripts; takes a few minutes)
 import { readFileSync, writeFileSync } from 'node:fs';
 import * as D from '../../src/dating/model.js';
@@ -22,6 +28,7 @@ const inputs = {
   digitized: read('../../src/data/dating/digitized.json'), pools: read('../../src/data/dating/pools.json'),
   calibration: read('../../src/data/dating/calibration.json'), nsfg: read('../../src/data/dating/nsfg.json'),
   status: read('../../src/data/dating/status.json'),
+  keep: read('../../src/data/dating/keep.json'),   // keep.mjs (before this script)
 };
 const assort = read('../../src/data/dating/assort.json');
 const expect = read('../../src/data/dating/expect.json'), hcmst = read('../../src/data/dating/hcmst.json'), addhealth = read('../../src/data/dating/addhealth.json');
@@ -62,8 +69,21 @@ for (let th = 0; th <= 2.0001; th += 0.05) {
 const quint = byQuintile(theta);
 log(`theta ${theta}: model ${quint.map((x) => (x * 100).toFixed(0)).join(' ')} vs ACS ${acs.map((x) => (x * 100).toFixed(0)).join(' ')}`);
 
-// ---------- tolerance and commitScale ----------
+// ---------- in person: Date Psychology ----------
+const approach = read('../../src/data/dating/approach.json');
+const meanOf = (d, top) => Object.entries(d).filter(([k]) => k !== 'note').reduce((t, [k, v]) => t + v * (k.endsWith('+') ? top : +k), 0);
+const ap = approach.approachesLastYear, oc = approach.outcomesAmongApproachers;
+const meanAp = meanOf(ap, approach.tenPlusMean) / (1 - ap['0']), datesYr = meanOf(oc.date, approach.fivePlusMean);
+const ipTarget = { perApproach: datesYr / meanAp, keep: meanOf(oc.twoMonth, approach.fivePlusMean) / datesYr, ltr: 1 - oc.ltr['0'], approaches: meanAp };
 S = createScenario(inputs, { grid: 'coarse', fitted: { p0, theta } });
+const ipMan = { M: 30, z: 0, x: 0, lo: 22, hi: 30, ch: 'inperson' };
+const bisect = (f, lo, hi, target, up = true) => { for (let i = 0; i < 40; i++) { const m = (lo + hi) / 2; if ((f(m) < target) === up) lo = m; else hi = m; } return (lo + hi) / 2; };
+const ipYes = bisect((m) => S.hisYear({ ...ipMan, o: { ipYes: m } }).perApproach, 0.5, 60, ipTarget.perApproach);
+const ipKeepShift = bisect((d) => { const y = S.hisYear({ ...ipMan, o: { ipYes, ipKeepShift: d } }); return y.r.continued / y.dates; }, -3, 6, ipTarget.keep);
+log(`in person: ipYes ${ipYes.toFixed(2)} (dates per approach ${ipTarget.perApproach.toFixed(3)}), ipKeepShift ${ipKeepShift.toFixed(2)} (first dates -> two-month relationships ${(ipTarget.keep * 100).toFixed(1)}%)`);
+
+// ---------- tolerance and commitScale ----------
+S = createScenario(inputs, { grid: 'coarse', fitted: { p0, theta, ipYes, ipKeepShift } });
 const LAG = 2;
 const expectW = expect.by_age.women.filter((r) => r.lo >= 23 && r.hi <= 28).reduce((t, r, _, a) => t + r.yes / a.length, 0);
 const married = 1 - S.censusW[25 + LAG + 5] / S.censusW[25 + LAG];
@@ -96,7 +116,9 @@ for (let it = 0; it < 10; it++) {
 }
 // Checks: committed by 35 (searching from 22) by appeal, against Add Health's ever married by ~37
 // by true appeal (r = 0.6). Only the top is fitted (the horizons); the bottom is left to the model.
-S = createScenario(inputs, { grid: 'coarse', fitted: { p0, theta, tolerance: fit.tolerance, commitScale: fit.commitScale } });
+S = createScenario(inputs, { grid: 'coarse', fitted: { p0, theta, ipYes, ipKeepShift, tolerance: fit.tolerance, commitScale: fit.commitScale } });
+const ipYear = S.hisYears({ age: 30, lo: 22, hi: 30, years: 1, ch: 'inperson', approaches: ipTarget.approaches }).odds.any;
+log(`in person, a median man approaching ${ipTarget.approaches.toFixed(1)} times a year: committed within the year ${(ipYear * 100).toFixed(1)}% vs Date Psychology long-term relationships ${(ipTarget.ltr * 100).toFixed(1)}%`);
 const lv = [0.1, 0.3, 0.5, 0.7, 0.9, 0.95, 0.99];
 const ah = (sex) => { const f = addhealth.fits[`${sex}_w5_r${addhealth.r_main}`]; return lv.map((v) => normCdf(f.a + f.b * D.zTop(1 - v))); };
 const lifeW = lv.map((v) => S.herYears({ start: 22, years: 13, v, gap: 2 }).odds.any);
@@ -104,10 +126,11 @@ const lifeM = lv.map((mv) => S.hisYears({ age: 22, years: 16, lo: 20, hi: 34, mv
 const pc = (x) => `${Math.round(x * 100)}%`;
 log(`women by 35, at ${lv.join('/')}: model ${lifeW.map(pc).join(' ')} vs Add Health ${ah('women').map(pc).join(' ')}`);
 log(`men by 38 (apps), same: model ${lifeM.map(pc).join(' ')} vs Add Health ${ah('men').map(pc).join(' ')}`);
-const out = { ...prev, p0, theta, tolerance: fit.tolerance, commitScale: fit.commitScale,
+const out = { ...prev, p0, theta, ipYes: +ipYes.toFixed(3), ipKeepShift: +ipKeepShift.toFixed(3), tolerance: fit.tolerance, commitScale: fit.commitScale,
   checks: { marriageByEarnings: { model: quint, acs }, couplesCorrelation: { model: fit.rho, target: rhoTarget },
     level: { census: married, expect: expectW, target, lag: LAG },
-    lifetime: { at: lv, women: lifeW, womenAddHealth: ah('women'), men: lifeM, menAddHealth: ah('men') } } };
+    lifetime: { at: lv, women: lifeW, womenAddHealth: ah('women'), men: lifeM, menAddHealth: ah('men') },
+    inPerson: { target: ipTarget, modelYear: ipYear } } };
 delete out.commitMedian;
 writeFileSync(new URL('../../src/data/dating/fitted.json', import.meta.url), JSON.stringify(out, null, 1));
 log(`wrote fitted.json ${JSON.stringify({ theta, tolerance: fit.tolerance, commitScale: fit.commitScale })}`);

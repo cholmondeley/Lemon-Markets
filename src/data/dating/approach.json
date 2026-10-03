@@ -1,0 +1,13 @@
+{
+ "source": "Date Psychology survey of men approaching women in person, via the author's draft 'why you should approach more' (Charts and cites); read from the published charts by eye (about 1 point).",
+ "approachesLastYear": {"note": "all men; share by number of in-person approaches in the past year (the top bar is 10 or more)", "0": 0.52, "1": 0.155, "2": 0.075, "3": 0.05, "4": 0.04, "5": 0.01, "6": 0.033, "7": 0.003, "8": 0.01, "10+": 0.11},
+ "tenPlusMean": 15,
+ "outcomesAmongApproachers": {
+  "note": "men who approached at least once in the past year; share by number of each outcome",
+  "date": {"0": 0.4027, "1": 0.29, "2": 0.12, "3": 0.08, "4": 0.04, "5+": 0.07},
+  "sex": {"0": 0.5302},
+  "twoMonth": {"0": 0.7248, "1": 0.215, "2": 0.025, "3": 0.02, "5+": 0.01},
+  "ltr": {"0": 0.8658, "1": 0.11, "2": 0.012, "5+": 0.005}
+ },
+ "fivePlusMean": 6
+}

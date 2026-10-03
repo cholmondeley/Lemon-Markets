@@ -202,7 +202,8 @@ test('commitment follows rank: men commit up, rarely down', () => {
   const y = (p) => Z[p] + S.womenShift(28);
   assert.ok(his(man(0.25), y(0.9)) / m > 0.99, 'a 25th-percentile man commits to a 90th-percentile woman');
   assert.ok(his(man(0.9), y(0.5)) / m < 0.1, 'a 90th-percentile man rarely commits to a median woman');
-  assert.ok(his(man(0.5), y(0.5)) / m > 0.6, 'a median man usually commits to a median woman');
+  const mm = his(man(0.5), y(0.5)) / m;
+  assert.ok(mm > 0.3 && mm < 0.7, `a median man commits to a median woman about half the time: ${mm}`);
 });
 
 test('her odds of a top-10% man: near zero at the median, rising steeply with her appeal', () => {
@@ -248,4 +249,20 @@ test('on the apps she keeps seeing a man only if he beats her other first dates'
   const kept = r.evaluated / r.dates;
   assert.ok(kept < 0.25, `a median man's first dates that become months of dating: ${kept}`);
   assert.ok(S.hisYears({ age: 30, lo: 22, hi: 30, uLooks: 0.5, ch: 'inperson' }).odds.any > 4 * S.hisYears({ age: 30, lo: 22, hi: 30, uLooks: 0.5 }).odds.any, 'in person far better for him');
+});
+
+test('a millionaire husband: each man counts with his chance of being worth $1M+ (8.2% of men 22-55)', () => {
+  const pools = readJ('pools.json'), cells = S.menPopCells();
+  let W = 0, P = 0;
+  for (let M = 22; M <= 55; M++) { const wm = pools.by_age.find((r) => r.sex === 'men' && r.age === M).pop; for (const c of cells) { W += c.w * wm; P += c.w * wm * S.pMil({ ...c, M }); } }
+  close(P / W, readJ('status.json').millionaire_share, 0.005);
+  const o = S.herYears({ start: 25, v: 0.9, gap: 2 }).odds, w = S.herYears({ start: 25, v: 0.9, gap: 15 }).odds;
+  assert.ok(o.mil > 0.005 && w.mil > 2 * o.mil, `a gap multiplies her millionaire odds: ${o.mil} -> ${w.mil}`);
+});
+
+test('in person matches the Date Psychology survey it is fitted to', () => {
+  const { inPerson } = readJ('fitted.json').checks, man = { M: 30, z: 0, x: 0, lo: 22, hi: 30, ch: 'inperson' };
+  const y = S.hisYear(man);
+  close(y.perApproach, inPerson.target.perApproach, 0.01);
+  close(y.r.continued / y.dates, inPerson.target.keep, 0.02);
 });
