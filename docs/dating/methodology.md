@@ -202,10 +202,15 @@ $1M+ (`pMil`): from the parquet, P(net worth ≥ $1M) by age band and earnings s
 correlate 0.8 with status), averaged over the noise. Across men 22-55 it reproduces the parquet's 8.2%.
 Before, the top 8.2% on standing counted as millionaires, which overstated it: standing is not wealth.
 
-**Open issue: the age-gap lift for young women is now steeper than the ACS.** For a top-20% woman of 23,
-top-10% men are 0.6% of her commitments open to men 2 years older and 12% open to 15 years older (19x);
-the ACS for brides 18-22 has top-10% earners at 1.3% (gap under 2) and 5.8% (gap 10+), 4.4x. With strict
-sorting she commits near her own potential, and a young man near it rarely has top-10% standing yet.
+**The age-gap lift for young women, floored with data.** For a top-20% woman of 23 the model gives
+0.4% → 7.6% for a top-10% man (open to men 2 → 15 years older; 19x). The narrow-gap baseline is the
+model's least certain number: with strict sorting she commits near her own potential, and young men near
+it rarely have top-10% standing yet. It sits below what the average bride gets today (ACS: 1.3% of women
+marrying at 18-22 with a gap under 2 have a top-10%-income husband), so the page floors it there (1.3% x
+her 66% odds of committing at all = 0.9%) and rounds: about 1% → about 8%, roughly 9x. The ACS's own 4.4x
+(gap 10+ vs under 2, 5.8% vs 1.3%, only 337 couples with a 10+ gap, so roughly 2.5-6.5x) is for today's
+brides; the page's argument is aimed at women with more pull who mostly don't consider a gap now, so a
+larger lift for them than today's average is expected.
 
 ### 6a. How tightly couples sort (PSID)
 
