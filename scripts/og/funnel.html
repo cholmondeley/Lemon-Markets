@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>A Year on the Apps</title>
+<!-- Substack figure: single women 22-35 over one year, from the apps to pairing off. Rendered by
+     scripts/og/render_funnel.py. Numbers: see the source line; derivations in docs/dating/methodology.md. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Domine:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root {
+    --bg: #e9eae1; --surface: #f6f7f1; --ink: #22261d; --muted: #5e6455; --faint: #8b9080;
+    --rule: #c7cbb9; --women: #b8336a; --women-soft: #e6bfd0; --neutral: #a9ad9c;
+  }
+  body { margin: 0; background: var(--bg); font-family: "IBM Plex Sans", sans-serif; color: var(--ink); }
+  #card { width: 860px; margin: 40px; padding: 26px 28px 20px; background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; box-sizing: border-box; }
+  h4 { font-family: "Domine", Georgia, serif; font-size: 1.32rem; margin: 0 0 6px; font-weight: 700; }
+  .sub { color: var(--muted); font-size: 0.98rem; margin: 0 0 22px; line-height: 1.45; }
+  .row { display: grid; grid-template-columns: 300px 1fr; align-items: center; gap: 14px; margin: 0 0 16px; }
+  .lab b { display: block; font-weight: 600; font-size: 0.98rem; line-height: 1.25; }
+  .lab span { display: block; color: var(--muted); font-size: 0.82rem; margin-top: 2px; }
+  .track { position: relative; height: 30px; }
+  .bar { position: absolute; left: 0; top: 0; height: 100%; background: var(--women); border-radius: 0 4px 4px 0; }
+  .bar.range { background: repeating-linear-gradient(45deg, var(--women-soft) 0 5px, #f1dce5 5px 10px); }
+  .val { position: absolute; top: 50%; transform: translateY(-50%); font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 0.92rem; white-space: nowrap; }
+  .val small { font-family: "IBM Plex Sans", sans-serif; font-weight: 400; color: var(--muted); font-size: 0.8rem; margin-left: 6px; }
+  .row.aside .lab { padding-left: 22px; }
+  .row.aside .lab b { font-weight: 500; }
+  .row.aside .bar { background: var(--neutral); }
+  .src { color: var(--faint); font-size: 0.76rem; line-height: 1.45; margin: 18px 0 0; border-top: 1px solid var(--rule); padding-top: 10px; }
+</style>
+</head>
+<body>
+<div id="card">
+  <h4>A year on the apps, for single women 22-35</h4>
+  <p class="sub">Most aren't really searching. Of the ones who are, three in four lose months of dating to a man who was never going to commit, and about a third pair off.</p>
+  <div id="rows"></div>
+  <p class="src">Single women: ACS (the Dating Calculator's population). App use: Pew 2022, 25% of adults under 30 used an app in the past year, about 38% of single women. Actually dating: NSFG 2022-23, 7.2% of single women 18-35 had sex with someone they met online, about 20% of users once the model's date-to-sex rate is applied. Casual men: model, her two months-long dating slots a year. Paired off: census first-marriage rates for women 24-37, times the share of couples who met online (39% in 2017, 59% in 2020-22, HCMST), times 80% through apps, less ~6% for falling couple formation (cohort marriage curves). The hatched bar is that range.</p>
+</div>
+<script>
+  // [label, note, value (millions), high end of a range or null, aside?, value text]
+  const ROWS = [
+    ['Single women 22-35', 'everyone', 14.98, null, false, '15.0M'],
+    ['Used a dating app in the past year', '38% of single women', 5.69, null, false, '5.7M'],
+    ['Actually went on dates from the apps', '20% of users; 7.8% of single women', 1.17, null, false, '1.17M'],
+    ['of whom lost months of dating to a casual man', '3 in 4 (26% lost both of her slots)', 0.88, null, true, '0.88M'],
+    ['Paired off on a path to marriage', 'about a third of those dating', 0.31, 0.47, false, '0.31-0.47M'],
+  ];
+  const max = 14.98, W = 400;   // px for the largest bar (room for its label)
+  const x = (v) => Math.max(3, (v / max) * W);
+  document.getElementById('rows').innerHTML = ROWS.map(([lab, note, v, hi, aside, txt]) => {
+    const end = hi ?? v;
+    const bars = hi
+      ? `<div class="bar range" style="width:${x(hi)}px"></div><div class="bar" style="width:${x(v)}px"></div>`
+      : `<div class="bar" style="width:${x(v)}px"></div>`;
+    return `<div class="row${aside ? ' aside' : ''}"><div class="lab"><b>${lab}</b><span>${note}</span></div>
+      <div class="track">${bars}<div class="val" style="left:${x(end) + 10}px">${txt}</div></div></div>`;
+  }).join('');
+</script>
+</body>
+</html>
