@@ -214,15 +214,6 @@ for (const v of [0.5, 0.7, 0.9]) {
 out.levers = out.leversBy.p50;
 // Age gaps for a top-20% woman of 23: where the top-tier men are.
 out.gapYoung = { narrow: round(herYears({ start: 23, v: 0.8, gap: 2 }).odds), wide: round(herYears({ start: 23, v: 0.8, gap: 15 }).odds) };
-// The narrow-gap baseline is the model's least certain number (it rests on how few young men already have
-// top-10% standing). Floor it with data: a top-20% woman should do at least as well as the average bride,
-// and in the ACS 1.3% of women marrying at 18-22 with a gap under 2 have a top-10%-income husband. Her
-// floor = that share x her odds of committing at all. The page rounds both ends to whole percents.
-{
-  const acs = ag.reach_recent_5y.find((r) => r.wife_age === '18-22' && r.gap === 'under 2').top10;
-  out.gapYoung.narrowShown = r4(Math.max(out.gapYoung.narrow.top10, acs * out.gapYoung.narrow.any));
-  out.gapYoung.acsNarrow = r4(acs);
-}
 out.leverAppeal = { glp: r4(vGlp), glpGlutes: r4(vGlpG) };
 {
   // GLP-1s for a woman already in the top 20% on WHR (80th percentile), from 27.
