@@ -92,6 +92,24 @@ slider scales women's like rates by 2.7 / ratio.
 **Exposure.** Views ∝ e^{κz}; κ fitted to Hinge's top-5% share alone: 0.74 for men, 0.86 for women.
 Out of sample: men's top 1% 17% (Hinge 16%), top 10% 57% (58%), bottom half 5.9% (4%).
 
+### 3a. A year on the apps (single women 22-35)
+
+`site-data.mjs` (`yearOnApps`), Act II's second step and `03c-a-year-on-the-apps.png`. Single women 22-35:
+15.0M (ACS). Used an app in the past year: Pew 2022 has 25% of adults under 30; nearly all users are single
+and 66% of women 18-29 are (NSFG), so 38% of single women (5.7M; our own chain, NSFG app sex over the
+model's active share, implies 39%). Actually dating from the apps: NSFG 2022-23, 7.2% of single women
+18-35 had sex with someone they met online, averaging 2.8 partners; with Poisson partners an active dater
+has any with chance 92%, so 7.8% of single women (1.17M, about one user in five; it was 11% app sex in
+2017-19). Of those, 75% spent at least one of their two months-long dating slots that year on a casual
+man (26% both; model). Paired off: census first-marriage hazards for women 24-37 (couples form about two
+years before the wedding) give 1.05M a year; times the share of couples who met online (39% in 2017,
+published; 59% in 2020-22, HCMST, 49 couples), times the share of those through a dating app or site
+(HCMST 2015-22, 154 couples: 54% named a dating app or site, 15% social networking, 4% games, chat and
+other sites, 28% "internet, not otherwise classified"; so 54-82%), less 6.4% for the fall in couple
+formation over a 2.8-year lag (cohort curves): 0.20-0.47M, 18-41% of active daters. The model's own
+commitments among those 1.17M come to 0.14M: below that range, because its works-out rate was fitted to
+all single women, half-hearted searchers included, so it understates an active searcher's odds.
+
 ## 4. Inbox load
 
 `inboxLoad`: likes arriving to the average woman per day = men per woman × swipes per man × men's like

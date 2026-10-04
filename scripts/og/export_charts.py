@@ -21,6 +21,7 @@ FIGURES = [
     ("02-how-couples-met", '[data-fig="channels"]', "woman"),
     ("03a-standards-funnel-woman", '[data-fig="calc0"]', "woman"),
     ("03b-standards-funnel-man", '[data-fig="calc1"]', "man"),
+    ("03c-a-year-on-the-apps", '[data-fig="yearOnApps"]', "woman"),
     ("04-like-rates", '[data-fig="likeW"]', "woman"),
     ("05-likes-received-men", '[data-fig="recvM"]', "woman"),
     ("06-hinge-like-shares", '[data-fig="hinge"]', "woman"),

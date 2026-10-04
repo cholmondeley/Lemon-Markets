@@ -82,6 +82,47 @@ out.gssConcentration = { men: gss.men.partner_concentration_25_45, women: gss.wo
   out.attention = { men: 0.31, women: top5(1, r0), agreeLess: top5(1, 0.2), even: top5(2.7, r0), both: top5(2.7, 0.2) };
 }
 
+// A year on the apps, single women 22-35: who is on them, who actually dates, what their months of dating
+// go to, and how many pair off. Each step from its source:
+//   users     Pew 2022: 25% of adults under 30 used an app in the past year; nearly all users are single
+//             and 66% of women 18-29 are (NSFG), so about 38% of single women.
+//   active    NSFG 2022-23: 7.2% of single women 18-35 had sex with someone they met online in the past
+//             year, averaging 2.8 partners; Poisson, an actively dating woman has any with chance 1 - e^-m
+//             where m / (1 - e^-m) = 2.8, so actively dating = 7.2% / that.
+//   casual    model: of those, the share with at least one of her two months-long slots going to a casual man.
+//   paired    census first-marriage hazards for women 24-37 (couples form about two years before the wedding),
+//             times the share of couples who met online (39% in 2017, published; 59% in 2020-22, HCMST, 49
+//             couples), times the share of those through a dating app or site (54% named it; up to 82% with
+//             the unclassified "internet"), less the fall in couple formation over a 2.8-year lag (cohort curves).
+log('a year on the apps');
+{
+  const single = (a) => { const r = inputs.pools.by_age.find((x) => x.sex === 'women' && x.age === a); return r.pop * r.single; };
+  let N = 0; for (let a = 22; a <= 35; a++) N += single(a);
+  const ns = inputs.nsfg['2022-2023_women'], users = 0.25 / ns['18_29'].single_share;
+  const mp = ns['18_35'].app_sex_mean_partners;
+  let lo = 0.01, hi = 20; for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (m / (1 - Math.exp(-m)) < mp) lo = m; else hi = m; }
+  const pAny = 1 - Math.exp(-(lo + hi) / 2), active = ns['18_35'].app_sex_single / pAny;
+  // Casual: by age and appeal (equal-weight quantiles), weighted by single women at each age.
+  const qs = [0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95];
+  let W = 0, anyCas = 0, bothCas = 0;
+  for (let a = 22; a <= 35; a++) for (const v of qs) {
+    const row = herYears({ start: a, years: 1, v }).rows[0], w = single(a);
+    W += w; anyCas += w * (1 - Math.pow(1 - row.casual, row.evaluated)); bothCas += w * Math.pow(row.casual, row.evaluated);
+  }
+  // Paired: census hazards two years on.
+  const nm = {}; let q = 1; for (const r of inputs.pools.by_age.filter((x) => x.sex === 'women')) { q = Math.min(q, r.never_married); nm[r.age] = q; }
+  let mar = 0; for (let a = 22; a <= 35; a++) mar += single(a + 2) * (1 - nm[a + 3] / nm[a + 2]);
+  const ok = hcmst.online_kinds, onLo = out.channels.series.Online.at(-1), onHi = hcmst.periods.at(-1).Online;
+  const at = (k, a) => out.cohorts[k].filter((p) => p[0] <= a).at(-1)[1];
+  const fall = [25, 29, 33].reduce((t, a) => { const yr = 1 - Math.pow(Math.log(1 - at('1990', a)) / Math.log(1 - at('1980', a)), 1 / 10); return t + (1 - Math.pow(1 - yr, 2.8)) / 3; }, 0);
+  const pLo = mar * onLo * ok.dating * (1 - fall), pHi = mar * onHi * (ok.dating + ok.other) * (1 - fall);
+  out.yearOnApps = round({ single: N, users, usersN: N * users, active, activeN: N * active, activeOfUsers: active / users,
+    anyCasual: anyCas / W, bothCasual: bothCas / W, casualN: N * active * anyCas / W,
+    marriagesLagged: mar, onlineLo: onLo, onlineHi: onHi, appsLo: ok.dating, appsHi: ok.dating + ok.other, fall,
+    pairedLo: pLo, pairedHi: pHi, pairedLoShare: pLo / (N * active), pairedHiShare: pHi / (N * active) });
+  log(`a year on the apps: ${JSON.stringify(out.yearOnApps)}`);
+}
+
 // ---------- Act III: the funnel ----------
 log('funnel');
 const F = SF.funnel();

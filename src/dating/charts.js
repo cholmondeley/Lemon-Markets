@@ -211,7 +211,10 @@ export function bars(host, rows, { max = null, cls = '' } = {}) {
       if (r.group) { const g = document.createElement('div'); g.className = 'bar-group-title'; g.textContent = r.group; host.appendChild(g); return; }
       const row = document.createElement('div');
       row.className = 'bar-row' + (r.hl ? ' hl' : '') + (r.rowCls ? ' ' + r.rowCls : '');
-      row.innerHTML = `<span class="bl">${r.label}${r.sub ? `<small>${r.sub}</small>` : ''}</span><span class="bt"><i class="bf ${r.cls || ''}" style="width:${Math.max(0, Math.min(100, (r.value / m) * 100)).toFixed(2)}%"></i></span><span class="bv">${r.text}</span>`;
+      // r.hi: the high end of a range, drawn hatched past the bar.
+      const w = (v) => Math.max(0, Math.min(100, (v / m) * 100)).toFixed(2);
+      const range = r.hi != null ? `<i class="bf range ${r.cls || ''}" style="width:${w(r.hi)}%"></i>` : '';
+      row.innerHTML = `<span class="bl">${r.label}${r.sub ? `<small>${r.sub}</small>` : ''}</span><span class="bt">${range}<i class="bf ${r.cls || ''}" style="width:${w(r.value)}%"></i></span><span class="bv">${r.text}</span>`;
       if (r.tip) {
         row.addEventListener('pointermove', (ev) => showTip(r.tip, ev.clientX, ev.clientY));
         row.addEventListener('pointerleave', hideTip);

@@ -104,8 +104,20 @@ def main():
     o = np.argsort(gap)
     wedding_lag = {"n": int(len(gap)), "median": round(float(gap[o][np.searchsorted(np.cumsum(w[o]) / w.sum(), 0.5)]), 2), "mean": round(float(np.average(gap, weights=w)), 2)}
     print(f"relationship start to wedding, married 2005-2017: median {wedding_lag['median']} years, mean {wedding_lag['mean']} (n={wedding_lag['n']})")
+    # Of couples who met online in 2015-2022, how: a dating app or site, social networking, other sites,
+    # or "internet, not otherwise classified" (Rosenfeld's q24 codes). Apps are the dating share at least,
+    # and at most that plus the unclassified.
+    KINDS = ["internet_dating", "internet_soc_network", "internet_game", "internet_chat", "internet_org", "internet_other"]
+    on = []
+    for pre, yr, w, same in [("w1", "w1_q21a_year", "w1_weight_combo", "w1_same_sex_couple"), ("w2", "w2_q21a_year", "w2_combo_weight", "w2_same_sex_couple"),
+                             ("w3", "w3_Q21A_year", "w3_combo_weight", "w3_same_sex_couple")]:
+        g = df[df[yr].between(2015, 2022) & (df[same] != 1) & (df[f"{pre}_q24_met_online"] == 1) & (df[w] > 0)]
+        on.append(pd.DataFrame({"w": g[w].values, **{k: (g[f"{pre}_q24_{k}"] == 1).values for k in KINDS}}))
+    on = pd.concat(on)
+    online_kinds = {"years": [2015, 2022], "n": int(len(on)), **{k.replace("internet_", ""): round(float(np.average(on[k], weights=on.w)), 4) for k in KINDS}}
+    print("met online 2015-2022, how:", online_kinds)
     out = {"source": "HCMST 2017-2020-2022 (Rosenfeld), small public v2.2: heterosexual couples, year first met; weighted.",
-           "periods": periods, "by_year": by_year, "bar_online": bar_online, "wedding_lag": wedding_lag, "channels": list(CHANNELS)}
+           "periods": periods, "by_year": by_year, "bar_online": bar_online, "wedding_lag": wedding_lag, "online_kinds": online_kinds, "channels": list(CHANNELS)}
     OUT.write_text(json.dumps(out, indent=1))
     print(f"wrote {OUT.relative_to(ROOT)}")
 

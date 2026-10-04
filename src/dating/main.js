@@ -30,7 +30,7 @@ try { const saved = localStorage.getItem('lemon-dating-sex'); if (saved === 'man
 
 // ---------- numbers in the prose ----------
 const get = (path) => path.split('.').reduce((o, k) => (o == null ? o : o[k]), SITE);
-const FMT = { pct: (v) => pct(v), pct1: (v) => pct(v, 1), lt: (v) => (v < 0.001 ? '<0.1%' : pct(v, 1)), num: (v) => (v >= 10 ? Math.round(v).toString() : v.toFixed(1)), k: (v) => Math.round(v / 1000), ord: (v) => ord(v * 100), pts: (v) => Math.round(v * 100) };
+const FMT = { pct: (v) => pct(v), pct1: (v) => pct(v, 1), lt: (v) => (v < 0.001 ? '<0.1%' : pct(v, 1)), num: (v) => (v >= 10 ? Math.round(v).toString() : v.toFixed(1)), k: (v) => Math.round(v / 1000), mil: (v) => `${(v / 1e6).toFixed(1)} million`, ord: (v) => ord(v * 100), pts: (v) => Math.round(v * 100) };
 document.querySelectorAll('[data-v]').forEach((el) => {
   const v = get(el.dataset.v);
   if (typeof v === 'number') el.textContent = (FMT[el.dataset.f] || FMT.num)(v);
@@ -84,6 +84,17 @@ fig('ratio').innerHTML = `<div class="tiles">
   <div class="tile"><b>1.5 : 1</b><span>men per woman over a whole year: women try the apps and leave faster</span></div>
   <div class="tile women"><b>54%</b><span>of women on the apps are at least sometimes overwhelmed by messages</span></div>
   <div class="tile men"><b>64%</b><span>of men on the apps feel insecure about how few they get</span></div></div>`;
+{
+  // A year on the apps, single women 22-35 (site-data: each step from its source).
+  const y = SITE.yearOnApps, M = (v) => `${(v / 1e6).toFixed(v >= 2e6 ? 1 : 2)}M`;
+  bars(fig('yearOnApps'), [
+    { label: 'Single women 22-35', value: y.single, text: M(y.single), cls: 'women' },
+    { label: 'Used a dating app in the past year', sub: `${pct(y.users)} of single women`, value: y.usersN, text: M(y.usersN), cls: 'women' },
+    { label: 'Actually went on dates from the apps', sub: `${pct(y.activeOfUsers)} of users; ${pct(y.active, 1)} of single women`, value: y.activeN, text: M(y.activeN), cls: 'women' },
+    { label: 'of whom lost months of dating to a casual man', sub: `${pct(y.anyCasual)} (${pct(y.bothCasual)} lost both of her two slots)`, value: y.casualN, text: M(y.casualN), rowCls: 'aside' },
+    { label: 'Paired off on a path to marriage', sub: `${pct(y.pairedLoShare)}-${pct(y.pairedHiShare)} of those dating`, value: y.pairedLo, hi: y.pairedHi, text: `${M(y.pairedLo)}-${M(y.pairedHi)}`, cls: 'women', hl: true },
+  ], { max: y.single });
+}
 const pctTicks = [[0, '0%'], [25, '25%'], [50, '50%'], [75, '75%'], [100, '100%']];
 const binTip = (who) => (i, share) => `<b>${i}–${i + 1}%</b><div class="k">${pct(share, 1)} of ${who}</div>`;
 histChart(fig('likeW'), { height: 280, bins: SITE.hist.womenLike, color: '--women', maxBin: 60, xTicks: [[0, '0%'], [20, '20%'], [40, '40%'], [60, '60%']], tip: binTip('women'), aria: 'Histogram: most women like under 10% of profiles; median 4.5%.' });

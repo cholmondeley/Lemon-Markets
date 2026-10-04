@@ -34,9 +34,9 @@
 <body>
 <div id="card">
   <h4>A year on the apps, for single women 22-35</h4>
-  <p class="sub">Most aren't really searching. Of the ones who are, three in four lose months of dating to a man who was never going to commit, and about a third pair off.</p>
+  <p class="sub">Most aren't really searching. Of the ones who are, three in four lose months of dating to a man who was never going to commit, and a fifth to two-fifths pair off.</p>
   <div id="rows"></div>
-  <p class="src">Single women: ACS (the Dating Calculator's population). App use: Pew 2022, 25% of adults under 30 used an app in the past year, about 38% of single women. Actually dating: NSFG 2022-23, 7.2% of single women 18-35 had sex with someone they met online, about 20% of users once the model's date-to-sex rate is applied. Casual men: model, her two months-long dating slots a year. Paired off: census first-marriage rates for women 24-37, times the share of couples who met online (39% in 2017, 59% in 2020-22, HCMST), times 80% through apps, less ~6% for falling couple formation (cohort marriage curves). The hatched bar is that range.</p>
+  <p class="src">Single women: ACS (the Dating Calculator's population). App use: Pew 2022, 25% of adults under 30 used an app in the past year, about 38% of single women. Actually dating: NSFG 2022-23, 7.2% of single women 18-35 had sex with someone they met online, about 20% of users once the model's date-to-sex rate is applied. Casual men: model, her two months-long dating slots a year. Paired off: census first-marriage rates for women 24-37, times the share of couples who met online (39% in 2017, 59% in 2020-22, HCMST), times the share of those through a dating app or site (54% named one; up to 82% counting the unclassified internet), less ~6% for falling couple formation (cohort marriage curves). The hatched bar is that range.</p>
 </div>
 <script>
   // [label, note, value (millions), high end of a range or null, aside?, value text]
@@ -45,7 +45,7 @@
     ['Used a dating app in the past year', '38% of single women', 5.69, null, false, '5.7M'],
     ['Actually went on dates from the apps', '20% of users; 7.8% of single women', 1.17, null, false, '1.17M'],
     ['of whom lost months of dating to a casual man', '3 in 4 (26% lost both of her slots)', 0.88, null, true, '0.88M'],
-    ['Paired off on a path to marriage', 'about a third of those dating', 0.31, 0.47, false, '0.31-0.47M'],
+    ['Paired off on a path to marriage', '18-41% of those dating', 0.20, 0.47, false, '0.20-0.47M'],
   ];
   const max = 14.98, W = 400;   // px for the largest bar (room for its label)
   const x = (v) => Math.max(3, (v / max) * W);

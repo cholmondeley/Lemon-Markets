@@ -234,6 +234,19 @@
   "median": 2.83,
   "mean": 4.32
  },
+ "online_kinds": {
+  "years": [
+   2015,
+   2022
+  ],
+  "n": 154,
+  "dating": 0.5369,
+  "soc_network": 0.1458,
+  "game": 0.0079,
+  "chat": 0.028,
+  "org": 0.0048,
+  "other": 0.2809
+ },
  "channels": [
   "Online",
   "Through friends",

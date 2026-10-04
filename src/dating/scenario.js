@@ -326,7 +326,9 @@ export function createScenario({ digitized, pools, calibration: cal, nsfg, statu
       // Who she ends up with (type), weighted by the chance her first success comes this year.
       const pYear = reach * out.multi.any;
       xm += pYear * out.xMean; xs += pYear * out.xSq; got += pYear; reach *= 1 - out.multi.any;
-      rows.push({ age, yEff, matches: r.matches, dated: r.dated, evaluated: r.evaluated, odds: out.multi, zPct: r.zPct, commits: out.commits, bar: out.bar });
+      // casual: the share of the men she properly dates (months) who are casual.
+      const fw = r.final.cells.reduce((t, c) => t + c.w, 0), casual = fw > 0 ? r.final.cells.reduce((t, c) => t + (c.serious ? 0 : c.w), 0) / fw : 0;
+      rows.push({ age, yEff, matches: r.matches, dated: r.dated, evaluated: r.evaluated, casual, odds: out.multi, zPct: r.zPct, commits: out.commits, bar: out.bar });
     }
     const odds = Object.fromEntries(Object.entries(miss).map(([k, v2]) => [k, 1 - v2]));
     return { odds, rows, first: rows[0], last: rows[rows.length - 1], partner: { mean: got > 0 ? xm / got : 0, sq: got > 0 ? xs / got : 0 } };

@@ -48,6 +48,8 @@ body[data-sex="woman"] [data-for="man"], body[data-sex="man"] [data-for="woman"]
 .bar-row .bf{position:absolute;inset:0 auto 0 0;border-radius:0 4px 4px 0;background:var(--neutral);transition:width .7s cubic-bezier(.2,.7,.2,1);}
 .bar-row .bf.women{background:var(--women);} .bar-row .bf.men{background:var(--men);} .bar-row .bf.accent{background:var(--dating);} .bar-row .bf.lemon{background:var(--lemon);}
 .bar-row .bf.ghost{background:transparent;border:2px dashed var(--rule-strong);border-left:none;}
+.bar-row .bf.range{background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--women) 45%,transparent) 0 4px,transparent 4px 8px);}
+.bar-row.aside .bl{padding-left:14px;color:var(--ink-muted);}
 .bar-row .bv{font-family:"IBM Plex Mono",monospace;font-size:0.82rem;font-weight:600;min-width:4.2em;text-align:right;}
 .bar-row.hl .bl{font-weight:600;}
 .bar-row:hover .bt{outline:2px solid var(--rule-strong);outline-offset:1px;}
