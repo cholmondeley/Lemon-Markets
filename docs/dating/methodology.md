@@ -11,7 +11,7 @@ Contents
 
 1. [Data](#1-data)
 2. [Conventions: percentiles and the Gaussian copula](#2-conventions-percentiles-and-the-gaussian-copula)
-3. [The attention market](#3-the-attention-market)
+3. [The attention market](#3-the-attention-market) (3a: [a year on the apps](#3a-a-year-on-the-apps-single-women-22-35))
 4. [Inbox load](#4-inbox-load)
 5. [Who is single: the commitment filter and the lemon effect](#5-who-is-single-the-commitment-filter-and-the-lemon-effect)
 6. [Mate value and commitment](#6-mate-value-and-commitment)
@@ -292,7 +292,11 @@ nowhere: about 8% become months of dating (it was 72% when her own bar alone dec
 is also dating better-looking men), in line with the funnel's ~4% of his first dates that end in sex.
 He properly dates the best two a year; success if both commit. Bars: her appeal for her age at the 50 /
 75 / 90 / 95th percentile, and as good as him or better. For a median man of 30 (women 22-30), five
-years: 9.3%; by looks percentile 10th 0.2%, 25th 1.1%, 75th 43%, 90th 76%, 99th 85%.
+years: 9.3%; by looks percentile 10th 0.2%, 25th 1.1%, 75th 43%, 90th 76%, 99th 85%. Per first date
+(Act IV, `perDate`), from the same chain for a man of 30 at each looks band, a year on the apps: the women
+who keep seeing him, the ones he properly dates and the chance both commit, spread over all his first
+dates: below the median 1.5%, 50th-75th 4.2%, 75th-90th 4.0%, 90th-95th 2.9%, 95th-99th 1.5%, top 1%
+0.5% (top men have so many first dates that each one counts for little).
 
 **Capacity on both sides** (`keep.mjs` → `keep.json`). The same holds for him: a man with dozens of
 first dates (a 99th-percentile-looks man has about 41 a year, and 14 women who'd keep seeing him) properly
@@ -405,10 +409,9 @@ calculators use likes only.
   status and social skills at the 75th, about the 88th percentile as a partner) in person: 86%, and a
   75th-percentile woman 75%. The body ladder uses the Dating Calculator's flags among single men
   25-35 (body half of looks, face at the median): out of overweight and obese (40%: body at the 60th
-  percentile, looks 57th) 23%; fit (the `fit` flag, identical to `abs`: 5.3%, body fat up to 20%; looks
-  87th, 6.6 first dates a year) 66%; strict abs (`abs_strict`: 2.2%, body fat up to 17%; looks 92nd)
-  67%, and a 75th-percentile woman or better 0.8% → 28%. Status to the 90th percentile: any 12% (he is
-  choosier) but a 75th-percentile woman 4.7%.
+  percentile, looks 57th) 15% / 72%; fit (the `fit` flag, identical to `abs`: 5.3%, body fat up to 20%;
+  looks 87th, 6.6 first dates a year) 72% / 88%; strict abs (`abs_strict`: 2.2%, body fat up to 17%;
+  looks 92nd) 85% / 88%, and a 75th-percentile woman or better 0.1% → 25% on the apps.
 - **Exchange rates** (`exchange.py`): the income or net worth that as many single men 28-42 clear as
   single women 22-29 clear a WHR tier. WHR ≤ 0.74 (4.0%) ↔ $163k+ or $1.1M+. Metros: single women 22-29
   at WHR ≤ 0.74 per single man 28-42 worth $1M+ (bodies imputed from NHANES).
@@ -442,12 +445,13 @@ weaker, mixed evidence (Bellou 2015 finds broadband raised marriage rates).
 | Commitment noise σ; first-date noise | 0.5; 1.0 | Assumptions, swept in `results.md` §H |
 | Options premium κ | 0.25 | Assumption, swept |
 | Age discount on an older man's bar | ½ × OkCupid shift | Assumption |
-| Casual men recognizable from the profile; keep dating | 50%; 80% | Assumptions |
+| Casual men recognizable from the profile; keep dating | 50%; 80% | Assumptions; the 50% is untriangulated (§15) |
 | Earnings-status correlation | 0.8 | Assumption |
 | Reads: profile / first date / friend | (0.48, 0.2) / (0.3, 0.5) / (0.3, 0.45) | Connelly & Ones 2010 for the scale |
 | First dates per actively dating woman, active share | 13 / yr, 0.2 | NSFG 2022-23, luap |
 | Men per woman over a year | 1.5 | Pew ever-used, NSFG |
-| Months-long dates per year | 2 | Author's 4-20 over a decade |
+| Months-long dates per year | 2, both sexes | Author's 4-20 over a decade; each side keeps only people who beat its other first dates (`keep.mjs`, §8) |
+| P(worth $1M+) by age and earnings | parquet table | `status.py` (`millionaire_by_z`), §6 |
 | Body share of a woman's appeal; of a man's looks | 0.6; 0.5 | Assumptions |
 | Men's body rungs | 60th / 94.7th / 97.8th percentile | Parquet flags: not overweight, fit, strict abs |
 | In person (men): approaches a year; her yes bar; her keep-seeing bar | 12; app like rate × 6.6; app threshold − 0.64 | Post (once a month = top quarter); fitted to Date Psychology (§8) |
@@ -465,19 +469,27 @@ odds for attractive women at 23 and 31; getting off the apps and getting fit eac
 man's odds by half or more; the census fit (27 → 32, among women who expect to marry); and relaxing,
 which never lowers anyone's odds and lifts top women past 85% committed by 35.
 
-Fitted exactly: the three targets in §13. Out of sample: Hinge top 1/10% and bottom 50%; NSFG men's 3.4
+Fitted exactly (§13): couples' correlation (tolerance), the census level (works-out), ACS marriage by
+earnings quintile (θ), and Date Psychology's dates per approach and first dates becoming two-month
+relationships (ipYes, ipKeepShift); the planning horizons are chosen against Add Health's top deciles.
+Checks: Add Health's lifetime curve by appeal (top matches, bottom lower, §6); the survey's long-term
+relationships (a median man at their 5.4 approaches a year commits within the year 10.8%, against 13.4%);
+the market balancing (men's app searches give 4.8% of single men committing a year, against about 4%
+implied by the census and HCMST's online share); the millionaire probability reproducing the parquet's
+8.2%; a year on the apps (§3a: the model's 0.14M commitments among active daters, below the data's
+0.20-0.47M). Out of sample: Hinge top 1/10% and bottom 50%; NSFG men's 3.4
 partners; the founder's intent gradient from selection alone; the census rate at which single women
 marry at other ages (above it at 22, close at 24-28 and 36-38, below it at 30-34);
-a median man's five-year odds (9.3% on the apps, 65% in person) against the census rate for never-married men 30 → 35 (27%, all
-channels).
+a median man's five-year odds (9.3% on the apps, 65% in person, approaching once a month) against the census rate
+for never-married men 30 → 35 (33%, all men and channels).
 
 ## 15. Assumptions and limitations
 
 1. **One mate value per person**, a weighted index; people differ in taste only through noise.
 2. **Bars rise with options by McCall search**; κ is an assumption and moves results (§H of `results.md`).
-3. **Three targets for three free parameters**, plus two horizons chosen against Add Health's top deciles;
-   the many fixed assumptions (§13) are swept, not fitted. The bottom of the appeal distribution is not
-   fitted: the model puts it below Add Health's pre-app cohort.
+3. **Five fitted parameters for five targets**, plus two horizons chosen against Add Health's top
+   deciles; the many fixed assumptions (§13) are swept, not fitted. The bottom of the appeal distribution
+   is not fitted: the model puts it below Add Health's pre-app cohort.
 4. **Two rankings of men**: commitment and "as good as her or better" on potential; "top 10% man" on
    standing now (status by age from earnings ranks; wealth is not modeled separately).
 5. **Apps as the default channel**; in person for men; the model under-predicts marriage in the early
@@ -485,6 +497,23 @@ channels).
 6. **Parquet bodies are imputed** from NHANES, so body measures are not linked to marital status.
 7. **Digitized charts** carry reading error of about a point.
 8. **Scope**: straight dating in the US.
+9. **The works-out rate absorbs half-hearted searching.** It is fitted as if every single woman searched
+   like an active app dater, so the odds on the page are for an average woman; an active searcher's are
+   higher (§3a: the model's commitments among active daters fall short of the data by 1.5-3.4x).
+10. **Casual men have no capacity limit**: they keep seeing 80% of the women who want to, however many,
+   so they date several women for months at once (nonexclusive dating). That is why active women start
+   about 1.45x as many months-long relationships as men's own searches account for; all of the excess is
+   with casual men.
+11. **In person is extrapolated**: fitted at the survey's average of 5.4 approaches a year, shown at 12
+   (once a month); the survey's approachers are probably above the median man, and its figures are read
+   off charts by eye.
+12. **The share of casual men she can spot up front (50%) is not triangulated.** Lower values cut women's
+   odds most at the bottom (median woman, five years from 25: 42% at 0.5, 32% at 0.25, 26% at 0,
+   before refitting).
+13. **"Top 10%" is current standing among men 22-55**, so very few young men qualify (0.2-0.6% of single
+   men 22-25); a young woman's odds of one with a narrow age gap are near zero by definition, and the
+   age-gap lift is steep (0.4% → 7.6% for a top-20% woman of 23, against the ACS's 4.4x for today's
+   brides by income).
 
 ## 16. Files and how to regenerate
 
